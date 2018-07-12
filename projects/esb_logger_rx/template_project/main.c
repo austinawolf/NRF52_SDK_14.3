@@ -91,7 +91,7 @@ void nrf_esb_event_handler(nrf_esb_evt_t const * p_event)
 							
 								char rx_data[32];
 								memcpy(rx_data,rx_payload.data,32);				
-								printf("%s\n\r",rx_data);
+								printf("%s",rx_data);
 
 								
 								success_event_total++;

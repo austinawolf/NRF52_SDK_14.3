@@ -69,7 +69,7 @@
 #include "led_error.h"
 #include "mpu9150_helper.h"
 
-#define SAMPLE_PERIOD 100
+#define SAMPLE_PERIOD 1001
 
 uint32_t event_number = 0;
 
@@ -145,7 +145,6 @@ int main(void)
 		if (dmp_init_status != 0) alert(BSP_BOARD_LED_1, 2);
 	
 	
-
 		//CLOCKS INIT
     clocks_start();
 
@@ -159,9 +158,9 @@ int main(void)
 
     NRF_LOG_DEBUG("Enhanced ShockBurst Transmitter Example running.");
 		
-		esb_log_print("Esb Logger Running");
-		esb_log_print("MPU init: %d", mpu_init_status);
-		esb_log_print("DMP init: %d", dmp_init_status);
+		esb_log_print("Esb Logger Running\r\n");
+		esb_log_print("MPU init: %d\r\n", mpu_init_status);
+		esb_log_print("DMP init: %d\r\n", dmp_init_status);
 		
 
 		vTaskStartScheduler();

@@ -31,6 +31,8 @@
 
 #define WHO_AM_I 0x75
 
+uint32_t event_num = 0;
+
 int mpu_helper_init(void) {
 		int ret;
 		struct int_param_s int_param;
@@ -79,7 +81,7 @@ int mpu_helper_dmp_setup(void) {
 															DMP_FEATURE_GYRO_CAL);
 		if (ret != 0) return -3;
 		
-		#define DEFAULT_MPU_HZ 11
+		#define DEFAULT_MPU_HZ 1
 	
 		ret = dmp_set_fifo_rate(DEFAULT_MPU_HZ);
 		if (ret != 0) return -4;
@@ -96,35 +98,34 @@ unsigned char mpu_test(void) {
 	unsigned long sensor_timestamp;
 
 	ret = dmp_read_fifo(gyro, accel, quat, &sensor_timestamp, &sensors, &more);
-
+	event_num++;
 	
 	
 	#define QUAT
-	//#define ACC
-	//#define GYRO
+	#define ACC
+	#define GYRO
 	
+	esb_log_print("\r\nPacket:%d,",event_num);
 	#ifdef QUAT
-		esb_log_print("Quat:");
-		esb_log_print("%i", quat[0]);
-		esb_log_print("%i", quat[1]);
-		esb_log_print("%i", quat[2]);
-		esb_log_print("%i\n", quat[3]);
+		esb_log_print("%i,", quat[0]);
+		esb_log_print("%i,", quat[1]);
+		esb_log_print("%i,", quat[2]);
+		esb_log_print("%i,", quat[3]);
 	#endif
 	
 	#ifdef ACC
-		esb_log_print("Acc:");	
-		esb_log_print("%i", accel[0]);
-		esb_log_print("%i", accel[1]);
-		esb_log_print("%i\n", accel[2]);
+		esb_log_print("%i,", accel[0]);
+		esb_log_print("%i,", accel[1]);
+		esb_log_print("%i,", accel[2]);
 	#endif
 	
 	#ifdef GYRO
-		esb_log_print("Gyro:");	
-		esb_log_print("%i", gyro[0]);
-		esb_log_print("%i", gyro[1]);
-		esb_log_print("%i\n", gyro[2]);
+		esb_log_print("%i,", gyro[0]);
+		esb_log_print("%i,", gyro[1]);
+		esb_log_print("%i,", gyro[2]);
 	#endif	
-	
+	esb_log_print("%i\r\n", ret);
+
 	return ret;
 }
 
