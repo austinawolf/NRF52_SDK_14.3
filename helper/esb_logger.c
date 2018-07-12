@@ -164,13 +164,8 @@ static void packet_write_task_function (void * pvParameter)
 		uint8_t i;
     while (true)
     {
-				led_on(BSP_BOARD_LED_0);
-				
-				led_off(BSP_BOARD_LED_0);
 
-					
 				
-
 				taskENTER_CRITICAL();
 				if (my_fifo.write_pos > my_fifo.read_pos) {
 						
@@ -196,7 +191,6 @@ static void packet_write_task_function (void * pvParameter)
 						}
 						
 						vTaskDelay(wait_1ms);
-
 						
 				}
 				else {

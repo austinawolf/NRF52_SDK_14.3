@@ -101,13 +101,11 @@ static void payload_create_timer_callback (void * pvParameter)
 		NRF_LOG_DEBUG("esb_log()");
 		NRF_LOG_FLUSH();
 	
-	
-	  int i = 5;
-		float f = 27.0;
-		char str[50] = "tutoriaspoint.com";
 
-		esb_log_print("%d %s %f ", i, str, f);
-
+		esb_log_print("abcdef");
+		esb_log_print("ghijkl");
+		esb_log_print("mnopqrs");
+		esb_log_print("tuvwrxyz\r\n");
 }
 
 void clocks_start( void )

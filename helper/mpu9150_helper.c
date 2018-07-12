@@ -58,7 +58,7 @@ int mpu_helper_init(void) {
 		if (ret != 0) return -1;
 		
 
-    const long accel_bias[3] = {88, 70, -188};
+    //const long accel_bias[3] = {88, 70, -188};
 		mpu_set_accel_bias_6500_reg(accel_bias);
 
 
@@ -98,6 +98,9 @@ unsigned char mpu_test(void) {
 	unsigned long sensor_timestamp;
 
 	ret = dmp_read_fifo(gyro, accel, quat, &sensor_timestamp, &sensors, &more);
+	
+	if (ret < 0) return 1;
+	
 	event_num++;
 	
 	
