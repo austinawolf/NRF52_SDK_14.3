@@ -23,7 +23,9 @@ typedef struct {
 } Gyro;	
 
 
-
+struct platform_data_s {
+    signed char orientation[9];
+};
 
 
 Acc mpu_get_acc(void);
@@ -31,6 +33,8 @@ Gyro mpu_get_gyro(void);
 
 int mpu_helper_init(void);
 int mpu_helper_dmp_setup(void);
-unsigned char mpu_test(void);
+int	mpu_helper_inv_setup(void);
+
+unsigned char mpu_log_fifo(void);
 
 #endif

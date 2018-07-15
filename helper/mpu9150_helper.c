@@ -11,6 +11,12 @@
 #include "dmpmap.h"
 #include "esb_logger.h"
 
+#include "ml_math_func.h"
+
+#include "invensense.h"
+#include "invensense_adv.h"
+
+
 #define MPU9150_ADDR 0x68
 
 #define ACCEL_XOUT_H 0x3B
@@ -51,16 +57,18 @@ int mpu_helper_init(void) {
 		mpu_configure_fifo(INV_XYZ_ACCEL);
 		if (ret != 0) return -1;
 		
-		mpu_set_gyro_fsr(500);
+		mpu_set_gyro_fsr(2000);
 		if (ret != 0) return -1;
 		
-		mpu_set_accel_fsr(16);
+		mpu_set_accel_fsr(2);
 		if (ret != 0) return -1;
 		
 
-    //const long accel_bias[3] = {88, 70, -188};
+    const long accel_bias[3] = {70, 72, -200};
 		mpu_set_accel_bias_6500_reg(accel_bias);
 
+		long gyro_bias[3] = {-41, 25, -51};
+		mpu_set_gyro_bias_reg(gyro_bias);
 
 		return 0;
 
@@ -77,11 +85,11 @@ int mpu_helper_dmp_setup(void) {
 
 		ret = dmp_enable_feature(DMP_FEATURE_6X_LP_QUAT | 
 															DMP_FEATURE_SEND_RAW_ACCEL | 
-															DMP_FEATURE_SEND_CAL_GYRO |
+															DMP_FEATURE_SEND_RAW_GYRO |
 															DMP_FEATURE_GYRO_CAL);
 		if (ret != 0) return -3;
 		
-		#define DEFAULT_MPU_HZ 1
+		#define DEFAULT_MPU_HZ 10
 	
 		ret = dmp_set_fifo_rate(DEFAULT_MPU_HZ);
 		if (ret != 0) return -4;
@@ -89,7 +97,30 @@ int mpu_helper_dmp_setup(void) {
 		return ret;
 }
 
-unsigned char mpu_test(void) {
+
+int	mpu_helper_inv_setup(void) {
+	inv_error_t result; 
+	int ret;
+
+	result = inv_init_mpl();
+	if (result) return -1;
+
+	
+	
+	static struct platform_data_s gyro_pdata = {
+			.orientation = { 1, 0, 0,
+											 0, 1, 0,
+											 0, 0, 1}
+	};
+
+  ret = dmp_set_orientation(inv_orientation_matrix_to_scalar(gyro_pdata.orientation));
+	if (ret) return -2;
+	
+	return 0;
+}
+
+
+unsigned char mpu_log_fifo(void) {
 	int ret;
 	
 	short gyro[3], accel[3], sensors;
@@ -176,110 +207,6 @@ Gyro mpu_get_gyro(void) {
 		
 }
 
-
-
-
-Acc mpu_get_acc_old(void) {
-	
-	uint8_t high_byte, low_byte;
-	
-	int ret;
-	Acc acc;
-	
-	//Ask for upper 8 bytes of x-plane accerometer data
-	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_XOUT_H, 1, &high_byte);
-	if (ret) {
-		acc.status = -1;
-		return acc;
-	}
-	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_XOUT_L, 1, &low_byte);
-	if (ret) {
-		acc.status = -1;
-		return acc;
-	}
-	acc.x = (high_byte<<8) + low_byte;
-	
-	//Ask for upper 8 bytes of y-plane accerometer data
-	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_YOUT_H, 1, &high_byte);
-	if (ret) {
-		acc.status = -1;
-		return acc;
-	}
-	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_YOUT_L, 1, &low_byte);
-	if (ret) {
-		acc.status = -1;
-		return acc;
-	}
-	acc.y = (high_byte<<8) + low_byte;
-	
-	
-	//Ask for upper 8 bytes of z-plane accerometer data
-	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_ZOUT_H, 1, &high_byte);
-	if (ret) {
-		acc.status = -1;
-		return acc;
-	}
-	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_ZOUT_L, 1, &low_byte);
-	if (ret) {
-		acc.status = -1;
-		return acc;
-	}
-	acc.z = (high_byte<<8) + low_byte;
-	
-	return acc;
-	
-}
-
-
-Gyro mpu_get_gyro_old(void) {
-	uint8_t high_byte, low_byte;
-	
-	int ret;
-	Gyro gyro;
-	
-	//Ask for upper 8 bytes of x-plane gyroerometer data
-	high_byte = twi_write_read(MPU9150_ADDR,GYRO_XOUT_H);
-	if (ret == -1) {
-		gyro.status = -1;
-		return gyro;
-	}
-	low_byte = twi_write_read(MPU9150_ADDR,GYRO_XOUT_L);
-	if (ret == -1) {
-		gyro.status = -1;
-		return gyro;
-	}
-	gyro.x = (high_byte<<8) + low_byte;
-	
-	//Ask for upper 8 bytes of y-plane gyroerometer data
-	high_byte = twi_write_read(MPU9150_ADDR,GYRO_YOUT_H);
-	if (ret == -1) {
-		gyro.status = -1;
-		return gyro;
-	}
-	low_byte = twi_write_read(MPU9150_ADDR,GYRO_YOUT_L);
-	if (ret == -1) {
-		gyro.status = -1;
-		return gyro;
-	}
-	gyro.y = (high_byte<<8) + low_byte;
-	
-	
-	//Ask for upper 8 bytes of z-plane gyroerometer data
-	high_byte = twi_write_read(MPU9150_ADDR,GYRO_ZOUT_H);
-	if (ret == -1) {
-		gyro.status = -1;
-		return gyro;
-	}
-	low_byte = twi_write_read(MPU9150_ADDR,GYRO_ZOUT_L);
-	if (ret == -1) {
-		gyro.status = -1;
-		return gyro;
-	}
-	gyro.z = (high_byte<<8) + low_byte;
-	
-	return gyro;
-	
-}
 
 
 
