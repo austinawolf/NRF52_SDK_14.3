@@ -1,11 +1,8 @@
 
-/components/*
-/config/*
+
 /documentation/*
 /examples/*
-/external/*
 /external_tools/*
-/pin configuration files/*
 /svd/*
 
 *.hex
@@ -20,9 +17,7 @@
 *.txt
 *.uvopt
 *.msi
-*.uvproj
-*.uvoptx
-*.uvprojx
+
 *.ewd
 *.ewp
 *.xml
