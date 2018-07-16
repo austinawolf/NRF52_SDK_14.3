@@ -60,13 +60,17 @@ int mpu_helper_init(void) {
 		mpu_set_gyro_fsr(2000);
 		if (ret != 0) return -1;
 		
-		mpu_set_accel_fsr(2);
+		mpu_set_accel_fsr(16);
 		if (ret != 0) return -1;
 		
-
+		
+    //const long accel_bias[3] = {0, 0, 0};
+		//const long accel_bias[3] = {33, 12, -162};
     const long accel_bias[3] = {70, 72, -200};
 		mpu_set_accel_bias_6500_reg(accel_bias);
 
+		//long gyro_bias[3] = {0, 0, 0};
+		//long gyro_bias[3] = {-40, 1, 3};
 		long gyro_bias[3] = {-41, 25, -51};
 		mpu_set_gyro_bias_reg(gyro_bias);
 
@@ -85,7 +89,7 @@ int mpu_helper_dmp_setup(void) {
 
 		ret = dmp_enable_feature(DMP_FEATURE_6X_LP_QUAT | 
 															DMP_FEATURE_SEND_RAW_ACCEL | 
-															DMP_FEATURE_SEND_RAW_GYRO |
+															DMP_FEATURE_SEND_CAL_GYRO |
 															DMP_FEATURE_GYRO_CAL);
 		if (ret != 0) return -3;
 		
