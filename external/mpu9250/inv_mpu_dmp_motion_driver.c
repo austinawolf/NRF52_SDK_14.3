@@ -35,7 +35,6 @@
 #include "twi_interface.h"
 #include "clock_interface.h"
 #include "nrf_delay.h"
-#include "clock_interface.h"
 
 #define delay_ms    nrf_delay_ms
 #define get_ms      nrf_get_ms

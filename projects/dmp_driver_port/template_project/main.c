@@ -37,37 +37,47 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+ //std libraries
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include "sdk_common.h"
+
+//nrf libraries
 #include "nrf.h"
 #include "nrf_esb.h"
 #include "nrf_error.h"
 #include "nrf_esb_error_codes.h"
 #include "bsp.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "queue.h"
 #include "nordic_common.h"
-#include "nrf_drv_clock.h"
 #include "sdk_errors.h"
 #include "app_error.h" 
 #include "nrf_delay.h"
 #include "nrf_gpio.h"
 #include "boards.h"
-#include "nrf_delay.h"
 #include "app_util.h"
-#include "nrf_drv_saadc.h"
+
+//freertos
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "queue.h"
+
+//nrf drivers
+#include "nrf_drv_clock.h"
+
+//local libraries
 #include "log_helper.h"
 #include "esb_logger.h"
+#include "twi_interface.h"
+#include "led_error.h"
+#include "imu.h"
+
+//nrf log
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-#include "twi_interface.h"
-#include "led_error.h"
-#include "mpu9150_helper.h"
+
 
 #define SAMPLE_PERIOD 101
 
@@ -140,8 +150,8 @@ int main(void)
 		dmp_init_status = mpu_helper_dmp_setup();
 		if (dmp_init_status != 0) alert(BSP_BOARD_LED_1, 2);
 
-		inv_init_status = mpu_helper_inv_setup();
-		if (inv_init_status != 0) alert(BSP_BOARD_LED_1, 4);	
+		//inv_init_status = mpu_helper_inv_setup();
+		//if (inv_init_status != 0) alert(BSP_BOARD_LED_1, 4);	
 	
 		//CLOCKS INIT
     clocks_start();
@@ -159,7 +169,7 @@ int main(void)
 		esb_log_print("Esb Logger Running\r\n");
 		esb_log_print("MPU init: %d\r\n", mpu_init_status);
 		esb_log_print("DMP init: %d\r\n", dmp_init_status);
-		esb_log_print("inv init: %d\r\n", inv_init_status);
+		//esb_log_print("inv init: %d\r\n", inv_init_status);
 		
 
 		vTaskStartScheduler();
