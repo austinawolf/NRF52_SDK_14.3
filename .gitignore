@@ -1,9 +1,9 @@
 
 
 /documentation/*
-/examples/*
 /external_tools/*
 /svd/*
+/examples/*
 
 *.hex
 *.md
