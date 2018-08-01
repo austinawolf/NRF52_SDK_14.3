@@ -62,6 +62,22 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 
+#include <stdarg.h>
+#undef NRF_LOG_INFO
+#undef NRF_LOG_DEBUG
+#undef NRF_LOG_ERROR
+#define NRF_LOG_INFO printfl
+#define NRF_LOG_DEBUG printfl
+#define NRF_LOG_ERROR printfl
+
+void printfl(const char* format, ...) {
+	va_list arglist;
+	va_start(arglist,format);
+	vprintf(format,arglist);
+	printf("\n\r");
+	va_end(arglist);
+	return;
+}
 
 #define APP_BLE_CONN_CFG_TAG    1                                       /**< A tag that refers to the BLE stack configuration we set with @ref sd_ble_cfg_set. Default tag is @ref BLE_CONN_CFG_TAG_DEFAULT. */
 #define APP_BLE_OBSERVER_PRIO   3                                       /**< Application's BLE observer priority. You shoulnd't need to modify this value. */
