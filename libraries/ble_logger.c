@@ -18,6 +18,11 @@
 #include "bsp_btn_ble.h"
 #include "app_fifo.h"
 
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+
 #if defined (UART_PRESENT)
 #include "nrf_uart.h"
 #endif
@@ -83,11 +88,14 @@ bool erase_bonds;
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+#define MAX_DATA_SIZE 10
+
 void bsp_event_handler(bsp_event_t event);
 
 BLE_NUS_DEF(m_nus);                                                                 /**< BLE NUS service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
 BLE_ADVERTISING_DEF(m_advertising);                                                 /**< Advertising module instance. */
+
 
 static uint16_t   m_conn_handle          = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
 static uint16_t   m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;            /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
@@ -95,6 +103,194 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 {
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
+
+TaskHandle_t packet_write_task_handle;
+
+static void packet_write_task_function (void * pvParameter);
+void ble_tx_task_init(void);
+
+
+void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name);
+static void gap_params_init(void);
+static void gap_params_init(void);
+static void nus_data_handler(ble_nus_evt_t * p_evt);
+static void services_init(void);
+static void on_conn_params_evt(ble_conn_params_evt_t * p_evt);
+static void conn_params_error_handler(uint32_t nrf_error);
+void bsp_event_handler(bsp_event_t event);
+static void buttons_leds_init(bool * p_erase_bonds);
+static void advertising_init(void);
+void gatt_init(void);
+static void ble_stack_init(void);
+static void conn_params_init(void);
+
+void ble_logger_init(void) {
+	
+	ble_init();
+	fifo_init();
+	
+	uint32_t err_code;
+	err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);  
+	APP_ERROR_CHECK(err_code);
+
+	ble_tx_task_init();
+}	
+
+uint32_t ble_init(void) {
+    buttons_leds_init(&erase_bonds);
+		ble_stack_init();
+    gap_params_init();
+    gatt_init();
+    services_init();
+    advertising_init();
+    conn_params_init();
+		return 0;
+}
+
+
+
+void fifo_init(void) {
+
+		// Create a buffer for the FIFO
+		uint16_t buffer_size = 512;
+		uint8_t buffer[buffer_size];
+	
+		// Initialize FIFO structure
+		uint32_t err_code = app_fifo_init(&my_fifo, buffer, (uint16_t)sizeof(buffer));	
+		
+}
+
+
+uint32_t ble_log_print(const char* format, ...) {
+	char string[32];
+	va_list arglist;
+	va_start(arglist,format);
+	uint16_t len = vsprintf(string,format,arglist);
+	va_end(arglist);
+	
+	string[len++] = 0;
+	
+	uint32_t err_code;
+	printf("Send:%s, Size:%d\n\r", string, len);
+
+		uint8_t i = 0;
+	while(string[i] != 0) {
+		ble_log( (uint8_t) string[i++]);
+	}
+	ble_log(0);
+	
+	//err_code = ble_nus_string_send(&m_nus, (uint8_t*) string, &len);
+
+
+	return err_code;
+}
+
+uint32_t ble_log(uint8_t data) {	
+	uint32_t err_code;
+	err_code = app_fifo_put(&my_fifo, data);
+	return err_code;
+}
+
+uint8_t string_to_array(char* string, uint8_t* array) {
+	uint8_t i = 0;
+	while(string[i] != 0) {
+		array[i] = (uint8_t) string[i];
+		i++;	
+	}
+	array[i++] = 0;
+	return i;
+}
+	
+static void packet_write_task_function (void * pvParameter)
+{
+    UNUSED_PARAMETER(pvParameter);
+		const TickType_t wait_500ms = pdMS_TO_TICKS(50);
+		const TickType_t wait_1ms = pdMS_TO_TICKS(1);
+
+		uint8_t  out_string[MAX_DATA_SIZE+1];
+		uint8_t  return_val = 0;
+		uint32_t err_code;
+		uint16_t i;
+	
+    while (true)
+    {
+
+				
+				if (my_fifo.write_pos > my_fifo.read_pos) {
+						
+						i = 0;
+						while(my_fifo.write_pos > my_fifo.read_pos) {
+							
+							err_code = app_fifo_get(&my_fifo, &return_val);
+							out_string[i++] = return_val;
+							
+							if (i > MAX_DATA_SIZE) break;
+							if (return_val == 0) break;
+						}
+						
+
+
+
+						
+						UNUSED_PARAMETER(err_code);
+											
+						//send packet
+						//log
+						printf("Handle:%s ,Size: %d\n\r", out_string, i);
+						
+						
+            bsp_board_led_off(BSP_BOARD_LED_0);
+            bsp_board_led_off(BSP_BOARD_LED_1);
+						bsp_board_led_off(BSP_BOARD_LED_2);
+						bsp_board_led_off(BSP_BOARD_LED_3);					
+						err_code = ble_nus_string_send(&m_nus, out_string, &i);
+						
+						vTaskDelay(wait_1ms);
+						
+				}
+				else {
+					vTaskDelay(wait_500ms);
+				}
+
+				
+    }
+		
+}
+	
+void ble_tx_task_init(void) {
+		
+    UNUSED_VARIABLE(xTaskCreate(packet_write_task_function, "PACKET_WRITE", configMINIMAL_STACK_SIZE + 200, NULL, 2, &packet_write_task_handle));	
+
+}
+
+/// BLE SUPPORT ///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+
 
 
 /**@brief Function for assert macro callback.
@@ -538,78 +734,3 @@ static void advertising_init(void)
 
     ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
 }
-
-void ble_logger_init(void) {
-	
-	ble_init();
-	fifo_init();
-	
-	uint32_t err_code;
-	err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);  
-	APP_ERROR_CHECK(err_code);
-}	
-
-uint32_t ble_init(void) {
-    buttons_leds_init(&erase_bonds);
-		ble_stack_init();
-    gap_params_init();
-    gatt_init();
-    services_init();
-    advertising_init();
-    conn_params_init();
-		return 0;
-}
-
-void ble_tx_task_init(void) {
-		
-
-}
-
-void fifo_init(void) {
-
-		// Create a buffer for the FIFO
-		uint16_t buffer_size = 512;
-		uint8_t buffer[buffer_size];
-	
-		// Initialize FIFO structure
-		uint32_t err_code = app_fifo_init(&my_fifo, buffer, (uint16_t)sizeof(buffer));	
-		
-}
-
-uint32_t ble_log(uint8_t data) {	
-	uint32_t err_code;
-	err_code = app_fifo_put(&my_fifo, data);
-	return err_code;
-}
-
-uint32_t ble_log_print(const char* format, ...) {
-	char string[32];
-	va_list arglist;
-	va_start(arglist,format);
-	uint16_t len = vsprintf(string,format,arglist);
-	va_end(arglist);
-	
-	string[len++] = 0;
-	
-	uint32_t err_code;
-	printf("Sending:%s \n\r", (void*) &string);
-
-	err_code = ble_nus_string_send(&m_nus,  (uint8_t*) string, &len);
-
-	return err_code;
-}
-
-
-
-uint8_t string_to_array(char* string, uint8_t* array) {
-	uint8_t i = 0;
-	while(string[i] != 0) {
-		array[i] = (uint8_t) string[i];
-		i++;	
-	}
-	array[i++] = 0;
-	return i;
-}
-	
-	
-
