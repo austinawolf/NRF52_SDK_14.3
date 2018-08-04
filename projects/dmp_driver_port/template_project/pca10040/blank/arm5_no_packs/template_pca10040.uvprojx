@@ -781,6 +781,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>nRF_BLE</GroupName>
+        </Group>
+        <Group>
+          <GroupName>nRF_BLE_Services</GroupName>
+        </Group>
+        <Group>
+          <GroupName>nRF_SoftDevice</GroupName>
+        </Group>
+        <Group>
+          <GroupName>Libraries</GroupName>
+        </Group>
+        <Group>
+          <GroupName>freertos</GroupName>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
