@@ -88,7 +88,6 @@ bool erase_bonds;
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-#define MAX_DATA_SIZE 10
 
 void bsp_event_handler(bsp_event_t event);
 
@@ -134,7 +133,11 @@ void ble_logger_init(void) {
 	APP_ERROR_CHECK(err_code);
 
 	ble_tx_task_init();
-}	
+}
+
+void ble_tx_task_init(void) {	
+    UNUSED_VARIABLE(xTaskCreate(packet_write_task_function, "PACKET_WRITE", configMINIMAL_STACK_SIZE + 200, NULL, 2, &packet_write_task_handle));	
+}
 
 uint32_t ble_init(void) {
     buttons_leds_init(&erase_bonds);
@@ -146,8 +149,6 @@ uint32_t ble_init(void) {
     conn_params_init();
 		return 0;
 }
-
-
 
 void fifo_init(void) {
 
@@ -161,8 +162,11 @@ void fifo_init(void) {
 }
 
 
+
+
 uint32_t ble_log_print(const char* format, ...) {
 	char string[32];
+	
 	va_list arglist;
 	va_start(arglist,format);
 	uint16_t len = vsprintf(string,format,arglist);
@@ -171,16 +175,13 @@ uint32_t ble_log_print(const char* format, ...) {
 	string[len++] = 0;
 	
 	uint32_t err_code;
-	printf("Send:%s, Size:%d\n\r", string, len);
 
 		uint8_t i = 0;
 	while(string[i] != 0) {
 		ble_log( (uint8_t) string[i++]);
 	}
 	ble_log(0);
-	
-	//err_code = ble_nus_string_send(&m_nus, (uint8_t*) string, &len);
-
+	printf("Data:'%s' Len:%d\n\r", string, i);
 
 	return err_code;
 }
@@ -191,77 +192,46 @@ uint32_t ble_log(uint8_t data) {
 	return err_code;
 }
 
-uint8_t string_to_array(char* string, uint8_t* array) {
-	uint8_t i = 0;
-	while(string[i] != 0) {
-		array[i] = (uint8_t) string[i];
-		i++;	
-	}
-	array[i++] = 0;
-	return i;
-}
-	
 static void packet_write_task_function (void * pvParameter)
 {
     UNUSED_PARAMETER(pvParameter);
-		const TickType_t wait_500ms = pdMS_TO_TICKS(50);
+		const TickType_t wait_50ms = pdMS_TO_TICKS(50);
 		const TickType_t wait_1ms = pdMS_TO_TICKS(1);
 
-		uint8_t  out_string[MAX_DATA_SIZE+1];
-		uint8_t  return_val = 0;
+		uint8_t  out_string[BLE_LOGGER_MAX_DATA_SIZE+1];
+		uint8_t  return_val;
 		uint32_t err_code;
 		uint16_t i;
 	
     while (true)
     {
 
-				
 				if (my_fifo.write_pos > my_fifo.read_pos) {
 						
 						i = 0;
 						while(my_fifo.write_pos > my_fifo.read_pos) {
 							
 							err_code = app_fifo_get(&my_fifo, &return_val);
+							UNUSED_PARAMETER(err_code);
 							out_string[i++] = return_val;
 							
-							if (i > MAX_DATA_SIZE) break;
+							if (i > BLE_LOGGER_MAX_DATA_SIZE) break;
 							if (return_val == 0) break;
 						}
 						
-
-
-
-						
-						UNUSED_PARAMETER(err_code);
-											
-						//send packet
-						//log
-						printf("Handle:%s ,Size: %d\n\r", out_string, i);
-						
-						
-            bsp_board_led_off(BSP_BOARD_LED_0);
-            bsp_board_led_off(BSP_BOARD_LED_1);
-						bsp_board_led_off(BSP_BOARD_LED_2);
-						bsp_board_led_off(BSP_BOARD_LED_3);					
+						printf("Data:'%s' Len:%d\n\r", out_string, i);
 						err_code = ble_nus_string_send(&m_nus, out_string, &i);
 						
-						vTaskDelay(wait_1ms);
-						
+						vTaskDelay(wait_1ms);					
 				}
 				else {
-					vTaskDelay(wait_500ms);
-				}
-
-				
+					vTaskDelay(wait_50ms);
+				}	
     }
 		
 }
 	
-void ble_tx_task_init(void) {
-		
-    UNUSED_VARIABLE(xTaskCreate(packet_write_task_function, "PACKET_WRITE", configMINIMAL_STACK_SIZE + 200, NULL, 2, &packet_write_task_handle));	
 
-}
 
 /// BLE SUPPORT ///
 

@@ -25,6 +25,7 @@ Source Files:
 
 */
 
+#define BLE_LOGGER_MAX_DATA_SIZE 32
 
 
 

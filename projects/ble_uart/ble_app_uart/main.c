@@ -89,6 +89,18 @@
 #define NRF_LOG_DEBUG printfl1
 #define NRF_LOG_ERROR printfl1
 
+//freertos
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+
+#define SAMPLE_PERIOD 1000
+uint32_t event_num = 0;
+
+TimerHandle_t payload_create_timer_handle;
+static void payload_create_timer_callback(void * pvParameter);
+
+
 
 void printfl1(const char* format, ...) {
 	va_list arglist;
@@ -102,15 +114,14 @@ void printfl1(const char* format, ...) {
 #define UART_TX_BUF_SIZE                256                                         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                256                                    /**< UART RX buffer size. */
 
-uint32_t m_ble_nus_max_data_len = 32;
 
-/**@brief   Function for handling app_uart events.
- *
- * @details This function will receive a single character from the app_uart module and append it to
- *          a string. The string will be be sent over BLE when the last character received was a
- *          'new line' '\n' (hex 0x0A) or if the string has reached the maximum data length.
- */
-/**@snippet [Handling the data received over UART] */
+static void payload_create_timer_callback (void * pvParameter)
+{
+    UNUSED_PARAMETER(pvParameter);
+		ble_log_print("Event Number: %d", event_num++);
+}
+
+
 void uart_event_handle(app_uart_evt_t * p_event)
 {
     static uint8_t data_array[BLE_NUS_MAX_DATA_LEN];
@@ -123,20 +134,22 @@ void uart_event_handle(app_uart_evt_t * p_event)
             UNUSED_VARIABLE(app_uart_get(&data_array[index]));
             index++;
 
-            if ((data_array[index - 1] == '\r') || (index >= (m_ble_nus_max_data_len)))
+            if ((data_array[index - 1] == '\r') || (index >= (BLE_LOGGER_MAX_DATA_SIZE)))
             {
-                NRF_LOG_DEBUG("Ready to send data over BLE NUS");
-                NRF_LOG_HEXDUMP_DEBUG(data_array, index);
+                //NRF_LOG_DEBUG("Ready to send data over BLE NUS");
+                //NRF_LOG_HEXDUMP_DEBUG(data_array, index);
 
                 do
                 {
                     uint16_t length = (uint16_t) index;
 										data_array[length] = 0;
                     err_code = ble_log_print( (char*) data_array);
+									
                     if ( (err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_ERROR_BUSY) )
                     {
                         APP_ERROR_CHECK(err_code);
                     }
+										
                 } while (err_code == NRF_ERROR_BUSY);
 
                 index = 0;
@@ -182,15 +195,10 @@ static void uart_init(void)
                        err_code);
     APP_ERROR_CHECK(err_code);
 }
-/**@brief Function for initializing the nrf log module.
- */
-static void log_init(void)
-{
-    ret_code_t err_code = NRF_LOG_INIT(NULL);
-    APP_ERROR_CHECK(err_code);
 
-    NRF_LOG_DEFAULT_BACKENDS_INIT();
-}
+
+
+
 
 /**@brief Application main function.
  */
@@ -203,18 +211,21 @@ int main(void)
     APP_ERROR_CHECK(err_code);
 
     uart_init();
-		log_init();
+
 		printf("\r\nUART Start!\r\n");
 		
 		ble_logger_init();
+		
+		/* Start timer for packet generation */
+    payload_create_timer_handle = xTimerCreate( "ADC_SAMPLE", SAMPLE_PERIOD, pdTRUE, NULL, payload_create_timer_callback);
+    UNUSED_VARIABLE(xTimerStart(payload_create_timer_handle, 0));	
 	
-   
-		uint32_t event_num = 0;
-	
+		vTaskStartScheduler();
+
     // Enter main loop.
     for (;;)
     {
-			nrf_delay_ms(1000);
-			ble_log_print("Event Number: %d",event_num++);
+			//nrf_delay_ms(1000);
+			//ble_log_print("Event Number: %d",event_num++);
 		}
 }
