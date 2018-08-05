@@ -66,6 +66,8 @@ app_fifo_t my_fifo;
 
 bool erase_bonds;
 
+uint8_t ble_status = 0;
+
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2        /**< Reply when unsupported features are requested. */
@@ -181,7 +183,6 @@ uint32_t ble_log_print(const char* format, ...) {
 		ble_log( (uint8_t) string[i++]);
 	}
 	ble_log(0);
-	printf("Data:'%s' Len:%d\n\r", string, i);
 
 	return err_code;
 }
@@ -206,7 +207,7 @@ static void packet_write_task_function (void * pvParameter)
     while (true)
     {
 
-				if (my_fifo.write_pos > my_fifo.read_pos) {
+				if (my_fifo.write_pos > my_fifo.read_pos && ble_status) {
 						
 						i = 0;
 						while(my_fifo.write_pos > my_fifo.read_pos) {
@@ -467,6 +468,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
+						ble_status = 1;
             NRF_LOG_INFO("Connected");
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
@@ -474,6 +476,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
+						ble_status = 0;
             NRF_LOG_INFO("Disconnected");
             // LED indication will be changed when advertising starts.
             m_conn_handle = BLE_CONN_HANDLE_INVALID;

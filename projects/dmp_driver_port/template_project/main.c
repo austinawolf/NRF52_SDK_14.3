@@ -106,7 +106,7 @@ static void payload_create_timer_callback (void * pvParameter)
 {
 
     UNUSED_PARAMETER(pvParameter);
-		mpu_log_fifo();
+		imu_get_fifo();
 }
 
 void clocks_start( void )
@@ -132,7 +132,7 @@ void gpio_init( void )
 int main(void)
 {
 	
-		int mpu_init_status, dmp_init_status, inv_init_status;
+		int imu_status;
 	
 		//GPIO/LEDS INIT
     gpio_init();
@@ -144,14 +144,7 @@ int main(void)
 		twi_interface_init();
 	
 		//MPU INIT
-		mpu_init_status = mpu_helper_init();
-		if (mpu_init_status != 0) alert(BSP_BOARD_LED_1, 3);
-
-		dmp_init_status = mpu_helper_dmp_setup();
-		if (dmp_init_status != 0) alert(BSP_BOARD_LED_1, 2);
-
-		//inv_init_status = mpu_helper_inv_setup();
-		//if (inv_init_status != 0) alert(BSP_BOARD_LED_1, 4);	
+		imu_status = imu_init();	
 	
 		//CLOCKS INIT
     clocks_start();
@@ -167,9 +160,8 @@ int main(void)
     NRF_LOG_DEBUG("Enhanced ShockBurst Transmitter Example running.");
 		
 		esb_log_print("Esb Logger Running\r\n");
-		esb_log_print("MPU init: %d\r\n", mpu_init_status);
-		esb_log_print("DMP init: %d\r\n", dmp_init_status);
-		//esb_log_print("inv init: %d\r\n", inv_init_status);
+		esb_log_print("IMU init: %d\r\n", imu_status);
+
 		
 
 		vTaskStartScheduler();

@@ -13,12 +13,11 @@
 #include "inv_mpu_dmp_motion_driver.h"
 #include "dmpKey.h"
 #include "dmpmap.h"
-#include "esb_logger.h"
+#include "ble_logger.h"
 
 //mpl
 #include "invensense.h"
 #include "invensense_adv.h"
-
 
 
 #define MPU9150_ADDR 0x68
@@ -28,9 +27,26 @@
 #define WHO_AM_I 0x75
 
 
-uint32_t event_num = 0;
+uint32_t fifo_num = 0;
 
+int mpu_helper_init(void);
+int mpu_helper_dmp_setup(void);
+int	mpu_helper_inv_setup(void);
 
+int imu_init(void) {
+		int ret;
+	
+		ret = mpu_helper_init();
+		if (ret != 0) return ret;
+
+		ret = mpu_helper_dmp_setup();
+		if (ret != 0) return ret;	
+
+		//ret = mpu_helper_inv_setup();
+		//if (ret != 0) return ret;
+	
+		return 0;
+}
 
 int mpu_helper_init(void) {
 		int ret;
@@ -117,7 +133,7 @@ int	mpu_helper_inv_setup(void) {
 }
 
 
-unsigned char mpu_log_fifo(void) {
+unsigned char imu_get_fifo(void) {
 	int ret;
 	
 	short gyro[3], accel[3], sensors;
@@ -125,40 +141,43 @@ unsigned char mpu_log_fifo(void) {
 	long quat[4];
 	unsigned long sensor_timestamp;
 
+	//taskENTER_CRITICAL();
 	ret = dmp_read_fifo(gyro, accel, quat, &sensor_timestamp, &sensors, &more);
+	//taskEXIT_CRITICAL();
+	if (ret < 0) critical_error(BSP_BOARD_LED_0,2);
+
 	
-	if (ret < 0) return 1;
-	
-	event_num++;
-	
+	fifo_num++;
 	
 	#define QUAT
 	#define ACC
 	#define GYRO
 	
-	esb_log_print("\r\nPacket:%d,",event_num);
+	ble_log_print("\r\nPacket:%d,",fifo_num);
 	#ifdef QUAT
-		esb_log_print("%i,", quat[0]);
-		esb_log_print("%i,", quat[1]);
-		esb_log_print("%i,", quat[2]);
-		esb_log_print("%i,", quat[3]);
+		ble_log_print("%i,", quat[0]);
+		ble_log_print("%i,", quat[1]);
+		ble_log_print("%i,", quat[2]);
+		ble_log_print("%i,", quat[3]);
 	#endif
 	
 	#ifdef ACC
-		esb_log_print("%i,", accel[0]);
-		esb_log_print("%i,", accel[1]);
-		esb_log_print("%i,", accel[2]);
+		ble_log_print("%i,", accel[0]);
+		ble_log_print("%i,", accel[1]);
+		ble_log_print("%i,", accel[2]);
 	#endif
 	
 	#ifdef GYRO
-		esb_log_print("%i,", gyro[0]);
-		esb_log_print("%i,", gyro[1]);
-		esb_log_print("%i,", gyro[2]);
+		ble_log_print("%i,", gyro[0]);
+		ble_log_print("%i,", gyro[1]);
+		ble_log_print("%i,", gyro[2]);
 	#endif	
-	esb_log_print("%i\r\n", ret);
-
+	ble_log_print("%i\r\n", ret);
+	
+	
 	return ret;
 }
+
 
 Acc mpu_get_acc(void) {
 	
@@ -169,14 +188,12 @@ Acc mpu_get_acc(void) {
 	
 	ret = nrf_twi_read(MPU9150_ADDR,ACCEL_XOUT_H, 6, data);
 	if (ret != 0) {
-		acc.status = -1;
-		return acc;
+		critical_error(BSP_BOARD_LED_0,3);
 	}	
 
 	acc.x = (data[0]<<8) + data[1];
 	acc.y = (data[2]<<8) + data[3];
 	acc.z = (data[4]<<8) + data[5];
-	acc.status = 0;
 	
 	return acc;
 		
@@ -191,14 +208,12 @@ Gyro mpu_get_gyro(void) {
 	
 	ret = nrf_twi_read(MPU9150_ADDR,GYRO_XOUT_H, 6, data);
 	if (ret != 0) {
-		gyro.status = -1;
-		return gyro;
+		critical_error(BSP_BOARD_LED_0,3);
 	}	
 
 	gyro.x = (data[0]<<8) + data[1];
 	gyro.y = (data[2]<<8) + data[3];
 	gyro.z = (data[4]<<8) + data[5];
-	gyro.status = 0;
 	
 	return gyro;
 		
