@@ -1,4 +1,7 @@
 #include "esb_logger.h"
+
+#ifdef ESB_LOGGER
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdarg.h>
@@ -21,9 +24,6 @@
 #include "nrf_esb.h"
 #include "led_error.h"
 #include "app_fifo.h"
-
-#define QUEUE_LENGTH 10
-
 
 static nrf_esb_payload_t        tx_payload = NRF_ESB_CREATE_PAYLOAD(0, 0x01, 0x00, 0x00, 0x00, 0x00);
 static nrf_esb_payload_t        rx_payload;
@@ -215,4 +215,5 @@ uint8_t string_to_array(char* string, uint8_t* array) {
 }
 	
 	
+#endif
 

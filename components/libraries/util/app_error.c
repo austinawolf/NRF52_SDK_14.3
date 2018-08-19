@@ -51,6 +51,8 @@
 #include "app_error.h"
 #include "nordic_common.h"
 #include "sdk_errors.h"
+#include "led_error.h"
+
 /**@brief Function for error handling, which is called when an error has occurred.
  *
  * @warning This handler is an example only and does not fit a final product. You need to analyze
@@ -135,7 +137,11 @@ void app_error_save_and_stop(uint32_t id, uint32_t pc, uint32_t info)
 
     // If printing is disrupted, remove the irq calls, or set the loop variable to 0 in the debugger.
     __disable_irq();
-    while (loop);
+    while (loop) {
+				alert(BSP_BOARD_LED_0,2);
+				alert(BSP_BOARD_LED_1,2);
+				alert(BSP_BOARD_LED_2,2);			
+		}
 
     __enable_irq();
 }

@@ -1,4 +1,7 @@
 #include "ble_logger.h"
+
+#ifdef BLE_LOGGER
+
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -8,6 +11,7 @@
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
 #include "nrf_sdh.h"
+#include "nrf_sdh_freertos.h"
 #include "nrf_sdh_soc.h"
 #include "nrf_sdh_ble.h"
 #include "nrf_ble_gatt.h"
@@ -17,6 +21,7 @@
 #include "app_util_platform.h"
 #include "bsp_btn_ble.h"
 #include "app_fifo.h"
+#include "bsp.h"
 
 
 #include "FreeRTOS.h"
@@ -91,12 +96,9 @@ uint8_t ble_status = 0;
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 
-void bsp_event_handler(bsp_event_t event);
-
 BLE_NUS_DEF(m_nus);                                                                 /**< BLE NUS service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
 BLE_ADVERTISING_DEF(m_advertising);                                                 /**< Advertising module instance. */
-
 
 static uint16_t   m_conn_handle          = BLE_CONN_HANDLE_INVALID;                 /**< Handle of the current connection. */
 static uint16_t   m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;            /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
@@ -105,66 +107,56 @@ static ble_uuid_t m_adv_uuids[]          =                                      
     {BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}
 };
 
-TaskHandle_t packet_write_task_handle;
-
-static void packet_write_task_function (void * pvParameter);
-void ble_tx_task_init(void);
-
-
 void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name);
-static void gap_params_init(void);
-static void gap_params_init(void);
-static void nus_data_handler(ble_nus_evt_t * p_evt);
-static void services_init(void);
 static void on_conn_params_evt(ble_conn_params_evt_t * p_evt);
+
+//task function
+TaskHandle_t packet_write_task_handle;
+static void packet_write_task_function (void * pvParameter);
+
+//event handler
+void bsp_event_handler(bsp_event_t event);
 static void conn_params_error_handler(uint32_t nrf_error);
 void bsp_event_handler(bsp_event_t event);
+static void nus_data_handler(ble_nus_evt_t * p_evt);
+
+//ble inits
+void ble_tx_task_init(void);
+static void services_init(void);
 static void buttons_leds_init(bool * p_erase_bonds);
 static void advertising_init(void);
 void gatt_init(void);
 static void ble_stack_init(void);
 static void conn_params_init(void);
+static void gap_params_init(void);
+static void advertising_start(void * p_erase_bonds);
+	
+//ble logger functions
+uint32_t ble_log(uint8_t data);
+uint32_t ble_init(void);
+
 
 void ble_logger_init(void) {
 	
-	ble_init();
 	fifo_init();
-	
-	uint32_t err_code;
-	err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);  
-	APP_ERROR_CHECK(err_code);
+	ble_tx_task_init();	
+	ble_init();
 
-	ble_tx_task_init();
-}
-
-void ble_tx_task_init(void) {	
-    UNUSED_VARIABLE(xTaskCreate(packet_write_task_function, "PACKET_WRITE", configMINIMAL_STACK_SIZE + 200, NULL, 2, &packet_write_task_handle));	
 }
 
 uint32_t ble_init(void) {
     buttons_leds_init(&erase_bonds);
+	
 		ble_stack_init();
     gap_params_init();
     gatt_init();
     services_init();
     advertising_init();
     conn_params_init();
+    nrf_sdh_freertos_init(advertising_start, &erase_bonds);	
+	
 		return 0;
 }
-
-void fifo_init(void) {
-
-		// Create a buffer for the FIFO
-		uint16_t buffer_size = 512;
-		uint8_t buffer[buffer_size];
-	
-		// Initialize FIFO structure
-		uint32_t err_code = app_fifo_init(&my_fifo, buffer, (uint16_t)sizeof(buffer));	
-		
-}
-
-
-
 
 uint32_t ble_log_print(const char* format, ...) {
 	char string[32];
@@ -178,7 +170,7 @@ uint32_t ble_log_print(const char* format, ...) {
 	
 	uint32_t err_code;
 
-		uint8_t i = 0;
+	uint8_t i = 0;
 	while(string[i] != 0) {
 		ble_log( (uint8_t) string[i++]);
 	}
@@ -220,7 +212,7 @@ static void packet_write_task_function (void * pvParameter)
 							if (return_val == 0) break;
 						}
 						
-						printf("Data:'%s' Len:%d\n\r", out_string, i);
+						//printf("Data:'%s' Len:%d\n\r", out_string, i);
 						err_code = ble_nus_string_send(&m_nus, out_string, &i);
 						
 						vTaskDelay(wait_1ms);					
@@ -232,7 +224,18 @@ static void packet_write_task_function (void * pvParameter)
 		
 }
 	
+void fifo_init(void) {
+		// Create a buffer for the FIFO
+		uint16_t buffer_size = 512;
+		uint8_t buffer[buffer_size];
+	
+		// Initialize FIFO structure
+		uint32_t err_code = app_fifo_init(&my_fifo, buffer, (uint16_t)sizeof(buffer));	
+}
 
+void ble_tx_task_init(void) {	
+    UNUSED_VARIABLE(xTaskCreate(packet_write_task_function, "PACKET_WRITE", configMINIMAL_STACK_SIZE + 200, NULL, 2, &packet_write_task_handle));	
+}
 
 /// BLE SUPPORT ///
 
@@ -261,6 +264,14 @@ static void packet_write_task_function (void * pvParameter)
 
 
 ///////////////////////////////////////////////////////////////////////
+
+/**@brief Function for starting advertising. */
+static void advertising_start(void * p_erase_bonds)
+{
+		ret_code_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
+		APP_ERROR_CHECK(err_code);
+}
+
 
 
 
@@ -690,7 +701,7 @@ static void advertising_init(void)
     memset(&init, 0, sizeof(init));
 
     init.advdata.name_type          = BLE_ADVDATA_FULL_NAME;
-    init.advdata.include_appearance = false;
+    init.advdata.include_appearance = true;
     init.advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
 
     init.srdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
@@ -707,3 +718,5 @@ static void advertising_init(void)
 
     ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
 }
+
+#endif

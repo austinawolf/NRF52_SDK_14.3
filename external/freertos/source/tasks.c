@@ -66,6 +66,7 @@
 
     1 tab == 4 spaces!
 */
+#include "led_error.h"
 
 /* Standard includes. */
 #include <stdlib.h>
@@ -1613,6 +1614,7 @@ BaseType_t xReturn;
 		/* This line will only be reached if the kernel could not be started,
 		because there was not enough FreeRTOS heap to create the idle task
 		or the timer task. */
+		alert(BSP_BOARD_LED_2,4);
 		configASSERT( xReturn );
 	}
 }

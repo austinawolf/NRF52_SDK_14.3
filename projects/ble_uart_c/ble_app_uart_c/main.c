@@ -191,8 +191,8 @@ static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
  */
 static void ble_nus_chars_received_uart_print(uint8_t * p_data, uint16_t data_len)
 {
-    ret_code_t ret_val;
-		printf("%s\n\r",p_data);
+    //ret_code_t ret_val;
+		printf("%s",p_data);
 
 }
 
@@ -607,7 +607,7 @@ static void uart_init(void)
         .cts_pin_no   = CTS_PIN_NUMBER,
         .flow_control = APP_UART_FLOW_CONTROL_DISABLED,
         .use_parity   = false,
-        .baud_rate    = UART_BAUDRATE_BAUDRATE_Baud115200
+        .baud_rate    = UART_BAUDRATE_BAUDRATE_Baud1M
     };
 
     APP_UART_FIFO_INIT(&comm_params,

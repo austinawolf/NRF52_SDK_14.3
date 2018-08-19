@@ -78,7 +78,7 @@
 #include "nrf_sdh_ble.h"
 
 //libraries
-#include "ble_logger.h"
+#include "logger.h"
 #include "twi_interface.h"
 #include "led_error.h"
 #include "imu.h"
@@ -111,10 +111,13 @@
 #define SAMPLE_PERIOD 1000
 uint32_t event_num = 0;
 
-TimerHandle_t payload_create_timer_handle;
-static void payload_create_timer_callback(void * pvParameter);
+//Timer
+TimerHandle_t imu_read_timer_handle;
+static void imu_read_timer_callback(void * pvParameter);
 
-
+//Task function
+TaskHandle_t imu_get_fifo_task_handle;
+static void imu_get_fifo_task_function (void * pvParameter);
 
 void printfl1(const char* format, ...) {
 	va_list arglist;
@@ -129,10 +132,24 @@ void printfl1(const char* format, ...) {
 #define UART_RX_BUF_SIZE                256                                    /**< UART RX buffer size. */
 
 
-static void payload_create_timer_callback (void * pvParameter)
+static void imu_read_timer_callback (void * pvParameter)
 {
 	UNUSED_PARAMETER(pvParameter);
-	ble_log_print("Event Number: %d", event_num++);
+	//LOG_PRINT("Timer Number: %d\n\r", event_num++);
+	alert(BSP_BOARD_LED_1,1);
+	vTaskResume( imu_get_fifo_task_handle );
+
+}
+
+static void imu_get_fifo_task_function (void * pvParameter)
+{
+		UNUSED_PARAMETER(pvParameter);
+		while(true)	{
+			LOG_PRINT("Task Number: %d\n\r", event_num++);
+			//nrf_delay_ms(1000);
+			//imu_get_fifo();
+			vTaskSuspend( imu_get_fifo_task_handle );
+		}
 }
 
 void uart_event_handle(app_uart_evt_t * p_event)
@@ -156,7 +173,7 @@ void uart_event_handle(app_uart_evt_t * p_event)
                 {
                     uint16_t length = (uint16_t) index;
 										data_array[length] = 0;
-                    err_code = ble_log_print( (char*) data_array);
+                    err_code = LOG_PRINT( (char*) data_array);
 									
                     if ( (err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_ERROR_BUSY) )
                     {
@@ -242,23 +259,23 @@ int main(void)
 		imu_status = imu_init();	
 
 		//BLE logger init
-		ble_logger_init();
-		ble_log_print("BLE Logger Running\r\n");
-		ble_log_print("IMU init: %d\r\n", imu_status);	
+		LOG_INIT();
+		LOG_PRINT("BLE Logger Running\r\n");
+		LOG_PRINT("IMU init: %d\r\n", imu_status);	
 
 		/* Start timer for packet generation */
-    payload_create_timer_handle = xTimerCreate( "PAYLOAD_GEN", SAMPLE_PERIOD, pdTRUE, NULL, payload_create_timer_callback);
-    UNUSED_VARIABLE(xTimerStart(payload_create_timer_handle, 0));	
+    imu_read_timer_handle = xTimerCreate( "PAYLOAD_GEN", SAMPLE_PERIOD, pdTRUE, NULL, imu_read_timer_callback);
+    UNUSED_VARIABLE(xTimerStart(imu_read_timer_handle, 0));	
 
-		alert(BSP_BOARD_LED_0,3);
-		imu_get_fifo();
-		alert(BSP_BOARD_LED_0,3);
-
+    UNUSED_VARIABLE(xTaskCreate(imu_get_fifo_task_function, "IMU_FIFO", configMINIMAL_STACK_SIZE, NULL, 1, &imu_get_fifo_task_handle));	
+		vTaskSuspend( imu_get_fifo_task_handle );
 		
+		alert(BSP_BOARD_LED_0,3);
+
 		vTaskStartScheduler();
 
     for (;;)
     {
-
+				alert(BSP_BOARD_LED_1,2);
 		}
 }

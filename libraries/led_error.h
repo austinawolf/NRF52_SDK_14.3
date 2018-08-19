@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include "bsp.h"
+#include "boards.h"
 
 #define ESB_TRANSMISSION_ERR (uint8_t) 3
 #define SPI_NULL_RX 2

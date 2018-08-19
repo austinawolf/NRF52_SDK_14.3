@@ -1,5 +1,5 @@
-#include "boards.h"
 #include "led_error.h"
+
 #include "nrf_delay.h"
 #include "FreeRTOS.h"
 #include "task.h"

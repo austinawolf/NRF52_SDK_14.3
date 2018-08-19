@@ -3,6 +3,9 @@
 #include <stddef.h>
 #include <stdio.h>
 
+//nordic
+#include "bsp.h"
+
 //local libraries
 #include "twi_interface.h"
 #include "led_error.h"
@@ -13,12 +16,17 @@
 #include "inv_mpu_dmp_motion_driver.h"
 #include "dmpKey.h"
 #include "dmpmap.h"
-#include "ble_logger.h"
+#include "logger.h"
 
 //mpl
 #include "invensense.h"
 #include "invensense_adv.h"
 
+//freertos
+//freertos
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
 
 #define MPU9150_ADDR 0x68
 #define ACCEL_XOUT_H 0x3B
@@ -144,35 +152,36 @@ unsigned char imu_get_fifo(void) {
 	//taskENTER_CRITICAL();
 	ret = dmp_read_fifo(gyro, accel, quat, &sensor_timestamp, &sensors, &more);
 	//taskEXIT_CRITICAL();
-	if (ret < 0) critical_error(BSP_BOARD_LED_0,2);
+	//if (ret < 0) critical_error(BSP_BOARD_LED_0,2);
 
 	
 	fifo_num++;
+	
 	
 	#define QUAT
 	#define ACC
 	#define GYRO
 	
-	ble_log_print("\r\nPacket:%d,",fifo_num);
+	LOG_PRINT("\r\nPacket:%d,",fifo_num);
 	#ifdef QUAT
-		ble_log_print("%i,", quat[0]);
-		ble_log_print("%i,", quat[1]);
-		ble_log_print("%i,", quat[2]);
-		ble_log_print("%i,", quat[3]);
+		LOG_PRINT("%i,", quat[0]);
+		LOG_PRINT("%i,", quat[1]);
+		LOG_PRINT("%i,", quat[2]);
+		LOG_PRINT("%i,", quat[3]);
 	#endif
 	
 	#ifdef ACC
-		ble_log_print("%i,", accel[0]);
-		ble_log_print("%i,", accel[1]);
-		ble_log_print("%i,", accel[2]);
+		LOG_PRINT("%i,", accel[0]);
+		LOG_PRINT("%i,", accel[1]);
+		LOG_PRINT("%i,", accel[2]);
 	#endif
 	
 	#ifdef GYRO
-		ble_log_print("%i,", gyro[0]);
-		ble_log_print("%i,", gyro[1]);
-		ble_log_print("%i,", gyro[2]);
+		LOG_PRINT("%i,", gyro[0]);
+		LOG_PRINT("%i,", gyro[1]);
+		LOG_PRINT("%i,", gyro[2]);
 	#endif	
-	ble_log_print("%i\r\n", ret);
+	LOG_PRINT("%i\r\n", ret);
 	
 	
 	return ret;
