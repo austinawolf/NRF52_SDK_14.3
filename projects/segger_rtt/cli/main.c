@@ -53,25 +53,15 @@
 #include "app_error.h"
 #include "app_util.h"
 
-#include "SEGGER_RTT.h"
+#include "logger.h"
 
 int main(void)
 {
-    ret_code_t ret;
 
-
-    ret = nrf_drv_clock_init();
-    APP_ERROR_CHECK(ret);
-    nrf_drv_clock_lfclk_request(NULL);
-
-    ret = app_timer_init();
-    APP_ERROR_CHECK(ret);
-
-
-
+		uint32_t event_num = 0;
     while (true)
     {
-			SEGGER_RTT_WriteString(0, "Hello World!\n");
+			LOG_PRINT("Event Number: %d\n", event_num++);
 			nrf_delay_ms(1000);
 		}
 }
