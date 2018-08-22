@@ -79,7 +79,7 @@
  * use a generic SPI controller, some changes may be necessary.
  *
  */
-#include "flash_helper.h"
+#include "Serialize.h"
 
 #ifdef TIME_H_EXISTS
 #include <time.h>
@@ -695,6 +695,8 @@ ReturnType DataProgram(InstructionType insInstruction, ParameterType *fp)
 
 	default:
 		return Flash_FunctionNotSupported;
+		break;
+
 	} /* EndSwitch */
 
 	rRetVal = FlashDataProgram( (*fp).PageProgram.udAddr,
@@ -1464,7 +1466,7 @@ BOOL IsFlashBusy(void)
 	NMX_uint8 CheckBit;
 
 	// Step 1: Read the Status Register.
-	if((fdo->Desc.FlashId == MEM_TYPE_N25Q512_V3) || (fdo->Desc.FlashId == MEM_TYPE_N25Q1G) || (fdo->Desc.FlashId == MEM_TYPE_N25Q512_V18))
+	if((fdo->Desc.FlashId == MEM_TYPE_N25Q512_V3) || (fdo->Desc.FlashId == MEM_TYPE_N25Q1G) || (fdo->Desc.FlashId == MEM_TYPE_N25Q512_18))
 	{
 		FlashReadFlagStatusRegister(&ucSR);
 		CheckBit = SPI_FSR_PROG_ERASE_CTL;

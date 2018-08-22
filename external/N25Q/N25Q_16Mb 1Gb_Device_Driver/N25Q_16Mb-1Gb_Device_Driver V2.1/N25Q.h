@@ -1,7 +1,4 @@
 /*
- *	file:///C:/Users/Austin%20Wolf/Downloads/tn1211_sw_drivers_n25q.pdf
- *	file:///C:/Users/Austin%20Wolf/Downloads/n25q_1gb_3v_65nm%20(2).pdf
- *	https://www.micron.com/parts/nor-flash/serial-nor-flash/n25q00aa13g1240f
  *
  *  Header File for STFL-I based Serial Flash Memory Driver
  *
@@ -25,7 +22,7 @@
  *
  *  Ver.		Date				Comments
  *
- *  1.0			April 2010			Initial release
+ *  1.0			April 2010			Initial relase
  *  1.1			October 2011		Added 4-byte address mode support for N25Q256
  *  1.2         January 2012    	Minor bug fixing
  *  1.3			February 2012		Added support for N25Q 512M stacked (256M+256M)
@@ -36,7 +33,7 @@
  *  1.8			October 2014        Added read flag status register for N25Q512Mb/N25Q1Gb device in the IsFlashBusy()
  *	1.9			January 2015		Fixed inconsistent function declaration
  *	2.0			February 2015		Fixed some compilation warnings
- *									Fixed the issue of IsflashBusy() can't detect correct status
+ *									Fixed the issue of IsflashBusy() cann't detect correct status
  *									Fixed one potential bug of  FlashWriteNVConfigurationRegister doesn't send the correct value.
  *	2.1			August 2015			added write/read lock register function
  */
@@ -80,8 +77,6 @@
 	- N25Q 256M (N25Q256A8X)
 	- N25Q 512M
 	- N25Q 1G
-
-			
 
    ********* Flash and Board Configuration *********
    The driver also supports different configurations of the Flash chips
@@ -700,20 +695,6 @@ typedef unsigned char BOOL;
 
 BOOL IsFlashBusy(void);
 BOOL IsFlashWELBusy(void);
-
-/*******************************************************************************
-Added definitions from Serialize (AW edit 5/2)
-*******************************************************************************
-
-/* Status register masks */
-#define SPI_SR1_WIP				(1 << 0)
-#define SPI_SR1_WEL				(1 << 1)
-#define SPI_SR1_BP0				(1 << 2)
-#define SPI_SR1_BP1				(1 << 3)
-#define SPI_SR1_BP2				(1 << 4)
-#define SPI_SR1_E_FAIL			(1 << 5)
-#define SPI_SR1_P_FAIL			(1 << 6)
-#define SPI_SR1_SRWD			(1 << 7)
 
 
 /*******************************************************************************
