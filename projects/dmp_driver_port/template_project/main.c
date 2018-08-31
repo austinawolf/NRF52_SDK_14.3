@@ -68,18 +68,13 @@
 
 //local libraries
 #include "log_helper.h"
-#include "esb_logger.h"
+#include "logger.h"
 #include "twi_interface.h"
 #include "led_error.h"
 #include "imu.h"
+#include "config.h"
 
-//nrf log
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
-
-
-#define SAMPLE_PERIOD 101
+#define SAMPLE_PERIOD (uint32_t) 50
 
 uint32_t event_number = 0;
 
@@ -104,9 +99,26 @@ static void log_flush_task_function (void * pvParameter)
 
 static void payload_create_timer_callback (void * pvParameter)
 {
-
     UNUSED_PARAMETER(pvParameter);
-		imu_get_fifo();
+	
+		Motion motion;
+		motion = get_motion_data();
+
+		LOG_PRINT("\r\nPacket:%u,",motion.event);
+		LOG_PRINT("%u,",motion.sensor_timestamp);
+		LOG_PRINT("%i,", motion.quat[0]);
+		LOG_PRINT("%i,", motion.quat[1]);
+		LOG_PRINT("%i,", motion.quat[2]);
+		LOG_PRINT("%i,", motion.quat[3]);
+		LOG_PRINT("%i,", motion.accel[0]);
+		LOG_PRINT("%i,", motion.accel[1]);
+		LOG_PRINT("%i,", motion.accel[2]);
+		LOG_PRINT("%i,", motion.gyro[0]);
+		LOG_PRINT("%i,", motion.gyro[1]);
+		LOG_PRINT("%i,", motion.gyro[2]);
+		LOG_PRINT("%u,",motion.sensor_num);
+		LOG_PRINT("%i\r\n", motion.status);
+	
 }
 
 void clocks_start( void )
@@ -138,7 +150,7 @@ int main(void)
     gpio_init();
 		
 		//ESB LOGGER INIT
-		esb_logger_init();
+		LOG_INIT();
 	
 		//TWI INIT
 		twi_interface_init();
@@ -159,10 +171,8 @@ int main(void)
 
     NRF_LOG_DEBUG("Enhanced ShockBurst Transmitter Example running.");
 		
-		esb_log_print("Esb Logger Running\r\n");
-		esb_log_print("IMU init: %d\r\n", imu_status);
-
-		
+		LOG_PRINT("Esb Logger Running\r\n");
+		LOG_PRINT("IMU init: %d\r\n", imu_status);
 
 		vTaskStartScheduler();
 		

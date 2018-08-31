@@ -1,6 +1,8 @@
 #include "uart_helper.h"
 #include "boards.h"
 
+#if defined UART_LOGGER
+
 void uart_event_handle(app_uart_evt_t* p_event) {
 	
 	//static uint8_t data_array[UART_MAX_DATA_LEN];
@@ -47,3 +49,5 @@ void uart_init(void) {
 									
 	APP_ERROR_CHECK(err_code);
 }
+
+#endif

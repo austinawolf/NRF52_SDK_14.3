@@ -68,7 +68,8 @@ static inline int reg_int_cb(struct int_param_s *int_param)
  * #define AK8963_SECONDARY
  */
 #define MPU9250
-	
+//#define AK8963_SECONDARY
+
 #if defined MPU9150
 #ifndef MPU6050
 #define MPU6050
@@ -92,7 +93,7 @@ static inline int reg_int_cb(struct int_param_s *int_param)
 #if defined AK8975_SECONDARY || defined AK8963_SECONDARY
 #define AK89xx_SECONDARY
 #else
-/* #warning "No compass = less profit for Invensense. Lame." */
+#warning "No compass = less profit for Invensense. Lame."
 #endif
 
 static int set_int_enable(unsigned char enable);
@@ -658,13 +659,17 @@ int mpu_init(struct int_param_s *int_param)
     data[0] = BIT_RESET;
     if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, data))
         return -1;
-    delay_ms(100);
+
+		delay_ms(100);
+		
+
 
     /* Wake up chip. */
     data[0] = 0x00;
     if (i2c_write(st.hw->addr, st.reg->pwr_mgmt_1, 1, data))
         return -1;
-
+	
+	
    st.chip_cfg.accel_half = 0;
 
 #ifdef MPU6500
@@ -684,12 +689,14 @@ int mpu_init(struct int_param_s *int_param)
     st.chip_cfg.sample_rate = 0xFFFF;
     st.chip_cfg.fifo_enable = 0xFF;
     st.chip_cfg.bypass_mode = 0xFF;
+		
+		/*
 #ifdef AK89xx_SECONDARY
     st.chip_cfg.compass_sample_rate = 0xFFFF;
 #endif
-    /* mpu_set_sensors always preserves this setting. */
+    // mpu_set_sensors always preserves this setting.
     st.chip_cfg.clk_src = INV_CLK_PLL;
-    /* Handled in next call to mpu_set_bypass. */
+    //Handled in next call to mpu_set_bypass
     st.chip_cfg.active_low_int = 1;
     st.chip_cfg.latched_int = 0;
     st.chip_cfg.int_motion_only = 0;
@@ -718,11 +725,12 @@ int mpu_init(struct int_param_s *int_param)
     if (mpu_set_compass_sample_rate(10))
         return -1;
 #else
-    /* Already disabled by setup_compass. */
+    // Already disabled by setup_compass.
     if (mpu_set_bypass(0))
         return -1;
 #endif
-
+		*/
+		
     mpu_set_sensors(0);
     return 0;
 }

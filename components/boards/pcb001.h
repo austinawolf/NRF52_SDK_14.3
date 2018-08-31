@@ -95,15 +95,15 @@ extern "C" {
 #define SPIS_MOSI_PIN   25  // SPI MOSI signal.
 #define SPIS_SCK_PIN    29  // SPI SCK signal.
 
-#define SPIM0_SCK_PIN   31  // SPI clock GPIO pin number.
+#define SPIM0_SS_PIN    31  // SPI Slave Select GPIO pin number.
 #define SPIM0_MOSI_PIN  28  // SPI Master Out Slave In GPIO pin number.
 #define SPIM0_MISO_PIN  2  // SPI Master In Slave Out GPIO pin number.
-#define SPIM0_SS_PIN    29  // SPI Slave Select GPIO pin number.
+#define SPIM0_SCK_PIN   29  // SPI clock GPIO pin number.
 
-#define SPI_SCK_PIN SPIM0_SCK_PIN
+#define SPI_SS_PIN SPIM0_SS_PIN
 #define SPI_MOSI_PIN SPIM0_MOSI_PIN
 #define SPI_MISO_PIN SPIM0_MISO_PIN
-#define SPI_SS_PIN SPIM0_SS_PIN
+#define SPI_SCK_PIN SPIM0_SCK_PIN
 
 //TWI Pins for MPU9150 interface
 #define MPU9150_TWI_SDA		25 

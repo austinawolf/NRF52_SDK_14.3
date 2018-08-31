@@ -73,7 +73,7 @@ NRF_LOG_MODULE_REGISTER();
 #define SPI1_WITHOUT_DMA (defined(SPI1_USE_EASY_DMA) && !SPI1_USE_EASY_DMA && SPI1_ENABLED)
 #define SPI2_WITHOUT_DMA (defined(SPI2_USE_EASY_DMA) && !SPI2_USE_EASY_DMA && SPI2_ENABLED)
 
-#define NRF_SPI_DRV_MISO_PULLUP_CFG NRF_GPIO_PIN_PULLDOWN //AW 5/1: Should be in spi cfg file
+//#define NRF_SPI_DRV_MISO_PULLUP_CFG NRF_GPIO_PIN_PULLDOWN //AW 5/1: Should be in spi cfg file
 
 
 // suppress: non-standard use of 'defined' preprocessor operator
