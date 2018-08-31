@@ -53,9 +53,10 @@ static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE);  /**< SPI i
 static volatile bool spi_xfer_done;  /**< Flag used to indicate that SPI instance completed the transfer. */
 
 #define TEST_STRING "Nordic"
-static uint8_t       m_tx_buf[] = TEST_STRING;           /**< TX buffer. */
-static uint8_t       m_rx_buf[sizeof(TEST_STRING) + 1];    /**< RX buffer. */
-static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. */
+static uint8_t       m_tx_buf[] = {0x9E};           /**< TX buffer. */
+static uint8_t       m_rx_buf[30];    /**< RX buffer. */
+static const uint8_t tx_length = sizeof(m_tx_buf);        /**< Transfer length. */
+static const uint8_t rx_length = 30;        /**< Transfer length. */
 
 /**
  * @brief SPI user event handler.
@@ -71,6 +72,9 @@ void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
         NRF_LOG_INFO(" Received:");
         NRF_LOG_HEXDUMP_INFO(m_rx_buf, strlen((const char *)m_rx_buf));
     }
+		for (uint8_t i = 0; i < 30; i++) {
+				NRF_LOG_INFO("Index: %u, %p", i, m_rx_buf[i]); 
+		}
 }
 
 int main(void)
@@ -92,10 +96,10 @@ int main(void)
     while (1)
     {
         // Reset rx buffer and transfer done flag
-        memset(m_rx_buf, 0, m_length);
+        memset(m_rx_buf, 0, rx_length);
         spi_xfer_done = false;
 
-        APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, m_length, m_rx_buf, m_length));
+        APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, tx_length, m_rx_buf, rx_length));
 
         while (!spi_xfer_done)
         {
