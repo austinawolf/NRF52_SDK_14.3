@@ -130,7 +130,7 @@
 // <3=> NRF_GPIO_PIN_PULLUP 
 
 #ifndef NRF_SPI_DRV_MISO_PULLUP_CFG
-#define NRF_SPI_DRV_MISO_PULLUP_CFG 1
+#define NRF_SPI_DRV_MISO_PULLUP_CFG 0
 #endif
 
 // <e> SPI0_ENABLED - Enable SPI0 instance
@@ -142,7 +142,7 @@
  
 
 #ifndef SPI0_USE_EASY_DMA
-#define SPI0_USE_EASY_DMA 1
+#define SPI0_USE_EASY_DMA 0
 #endif
 
 // </e>
@@ -635,7 +635,7 @@
 // <16384=> 16384 
 
 #ifndef NRF_LOG_BUFSIZE
-#define NRF_LOG_BUFSIZE 1024
+#define NRF_LOG_BUFSIZE 4096
 #endif
 
 // <q> NRF_LOG_ALLOW_OVERFLOW  - Configures behavior when circular buffer is full.
@@ -2634,7 +2634,7 @@
 // <i> or this value is actually used. It depends on which one is bigger.
 
 #ifndef SEGGER_RTT_CONFIG_BUFFER_SIZE_UP
-#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 512
+#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 1024
 #endif
 
 // <o> SEGGER_RTT_CONFIG_MAX_NUM_UP_BUFFERS - Size of upstream buffer. 
@@ -2644,7 +2644,7 @@
 
 // <o> SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN - Size of upstream buffer. 
 #ifndef SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN
-#define SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN 16
+#define SEGGER_RTT_CONFIG_BUFFER_SIZE_DOWN 32
 #endif
 
 // <o> SEGGER_RTT_CONFIG_MAX_NUM_DOWN_BUFFERS - Size of upstream buffer. 
@@ -2664,7 +2664,7 @@
 // <2=> BLOCK_IF_FIFO_FULL 
 
 #ifndef SEGGER_RTT_CONFIG_DEFAULT_MODE
-#define SEGGER_RTT_CONFIG_DEFAULT_MODE 0
+#define SEGGER_RTT_CONFIG_DEFAULT_MODE 2
 #endif
 
 // </h> 

@@ -37,7 +37,7 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-#include "nrf_drv_spi.h"
+#include "spi_interface.h"
 #include "app_util_platform.h"
 #include "nrf_gpio.h"
 #include "nrf_delay.h"
@@ -47,21 +47,23 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "N25Q.h"
 
-#define SPI_INSTANCE  0 /**< SPI instance index. */
-static const nrf_drv_spi_t spi = NRF_DRV_SPI_INSTANCE(SPI_INSTANCE);  /**< SPI instance. */
-static volatile bool spi_xfer_done;  /**< Flag used to indicate that SPI instance completed the transfer. */
+/*
+static uint8_t       m_tx_buf[] = {0x9E};           // TX buffer.
+static uint8_t       m_rx_buf[30];    // RX buffer
+static const uint8_t tx_length = sizeof(m_tx_buf);        // Transfer length
+static const uint8_t rx_length = 30;        // Transfer length
+*/
 
-#define TEST_STRING "Nordic"
-static uint8_t       m_tx_buf[] = {0x9E};           /**< TX buffer. */
-static uint8_t       m_rx_buf[30];    /**< RX buffer. */
-static const uint8_t tx_length = sizeof(m_tx_buf);        /**< Transfer length. */
-static const uint8_t rx_length = 30;        /**< Transfer length. */
+
+
+
 
 /**
  * @brief SPI user event handler.
  * @param event
- */
+ 
 void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
                        void *                    p_context)
 {
@@ -76,39 +78,74 @@ void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
 				NRF_LOG_INFO("Index: %u, %p", i, m_rx_buf[i]); 
 		}
 }
+*/
 
 int main(void)
 {
+	//leds init
     bsp_board_leds_init();
 
+	//log init
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
     NRF_LOG_DEFAULT_BACKENDS_INIT();
     
-    NRF_LOG_INFO("SPI example.");
+	//flash init
+    FLASH_DEVICE_OBJECT fdo; /* flash device object */
+    ParameterType para; /* parameters used for all operation */
+    ReturnType ret; /* return variable */
+    NMX_uint8 rbuffer[16];
+    NMX_uint8 wbuffer[16] = /* write buffer */
+    {
+		0xBE, 0xEF, 0xFE, 0xED, 0xBE, 0xEF, 0xFE, 0xED,
+		0xBE, 0xEF, 0xFE, 0xED, 0xBE, 0xEF, 0xFE, 0xED
+    };
+	
+	NRF_LOG_RAW_INFO("\n\nSPI Example Running.\n\n");
+	NRF_LOG_FLUSH();
+	
+	//spi init
+	spi_init();
+		
+	//driver init
+    ret = Driver_Init(&fdo); /* initialize the flash driver */
+    if (Flash_WrongType == ret)
+    {
+        NRF_LOG_RAW_INFO("Sorry, no device detected."); 
+    }
+	else {
+		NRF_LOG_RAW_INFO("Device detected.");	
+	}
+	NRF_LOG_FLUSH();	
+	
+	NRF_LOG_RAW_INFO("\n\nSECTOR ERASE\n");
+	fdo.GenOp.SectorErase(0); /* erase first sector */
+    para.PageProgram.udAddr = 0; /* program 16 byte at address 0 */
+    para.PageProgram.pArray = wbuffer;
+    para.PageProgram.udNrOfElementsInArray = 16;
+    
+	NRF_LOG_RAW_INFO("\n\nDATA PROGRAM\n");
+	fdo.GenOp.DataProgram(PageProgram, &para);
+    para.Read.udAddr = 0; /* read 16 byte at address 0 */
+    para.Read.pArray = rbuffer;
+    para.Read.udNrOfElementsToRead = 16;
 
-    nrf_drv_spi_config_t spi_config = NRF_DRV_SPI_DEFAULT_CONFIG;
-    spi_config.ss_pin   = NRF_GPIO_PIN_MAP(0,31);
-    spi_config.miso_pin = NRF_GPIO_PIN_MAP(0,2);
-    spi_config.mosi_pin = NRF_GPIO_PIN_MAP(0,28);
-    spi_config.sck_pin  = NRF_GPIO_PIN_MAP(0,29);
-    APP_ERROR_CHECK(nrf_drv_spi_init(&spi, &spi_config, spi_event_handler, NULL));
-
+	NRF_LOG_RAW_INFO("\n\nDATA READ\n");
+    fdo.GenOp.DataRead(Read, &para);
+	
+	NRF_LOG_RAW_INFO("\n\nDATA\n");
+	for (int i = 0; i < 16; i++) {
+		NRF_LOG_RAW_INFO("%d,0x%x\n", i, rbuffer[i]); /* now rbuffer contains written elements */	
+        NRF_LOG_FLUSH();
+		nrf_delay_ms(1);
+	}
     while (1)
     {
-        // Reset rx buffer and transfer done flag
-        memset(m_rx_buf, 0, rx_length);
-        spi_xfer_done = false;
 
-        APP_ERROR_CHECK(nrf_drv_spi_transfer(&spi, m_tx_buf, tx_length, m_rx_buf, rx_length));
-
-        while (!spi_xfer_done)
-        {
-            __WFE();
-        }
+        //spi_transfer(m_tx_buf, tx_length, m_rx_buf, rx_length);
 
         NRF_LOG_FLUSH();
-
         bsp_board_led_invert(BSP_BOARD_LED_0);
         nrf_delay_ms(1000);
     }
+	
 }

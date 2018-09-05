@@ -34,49 +34,17 @@
 
 *******************************************************************************/
 #include "Serialize.h"
+#include "spi_interface.h"
+
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
+
 
 //#define ENABLE_PRINT_DEBUG
 
 #define EXT_MOD
 
-/*******************************************************************************
-     SPI Rodan controller init
-Function:     SpiRodanPortInit()
-Arguments:    There is no argument for this function
-Return Values:Return RetSpiError if the FPGA configuration is not correct.
-Description:  This function has to be called at the beginnning to configure the
-			  port.
-
-/******************************************************************************/
-SPI_STATUS SpiRodanPortInit(void)
-{
-
-	/*Check the FPGA Configuration Release*/
-	if (WRONG_FPGA)
-		return RetSpiError;
-
-	/*Clean the Controller Register */
-	WR_R(SPICR, RD_R(SPICR) & ZERO_MASK);
-
-	/* Set clock frequency to 25 MHz, set 8 DUMMY cycles, disable WP and HOLD modes and enable SPI controller */
-	WR_R(SPICR, RD_R(SPICR) | SPICR_CLK(0x1) | SPICR_DUMMY(8) | SPICR_WP | SPICR_HOLD);
-
-#ifdef SPI_NAND
-	/* Set SPI_NAND_ENABLE bit in the SPI Controller Register */
-	WR_R(SPICR, RD_R(SPICR) | SPI_NAND_EN);
-#endif
-
-#ifdef EXT_MOD
-	/* enable extended mode */
-	EXT_ENABLE;
-#endif
-
-	/*Set byte size transfer*/
-	SET_TXRXSIZE(8);
-
-	return RetSpiSuccess;
-
-}
 
 /*******************************************************************************
 Function:     ConfigureSpi(SpiConfigOptions opt)
@@ -96,15 +64,11 @@ void ConfigureSpi(SpiConfigOptions opt)
 	switch (opt)
 	{
 	case OpsWakeUp:
-		CHECK_BSY;
-		SET_CS;
+		//CHECK_BSY;
 		break;
 	case OpsInitTransfer:
-		FLUSHRWFIFO;
 		break;
 	case OpsEndTransfer:
-		CLEAR_CS;
-		FLUSHRWFIFO;
 		break;
 	default:
 		break;
@@ -141,15 +105,15 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
                         )
 {
 
-	uint8 *char_send, *char_recv;
-	uint16 rx_len = 0, tx_len = 0;
+	uint8_t *char_send, *char_recv;
+	uint8_t rx_len = 0, tx_len = 0;
 
 #ifdef ENABLE_PRINT_DEBUG
 	int i;
-	printf("\nSEND: ");
+	NRF_LOG_RAW_INFO("\nSEND: ");
 	for(i=0; i<char_stream_send->length; i++)
-		printf(" 0x%x ", char_stream_send->pChar[i]);
-	printf("\n");
+		NRF_LOG_RAW_INFO(" 0x%x ", char_stream_send->pChar[i]);
+	NRF_LOG_RAW_INFO("\n");
 #endif
 
 	tx_len = char_stream_send->length;
@@ -161,34 +125,16 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
 		char_recv = char_stream_recv->pChar;
 	}
 
-
+	spi_transfer(char_send, tx_len, char_recv, rx_len);
 
 	ConfigureSpi(optBefore);
 
 
-	while (tx_len-- > 0)
-	{
-		WR_R(SPIWRFIFO,  *(char_send++));
-		CHECK_BSY;
-		RD_R(SPIRDFIFO);
-	}
-
-	while (rx_len-- > 0)
-	{
-		WR_R(SPIWRFIFO,  DUMMY_BYTE);
-		CHECK_BSY;
-
-		if (CHECK_RX_FIFO)
-			*char_recv++ = RD_R(SPIRDFIFO);
-		else
-			rx_len++;
-	}
-
 #ifdef ENABLE_PRINT_DEBUG
-	printf("\nRECV: ");
+	NRF_LOG_RAW_INFO("\nRECV: ");
 	for(i=0; i<char_stream_recv->length; i++)
-		printf(" 0x%x ", char_stream_recv->pChar[i]);
-	printf("\n");
+		NRF_LOG_RAW_INFO(" 0x%x ", char_stream_recv->pChar[i]);
+	NRF_LOG_RAW_INFO("\n");
 #endif
 
 	ConfigureSpi(optAfter);
@@ -197,11 +143,3 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
 	return RetSpiSuccess;
 }
 
-void four_byte_addr_ctl(int enable)
-{
-	if(enable)
-		FOUR_BYTE_ENABLE;
-
-	if(!enable)
-		FOUR_BYTE_DISABLE;
-}

@@ -499,6 +499,19 @@ typedef struct
 
 } FLASH_DEVICE_OBJECT;
 
+/* Status register masks */
+#define SPI_SR1_WIP				(1 << 0)
+#define SPI_SR1_WEL				(1 << 1)
+#define SPI_SR1_BP0				(1 << 2)
+#define SPI_SR1_BP1				(1 << 3)
+#define SPI_SR1_BP2				(1 << 4)
+#define SPI_SR1_E_FAIL			(1 << 5)
+#define SPI_SR1_P_FAIL			(1 << 6)
+#define SPI_SR1_SRWD			(1 << 7)
+
+#define SPI_SR1_FAIL_FLAGS		(SPI_SR1_E_FAIL | SPI_SR1_P_FAIL)
+
+
 /******************************************************************************
     Standard functions
 *******************************************************************************/
