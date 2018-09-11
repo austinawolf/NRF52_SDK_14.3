@@ -22,7 +22,7 @@
  *
  *  Ver.		Date				Comments
  *
- *  1.0			April 2010			Initial relase
+ *  1.0			April 2010			Initial release
  *  1.1			October 2011		Added 4-byte address mode support for N25Q256
  *  1.2         January 2012    	Minor bug fixing
  *  1.3			February 2012		Added support for N25Q 512M stacked (256M+256M)
@@ -33,7 +33,7 @@
  *  1.8			October 2014        Added read flag status register for N25Q512Mb/N25Q1Gb device in the IsFlashBusy()
  *	1.9			January 2015		Fixed inconsistent function declaration
  *	2.0			February 2015		Fixed some compilation warnings
- *									Fixed the issue of IsflashBusy() cann't detect correct status
+ *									Fixed the issue of IsflashBusy() can't detect correct status
  *									Fixed one potential bug of  FlashWriteNVConfigurationRegister doesn't send the correct value.
  *	2.1			August 2015			added write/read lock register function
  */
@@ -172,7 +172,7 @@ typedef enum
 #define COUNT_FOR_A_SECOND 0xFFFFFF   				/* Timer Usage */
 #endif
 
-#define SE_TIMEOUT (3)                					/* Timeout in seconds suggested for Sector Erase Operation*/
+#define SE_TIMEOUT (10)                					/* Timeout in seconds suggested for Sector Erase Operation*/
 #define BE_TIMEOUT  (480)           						/* Timeout in seconds suggested for Bulk Erase Operation*/
 #define DIE_TIMEOUT (480)					/* Timeout in seconds suggested for Die Erase Operation*/
 /* Activates additional Routines */
@@ -202,6 +202,17 @@ typedef enum
 #define DISCOVERY_TABLE1                0x0C
 #define DTABLE1_SECTOR_DESCRIPTOR       0x1C
 #define DTABLE1_FLASH_SIZE              0x04
+
+// Status register masks 
+#define SPI_SR1_WIP				(1 << 0)
+#define SPI_SR1_WEL				(1 << 1)
+#define SPI_SR1_BP0				(1 << 2)
+#define SPI_SR1_BP1				(1 << 3)
+#define SPI_SR1_BP2				(1 << 4)
+#define SPI_SR1_E_FAIL			(1 << 5)
+#define SPI_SR1_P_FAIL			(1 << 6)
+#define SPI_SR1_SRWD			(1 << 7)
+
 /*******************************************************************************
 	DERIVED DATATYPES
 *******************************************************************************/
@@ -499,19 +510,6 @@ typedef struct
 
 } FLASH_DEVICE_OBJECT;
 
-/* Status register masks */
-#define SPI_SR1_WIP				(1 << 0)
-#define SPI_SR1_WEL				(1 << 1)
-#define SPI_SR1_BP0				(1 << 2)
-#define SPI_SR1_BP1				(1 << 3)
-#define SPI_SR1_BP2				(1 << 4)
-#define SPI_SR1_E_FAIL			(1 << 5)
-#define SPI_SR1_P_FAIL			(1 << 6)
-#define SPI_SR1_SRWD			(1 << 7)
-
-#define SPI_SR1_FAIL_FLAGS		(SPI_SR1_E_FAIL | SPI_SR1_P_FAIL)
-
-
 /******************************************************************************
     Standard functions
 *******************************************************************************/
@@ -556,7 +554,7 @@ ReturnType FlashReadLockRegister(uAddrType address,  NMX_uint8 * val);
 ReturnType FlashWriteLockRegister(uAddrType address,  NMX_uint8 * val);
 ReturnType FlashLockOneSector(uAddrType address);
 ReturnType FlashUnlockOneSector(uAddrType address);
-
+	
 /******************************************************************************
     Utility functions
 *******************************************************************************/
@@ -565,6 +563,9 @@ NMX_sint8 *FlashErrorStr( ReturnType rErrNum );
 #endif
 
 ReturnType FlashTimeOut( NMX_uint32 udSeconds );
+
+ReturnType  Reset(void);
+
 
 /*******************************************************************************
 List of Errors and Return values, Explanations and Help.

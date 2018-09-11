@@ -36,15 +36,14 @@
 #include "Serialize.h"
 #include "spi_interface.h"
 
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
-
-
-//#define ENABLE_PRINT_DEBUG
 
 #define EXT_MOD
 
+#define ENABLE_PRINT_DEBUG
+#define printf NRF_LOG_RAW_INFO
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
 
 /*******************************************************************************
 Function:     ConfigureSpi(SpiConfigOptions opt)
@@ -65,10 +64,14 @@ void ConfigureSpi(SpiConfigOptions opt)
 	{
 	case OpsWakeUp:
 		//CHECK_BSY;
+		//SET_CS;
 		break;
 	case OpsInitTransfer:
+		//FLUSHRWFIFO;
 		break;
 	case OpsEndTransfer:
+		//CLEAR_CS;
+		//FLUSHRWFIFO;
 		break;
 	default:
 		break;
@@ -104,37 +107,47 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
                          SpiConfigOptions optAfter
                         )
 {
+	uint8 *char_send, *char_recv;
+	uint16 rx_len = 0, tx_len = 0;
 
-	uint8_t *char_send, *char_recv;
-	uint8_t rx_len = 0, tx_len = 0;
 
-#ifdef ENABLE_PRINT_DEBUG
-	int i;
-	NRF_LOG_RAW_INFO("\nSEND: ");
-	for(i=0; i<char_stream_send->length; i++)
-		NRF_LOG_RAW_INFO(" 0x%x ", char_stream_send->pChar[i]);
-	NRF_LOG_RAW_INFO("\n");
-#endif
 
 	tx_len = char_stream_send->length;
 	char_send = char_stream_send->pChar;
 
+	#ifdef ENABLE_PRINT_DEBUG
+		int i;
+		printf("SEND: ");
+		for(i=0; i<tx_len; i++)
+			printf(" 0x%x ", char_send[i]);
+		printf("\n");
+	#endif	
+	
+	
 	if (NULL_PTR != char_stream_recv)
 	{
 		rx_len = char_stream_recv->length;
 		char_recv = char_stream_recv->pChar;
 	}
+	else {
+		rx_len = 0;
+		char_recv = NULL_PTR;		
+	}
 
-	spi_transfer(char_send, tx_len, char_recv, rx_len);
+
 
 	ConfigureSpi(optBefore);
 
 
+	spi_transfer(char_send, tx_len, char_recv, rx_len);
+
+	
+
 #ifdef ENABLE_PRINT_DEBUG
-	NRF_LOG_RAW_INFO("\nRECV: ");
-	for(i=0; i<char_stream_recv->length; i++)
-		NRF_LOG_RAW_INFO(" 0x%x ", char_stream_recv->pChar[i]);
-	NRF_LOG_RAW_INFO("\n");
+	printf("RECV: ");
+	for(i=0; i<rx_len; i++)
+		printf(" 0x%x ", char_recv[i]);
+	printf("\n");
 #endif
 
 	ConfigureSpi(optAfter);
@@ -143,3 +156,13 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
 	return RetSpiSuccess;
 }
 
+void four_byte_addr_ctl(int enable)
+{
+	if(enable)
+		//FOUR_BYTE_ENABLE;
+		enable = 0;
+
+	if(!enable)
+		//FOUR_BYTE_DISABLE;
+		enable = 0;
+}

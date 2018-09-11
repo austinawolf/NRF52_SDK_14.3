@@ -27,11 +27,9 @@ void slow_blink(uint8_t led_idx) {
 }
 
 void critical_error(uint8_t led_index, uint8_t error_code) {
-	taskENTER_CRITICAL();
 	while(1) {
 		alert(led_index, error_code);
 	}
-	//taskEXIT_CRITICAL();
 }
 
 void alert(uint8_t led_index, uint8_t error_code) {

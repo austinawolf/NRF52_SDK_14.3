@@ -47,11 +47,6 @@
 #include "nrf_esb_error_codes.h"
 #include "bsp.h"
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "queue.h"
-
 #include "nordic_common.h"
 #include "nrf_drv_clock.h"
 #include "sdk_errors.h"
@@ -60,9 +55,7 @@
 #include "nrf_gpio.h"
 #include "boards.h"
 #include "app_util.h"
-#include "nrf_drv_saadc.h"
-#include "log_helper.h"
-#include "esb_logger.h"
+#include "logger.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
@@ -72,41 +65,6 @@
 
 uint32_t event_number = 0;
 
-TaskHandle_t log_flush_task_handle;
-TimerHandle_t payload_create_timer_handle;
-
-static void log_flush_task_function (void * pvParameter);
-static void payload_create_timer_callback(void * pvParameter);
-uint8_t value = 0;
-
-
-uint32_t array_to_uint32(uint8_t* array);
-
-
-
-static void log_flush_task_function (void * pvParameter)
-{
-    UNUSED_PARAMETER(pvParameter);
-    while (true)
-    {
-        NRF_LOG_FLUSH();
-    }
-		
-}
-
-static void payload_create_timer_callback (void * pvParameter)
-{
-
-    UNUSED_PARAMETER(pvParameter);
-		NRF_LOG_DEBUG("esb_log()");
-		NRF_LOG_FLUSH();
-	
-
-		esb_log_print("abcdef");
-		esb_log_print("ghijkl");
-		esb_log_print("mnopqrs");
-		esb_log_print("tuvwrxyz\r\n");
-}
 
 void clocks_start( void )
 {
@@ -115,10 +73,6 @@ void clocks_start( void )
 
     while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);
 }
-
-
-
-
 
 void gpio_init( void )
 {
@@ -130,35 +84,27 @@ void gpio_init( void )
 
 int main(void)
 {
-		//GPIO/LEDS INIT
+	//GPIO/LEDS INIT
     gpio_init();
-
-		//LOG INIT
-    logger_init();
 		
-		//ESB LOGGER INIT
-		esb_logger_init();
+	//ESB LOGGER INIT
+	LOG_INIT();
 
-		//CLOCKS INIT
+	//CLOCKS INIT
     clocks_start();
-
-		/* Create task for log flush with priority set to 1 */
-		UNUSED_VARIABLE(xTaskCreate(log_flush_task_function, "LOG_FLUSH", configMINIMAL_STACK_SIZE + 200, NULL, 1, &log_flush_task_handle));
-    
-		/* Start timer for packet generation */
-    payload_create_timer_handle = xTimerCreate( "ADC_SAMPLE", SAMPLE_PERIOD, pdTRUE, NULL, payload_create_timer_callback);
-    UNUSED_VARIABLE(xTimerStart(payload_create_timer_handle, 0));
 
 
     NRF_LOG_DEBUG("Enhanced ShockBurst Transmitter Example running.");
-		NRF_LOG_FLUSH();
-		
-		vTaskStartScheduler();
-		
-		while (true) 
-		{
 			
-		}
+	while (true) 
+	{
+		LOG_PRINT("abcdef");
+		LOG_PRINT("ghijkl");
+		LOG_PRINT("mnopqrs");
+		LOG_PRINT("tuvwrxyz\r\n");
+		LOG_FLUSH();
+		nrf_delay_ms(1000);
+	}
 
 }
 

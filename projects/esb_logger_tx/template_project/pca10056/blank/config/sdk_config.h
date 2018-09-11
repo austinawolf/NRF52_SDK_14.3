@@ -3295,7 +3295,7 @@
 // <1=> 1 
 
 #ifndef APP_TIMER_CONFIG_SWI_NUMBER
-#define APP_TIMER_CONFIG_SWI_NUMBER 0
+#define APP_TIMER_CONFIG_SWI_NUMBER 1
 #endif
 
 // </e>
@@ -4219,7 +4219,7 @@
 // <e> NRF_LOG_BACKEND_RTT_ENABLED - nrf_log_backend_rtt - Log RTT backend
 //==========================================================
 #ifndef NRF_LOG_BACKEND_RTT_ENABLED
-#define NRF_LOG_BACKEND_RTT_ENABLED 0
+#define NRF_LOG_BACKEND_RTT_ENABLED 1
 #endif
 // <o> NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE - Size of buffer for partially processed strings. 
 // <i> Size of the buffer is a trade-off between RAM usage and processing.
@@ -4236,7 +4236,7 @@
 // <e> NRF_LOG_BACKEND_UART_ENABLED - nrf_log_backend_uart - Log UART backend
 //==========================================================
 #ifndef NRF_LOG_BACKEND_UART_ENABLED
-#define NRF_LOG_BACKEND_UART_ENABLED 1
+#define NRF_LOG_BACKEND_UART_ENABLED 0
 #endif
 // <o> NRF_LOG_BACKEND_UART_TX_PIN - UART TX pin 
 #ifndef NRF_LOG_BACKEND_UART_TX_PIN
@@ -4284,7 +4284,7 @@
 // <e> NRF_LOG_ENABLED - Logging module for nRF5 SDK
 //==========================================================
 #ifndef NRF_LOG_ENABLED
-#define NRF_LOG_ENABLED 1
+#define NRF_LOG_ENABLED 0
 #endif
 // <e> NRF_LOG_USES_COLORS - If enabled then ANSI escape code for colors is prefixed to every string
 //==========================================================
@@ -4359,7 +4359,7 @@
 // <i> Log data is buffered and can be processed in idle.
 
 #ifndef NRF_LOG_DEFERRED
-#define NRF_LOG_DEFERRED 1
+#define NRF_LOG_DEFERRED 0
 #endif
 
 // <o> NRF_LOG_BUFSIZE  - Size of the buffer for storing logs (in bytes).
@@ -4403,7 +4403,7 @@
  
 
 #ifndef NRF_LOG_FILTERS_ENABLED
-#define NRF_LOG_FILTERS_ENABLED 1
+#define NRF_LOG_FILTERS_ENABLED 0
 #endif
 
 // <q> NRF_LOG_CLI_CMDS  - Enable CLI commands for the module.

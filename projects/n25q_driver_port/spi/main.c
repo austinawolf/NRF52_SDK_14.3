@@ -56,34 +56,12 @@ static const uint8_t tx_length = sizeof(m_tx_buf);        // Transfer length
 static const uint8_t rx_length = 30;        // Transfer length
 */
 
-
-
-
-
-/**
- * @brief SPI user event handler.
- * @param event
- 
-void spi_event_handler(nrf_drv_spi_evt_t const * p_event,
-                       void *                    p_context)
-{
-    spi_xfer_done = true;
-    NRF_LOG_INFO("Transfer completed.");
-    if (m_rx_buf[0] != 0)
-    {
-        NRF_LOG_INFO(" Received:");
-        NRF_LOG_HEXDUMP_INFO(m_rx_buf, strlen((const char *)m_rx_buf));
-    }
-		for (uint8_t i = 0; i < 30; i++) {
-				NRF_LOG_INFO("Index: %u, %p", i, m_rx_buf[i]); 
-		}
-}
-*/
-
 int main(void)
 {
 	//leds init
     bsp_board_leds_init();
+	
+	nrf_gpio_pin_clear(NRF_GPIO_PIN_MAP(0,27));
 
 	//log init
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
@@ -93,6 +71,8 @@ int main(void)
     FLASH_DEVICE_OBJECT fdo; /* flash device object */
     ParameterType para; /* parameters used for all operation */
     ReturnType ret; /* return variable */
+	NMX_uint16 reg16;
+	NMX_uint8 reg8;
     NMX_uint8 rbuffer[16];
     NMX_uint8 wbuffer[16] = /* write buffer */
     {
@@ -100,49 +80,47 @@ int main(void)
 		0xBE, 0xEF, 0xFE, 0xED, 0xBE, 0xEF, 0xFE, 0xED
     };
 	
-	NRF_LOG_RAW_INFO("\n\nSPI Example Running.\n\n");
+	NRF_LOG_RAW_INFO("SPI Example Running.\n\n");
 	NRF_LOG_FLUSH();
 	
 	//spi init
 	spi_init();
-		
+
 	//driver init
     ret = Driver_Init(&fdo); /* initialize the flash driver */
     if (Flash_WrongType == ret)
     {
-        NRF_LOG_RAW_INFO("Sorry, no device detected."); 
+        NRF_LOG_RAW_INFO("Sorry, no device detected.\n"); 
     }
 	else {
-		NRF_LOG_RAW_INFO("Device detected.");	
+		NRF_LOG_RAW_INFO("Device detected.\n");	
+		
 	}
-	NRF_LOG_FLUSH();	
 	
-	NRF_LOG_RAW_INFO("\n\nSECTOR ERASE\n");
-	fdo.GenOp.SectorErase(0); /* erase first sector */
-    para.PageProgram.udAddr = 0; /* program 16 byte at address 0 */
+	NRF_LOG_RAW_INFO("\nSECTOR ERASE\n");
+	ret = fdo.GenOp.SubSectorErase(0); /* erase first subsector */
+	NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
+	
+	NRF_LOG_RAW_INFO("\nDATA PROGRAM\n");	
+    para.PageProgram.udAddr = 0x00; /* program 16 byte at address 0 */
     para.PageProgram.pArray = wbuffer;
     para.PageProgram.udNrOfElementsInArray = 16;
-    
-	NRF_LOG_RAW_INFO("\n\nDATA PROGRAM\n");
-	fdo.GenOp.DataProgram(PageProgram, &para);
-    para.Read.udAddr = 0; /* read 16 byte at address 0 */
+	ret = fdo.GenOp.DataProgram(PageProgram, &para);
+    NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
+
+	NRF_LOG_RAW_INFO("\nDATA READ\n");
+    para.Read.udAddr = 0x00; /* read 16 byte at address 0 */
     para.Read.pArray = rbuffer;
     para.Read.udNrOfElementsToRead = 16;
-
-	NRF_LOG_RAW_INFO("\n\nDATA READ\n");
-    fdo.GenOp.DataRead(Read, &para);
+    ret = fdo.GenOp.DataRead(Read, &para);
+    NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
 	
-	NRF_LOG_RAW_INFO("\n\nDATA\n");
-	for (int i = 0; i < 16; i++) {
-		NRF_LOG_RAW_INFO("%d,0x%x\n", i, rbuffer[i]); /* now rbuffer contains written elements */	
-        NRF_LOG_FLUSH();
-		nrf_delay_ms(1);
-	}
+	NMX_uint8 ucSR;
+	FlashReadStatusRegister(&ucSR);
+
+
     while (1)
     {
-
-        //spi_transfer(m_tx_buf, tx_length, m_rx_buf, rx_length);
-
         NRF_LOG_FLUSH();
         bsp_board_led_invert(BSP_BOARD_LED_0);
         nrf_delay_ms(1000);

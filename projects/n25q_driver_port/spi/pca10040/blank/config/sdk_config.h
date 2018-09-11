@@ -486,7 +486,7 @@
 // <i> longer one will be fragmented.
 
 #ifndef NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE
-#define NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE 64
+#define NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE 128
 #endif
 
 // </e>
@@ -617,7 +617,7 @@
 // <i> Log data is buffered and can be processed in idle.
 
 #ifndef NRF_LOG_DEFERRED
-#define NRF_LOG_DEFERRED 1
+#define NRF_LOG_DEFERRED 0
 #endif
 
 // <o> NRF_LOG_BUFSIZE  - Size of the buffer for storing logs (in bytes).

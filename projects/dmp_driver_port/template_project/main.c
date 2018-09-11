@@ -57,12 +57,6 @@
 #include "boards.h"
 #include "app_util.h"
 
-//freertos
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "queue.h"
-
 //nrf drivers
 #include "nrf_drv_clock.h"
 
@@ -74,52 +68,9 @@
 #include "imu.h"
 #include "config.h"
 
-#define SAMPLE_PERIOD (uint32_t) 50
-
 uint32_t event_number = 0;
-
-TaskHandle_t log_flush_task_handle;
-TimerHandle_t payload_create_timer_handle;
-
-static void log_flush_task_function (void * pvParameter);
-static void payload_create_timer_callback(void * pvParameter);
 uint32_t packet_number = 0;
 
-
-
-static void log_flush_task_function (void * pvParameter)
-{
-    UNUSED_PARAMETER(pvParameter);
-    while (true)
-    {
-        NRF_LOG_FLUSH();
-    }
-		
-}
-
-static void payload_create_timer_callback (void * pvParameter)
-{
-    UNUSED_PARAMETER(pvParameter);
-	
-		Motion motion;
-		motion = get_motion_data();
-
-		LOG_PRINT("\r\nPacket:%u,",motion.event);
-		LOG_PRINT("%u,",motion.sensor_timestamp);
-		LOG_PRINT("%i,", motion.quat[0]);
-		LOG_PRINT("%i,", motion.quat[1]);
-		LOG_PRINT("%i,", motion.quat[2]);
-		LOG_PRINT("%i,", motion.quat[3]);
-		LOG_PRINT("%i,", motion.accel[0]);
-		LOG_PRINT("%i,", motion.accel[1]);
-		LOG_PRINT("%i,", motion.accel[2]);
-		LOG_PRINT("%i,", motion.gyro[0]);
-		LOG_PRINT("%i,", motion.gyro[1]);
-		LOG_PRINT("%i,", motion.gyro[2]);
-		LOG_PRINT("%u,",motion.sensor_num);
-		LOG_PRINT("%i\r\n", motion.status);
-	
-}
 
 void clocks_start( void )
 {
@@ -143,42 +94,60 @@ void gpio_init( void )
 
 int main(void)
 {
+	uint32_t err_code;
+
+
+	int imu_status;
+
+	//GPIO/LEDS INIT
+	gpio_init();
 	
-		int imu_status;
-	
-		//GPIO/LEDS INIT
-    gpio_init();
+	//ESB LOGGER INIT
+	LOG_INIT();
+
+	//TWI INIT
+	twi_interface_init();
+
+	//MPU INIT
+	imu_status = imu_init();	
+
+	//CLOCKS INIT
+	clocks_start();
+
+	//log init
+	err_code = NRF_LOG_INIT(NULL);
+	APP_ERROR_CHECK(err_code);
+	NRF_LOG_DEFAULT_BACKENDS_INIT();
 		
-		//ESB LOGGER INIT
-		LOG_INIT();
+	//running	
+	NRF_LOG_DEBUG("Enhanced ShockBurst Transmitter Example running.");
+	LOG_PRINT("Esb Logger Running\r\n");
+	LOG_PRINT("IMU init: %d\r\n", imu_status);
 	
-		//TWI INIT
-		twi_interface_init();
-	
-		//MPU INIT
-		imu_status = imu_init();	
-	
-		//CLOCKS INIT
-    clocks_start();
+	while (true) 
+	{
+		Motion motion;
+		motion = get_motion_data();
 
-		/* Create task for log flush with priority set to 1 */
-		UNUSED_VARIABLE(xTaskCreate(log_flush_task_function, "LOG_FLUSH", configMINIMAL_STACK_SIZE + 200, NULL, 1, &log_flush_task_handle));
-    
-		/* Start timer for packet generation */
-    payload_create_timer_handle = xTimerCreate( "ADC_SAMPLE", SAMPLE_PERIOD, pdTRUE, NULL, payload_create_timer_callback);
-    UNUSED_VARIABLE(xTimerStart(payload_create_timer_handle, 0));
-
-
-    NRF_LOG_DEBUG("Enhanced ShockBurst Transmitter Example running.");
 		
-		LOG_PRINT("Esb Logger Running\r\n");
-		LOG_PRINT("IMU init: %d\r\n", imu_status);
+		LOG_PRINT("Packet:%u,",motion.event);
+		LOG_PRINT("%u,",motion.sensor_timestamp);
+		LOG_PRINT("%i,", motion.quat[0]);
+		LOG_PRINT("%i,", motion.quat[1]);
+		LOG_PRINT("%i,", motion.quat[2]);
+		LOG_PRINT("%i,", motion.quat[3]);
+		LOG_PRINT("%i,", motion.accel[0]);
+		LOG_PRINT("%i,", motion.accel[1]);
+		LOG_PRINT("%i,", motion.accel[2]);
+		LOG_PRINT("%i,", motion.gyro[0]);
+		LOG_PRINT("%i,", motion.gyro[1]);
+		LOG_PRINT("%i,", motion.gyro[2]);
+		LOG_PRINT("%u,",motion.sensor_num);
+		LOG_PRINT("%i\r\n", motion.status);
+		LOG_FLUSH();
+		nrf_delay_ms(50);
 
-		vTaskStartScheduler();
-		
-		while (true) 
-		{
-			
-		}
+
+	}
 
 }

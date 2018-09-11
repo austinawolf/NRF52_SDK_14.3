@@ -79,29 +79,26 @@ void nrf_esb_event_handler(nrf_esb_evt_t const * p_event)
         case NRF_ESB_EVENT_RX_RECEIVED:
             if (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS)
             {
-								
-							
+											
                 // Set LEDs identical to the ones on the PTX.
                 nrf_gpio_pin_write(LED_1, !(success_event_total%8>0 && success_event_total%8<=4));
                 nrf_gpio_pin_write(LED_2, !(success_event_total%8>1 && success_event_total%8<=5));
                 nrf_gpio_pin_write(LED_3, !(success_event_total%8>2 && success_event_total%8<=6));
                 nrf_gpio_pin_write(LED_4, !(success_event_total%8>3));
 
+					
+				char rx_data[32];
+				memcpy(rx_data,rx_payload.data,32);				
+				printf("%s",rx_data);
+
+
+				success_event_total++;
 								
 							
-								char rx_data[32];
-								memcpy(rx_data,rx_payload.data,32);				
-								printf("%s",rx_data);
-
-								
-								success_event_total++;
-								
-								
-
             }
-						else {
-							printf("FAILED EVENT: %u",fail_event_total++);
-						}
+			else {
+				printf("FAILED EVENT: %u",fail_event_total++);
+			}
             break;
     }
 		
@@ -155,31 +152,30 @@ int main(void)
 {
     uint32_t err_code;
 
-		//gpio init
+	//gpio init
     gpio_init();
 	
-		//log init
+	//log init
     //err_code = NRF_LOG_INIT(NULL);
     //APP_ERROR_CHECK(err_code);
     //NRF_LOG_DEFAULT_BACKENDS_INIT();
 	
-		//clocks start
+	//clocks start
     clocks_start();
 
-		//shockburst init
+	//shockburst init
     err_code = esb_init();
     APP_ERROR_CHECK(err_code);
 
-		//shockburst rx start
+	//shockburst rx start
     err_code = nrf_esb_start_rx();
     APP_ERROR_CHECK(err_code);
 		
-		//uart helper init
-		uart_init();   
+	//uart helper init
+	uart_init();   
 		
-		//running		
+	//running		
     printf("Enhanced ShockBurst Receiver Example running.\n\r");
-
 
     while (true)
     {

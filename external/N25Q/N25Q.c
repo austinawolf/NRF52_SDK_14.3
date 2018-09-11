@@ -80,23 +80,24 @@
  *
  */
 #include "Serialize.h"
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
+#include "nrf_delay.h"
 
 #ifdef TIME_H_EXISTS
 #include <time.h>
 #endif
 
-#define UNUSED(x) (void)(x)
-#define DEBUG
-#define PRINT_FUNCTION_CALL
 /* global flash device object */
 FLASH_DEVICE_OBJECT *fdo;
 
 /* local function, not api */
 void fill_addr_vect(uAddrType udAddr, NMX_uint8* pIns_Addr, NMX_uint8 num_address_byte);
 ReturnType WAIT_TILL_Instruction_EXECUTION_COMPLETE(NMX_sint16 second);
+
+#define DEBUG
+#define printf NRF_LOG_RAW_INFO
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
 
 /*******************************************************************************
 Function:     uAddrType BlockOffset ( uSectorType uscSectorNr);
@@ -126,11 +127,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("Driver_Init\n");
-#endif
-
-	
 	NMX_uint8 flag = 0;
 	NMX_uint32 Device = 0;
 	ReturnType ret;
@@ -146,7 +142,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q8)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q8\n");
+		printf("Detected N25Q8\n");
 #endif
 
 		/* device shape */
@@ -201,7 +197,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q16)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q16\n");
+		printf("Detected N25Q16\n");
 #endif
 
 		/* device shape */
@@ -257,7 +253,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q32)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q32\n");
+		printf("Detected N25Q32\n");
 #endif
 
 		/* device shape */
@@ -312,7 +308,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q64)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q64\n");
+		printf("Detected N25Q64\n");
 #endif
 
 		/* device shape */
@@ -367,7 +363,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q128)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q128\n");
+		printf("Detected N25Q128\n");
 #endif
 
 		/* device shape */
@@ -422,7 +418,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q256)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q256\n");
+		printf("Detected N25Q256\n");
 #endif
 
 		/* device shape */
@@ -493,7 +489,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if ((Device == MEM_TYPE_N25Q512_V3) || (Device == MEM_TYPE_N25Q512_V18))
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q512\n");
+		printf("Detected N25Q512\n");
 #endif
 
 		/* device shape */
@@ -557,7 +553,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	if (Device == MEM_TYPE_N25Q1G)
 	{
 #ifdef DEBUG
-		NRF_LOG_RAW_INFO("Detected N25Q1G\n");
+		printf("Detected N25Q1G\n");
 #endif
 
 		/* device shape */
@@ -619,7 +615,7 @@ ReturnType Driver_Init(FLASH_DEVICE_OBJECT *flash_device_object)
 	}
 
 #ifdef DEBUG
-	NRF_LOG_RAW_INFO("No device detected %x\n",Device);
+	printf("No device detected %x\n",Device);
 #endif
 
 	return Flash_WrongType;
@@ -663,10 +659,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType DataProgram(InstructionType insInstruction, ParameterType *fp)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("DataProgram\n");
-#endif	
-	
 	ReturnType rRetVal;
 	NMX_uint8 insCode;
 
@@ -762,10 +754,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType DataRead(InstructionType insInstruction, ParameterType *fp)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("DataRead\n");
-#endif	
-	
 	NMX_uint8 insCode;
 	ReturnType rRetVal;
 
@@ -824,10 +812,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashWriteEnable( void )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteEnable\n");
-#endif
-
 	CharStream char_stream_send;
 	NMX_uint8 cWREN = SPI_FLASH_INS_WREN;
 	NMX_uint8 ucSR;
@@ -868,10 +852,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashWriteDisable( void )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteDisable\n");
-#endif
-
 	CharStream char_stream_send;
 	NMX_uint8 cWRDI = SPI_FLASH_INS_WRDI;
 	NMX_uint8 ucSR;
@@ -920,14 +900,10 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashReadDeviceIdentification(NMX_uint32 *uwpDeviceIdentification)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadDeviceIdentification\n");
-#endif	
-	
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  cRDID = SPI_FLASH_INS_RDID;
-	NMX_uint8  pIdentification[4];
+	NMX_uint8  pIdentification[3];
 	// Step 1: Initialize the data (i.e. Instruction) packet to be sent serially
 	char_stream_send.length  = 1;
 	char_stream_send.pChar   = &cRDID;
@@ -942,10 +918,9 @@ ReturnType FlashReadDeviceIdentification(NMX_uint32 *uwpDeviceIdentification)
 	              OpsEndTransfer);
 
 #ifdef DEBUG
-	NRF_LOG_RAW_INFO("DeviceId[0] = 0x%x\n", char_stream_recv.pChar[0]);
-	NRF_LOG_RAW_INFO("DeviceId[1] = 0x%x\n", char_stream_recv.pChar[1]);
-	NRF_LOG_RAW_INFO("DeviceId[2] = 0x%x\n", char_stream_recv.pChar[2]);
-	NRF_LOG_FLUSH();
+	printf("DeviceId[0] = 0x%x\n", char_stream_recv.pChar[0]);
+	printf("DeviceId[1] = 0x%x\n", char_stream_recv.pChar[1]);
+	printf("DeviceId[2] = 0x%x\n", char_stream_recv.pChar[2]);
 #endif
 
 	// Step 3: Device Identification is returned ( manufaturer id + memory type + memory capacity )
@@ -976,10 +951,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashReadStatusRegister(NMX_uint8 *ucpStatusRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadStatusRegister\n");
-#endif
-
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  cRDSR = SPI_FLASH_INS_RDSR;
@@ -988,7 +959,7 @@ ReturnType FlashReadStatusRegister(NMX_uint8 *ucpStatusRegister)
 	char_stream_send.length  = 1;
 	char_stream_send.pChar   = &cRDSR;
 	char_stream_recv.length  = 1;
-	char_stream_recv.pChar   = &ucpStatusRegister[0];
+	char_stream_recv.pChar   = ucpStatusRegister;
 
 	// Step 2: Send the packet serially, get the Status Register content
 	Serialize_SPI(&char_stream_send,
@@ -1021,10 +992,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashWriteStatusRegister(NMX_uint8 ucStatusRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteStatusRegister\n");
-#endif	
-	
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Val[2];
 
@@ -1071,10 +1038,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashDataRead( uAddrType udAddr, NMX_uint8 *ucpElements, NMX_uint32 udNrOfElementsToRead, NMX_uint8 insInstruction)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashDataRead\n");
-#endif	
-	
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  pIns_Addr[5];
@@ -1139,11 +1102,8 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNrOfElementsInArray, NMX_uint8 ubSpiInstruction)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashGenProgram\n");
-#endif	
-
 	CharStream char_stream_send;
+	NMX_uint8 ucSR;
 	NMX_uint8 pIns_Addr[5];
 	NMX_uint8 fsr_value;
 	ReturnType ret;
@@ -1156,7 +1116,7 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	if(IsFlashBusy()) return Flash_OperationOngoing;
 
 	// Step 3: Disable Write protection
-	fdo->GenOp.WriteEnable();
+	//fdo->GenOp.WriteEnable();
 
 	// Step 4: Initialize the data (Instruction & address only) packet to be sent serially
 	char_stream_send.length   = fdo->Desc.NumAddrByte + 1;
@@ -1171,6 +1131,8 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	              NULL_PTR,
 	              OpsWakeUp,
 	              OpsInitTransfer);
+				  
+	FlashReadFlagStatusRegister(&ucSR);
 
 	// Step 6: Initialize the data (data to be programmed) packet to be sent serially
 	char_stream_send.length   = udNrOfElementsInArray;
@@ -1181,11 +1143,31 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	              NULL_PTR,
 	              OpsWakeUp,
 	              OpsEndTransfer);
+			  
+
+	
+	// Alternate
+	/*
+	char_stream_send.length   = fdo->Desc.NumAddrByte + 1 + udNrOfElementsInArray;
+	uint8 buffer_tx[char_stream_send.length];
+	
+	buffer_tx[0]              = ubSpiInstruction;
+	fill_addr_vect(udAddr, buffer_tx, fdo->Desc.NumAddrByte);
+	
+	memcpy(&buffer_tx[fdo->Desc.NumAddrByte], pArray, udNrOfElementsInArray);
+	char_stream_send.pChar    = buffer_tx;
+
+	Serialize_SPI(&char_stream_send,
+	              NULL_PTR,
+	              OpsWakeUp,
+	              OpsEndTransfer);	
+	*/
+
 
 	// Step 8: Wait until the operation completes or a timeout occurs.
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(1);
 
-
+	FlashReadStatusRegister(&ucSR);
 	FlashReadFlagStatusRegister(&fsr_value);
 	FlashClearFlagStatusRegister();
 
@@ -1232,29 +1214,23 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashSectorErase( uSectorType uscSectorNr )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashSectorErase\n");
-#endif	
-
 	CharStream char_stream_send;
 	//NMX_uint8  pIns_Addr[4];
 	NMX_uint8  pIns_Addr[5];
 	uAddrType SectorAddr;
 	NMX_uint8 fsr_value;
 	ReturnType ret;
-	UNUSED(ret);
-	
+
 	// Step 1: Validate the sector number input
 	if(!(uscSectorNr < fdo->Desc.FlashSectorCount)) return Flash_SectorNrInvalid;
-
+	
 	SectorAddr = fdo->GenOp.BlockOffset(uscSectorNr);
 
 	// Step 2: Check whether any previous Write, Program or Erase cycle is on going
 	if(IsFlashBusy()) return Flash_OperationOngoing;
-
+	
 	// Step 3: Disable Write protection
 	fdo->GenOp.WriteEnable();
-
 	// Step 4: Initialize the data (Instruction & address) packet to be sent serially
 	char_stream_send.length   = fdo->Desc.NumAddrByte + 1;
 	char_stream_send.pChar    = &pIns_Addr[0];
@@ -1276,7 +1252,10 @@ ReturnType  FlashSectorErase( uSectorType uscSectorNr )
 
 	// Step 6: Wait until the operation completes or a timeout occurs.
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(SE_TIMEOUT);
-
+	if (ret != Flash_Success) {
+		return ret;
+	}
+	
 	FlashReadFlagStatusRegister(&fsr_value);
 	FlashClearFlagStatusRegister();
 
@@ -1322,17 +1301,12 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashSubSectorErase( uSectorType uscSectorNr )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashSubSectorErase\n");
-#endif		
-	
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Addr[5];
 	uAddrType SubSectorAddr;
 	NMX_uint8 fsr_value;
 	ReturnType ret;
-	UNUSED(ret);
-	
+
 	// Step 1: Validate the sector number input
 	if(!(uscSectorNr < fdo->Desc.FlashSubSectorCount))
 		return Flash_SectorNrInvalid;
@@ -1366,7 +1340,10 @@ ReturnType  FlashSubSectorErase( uSectorType uscSectorNr )
 
 	// Step 6: Wait until the operation completes or a timeout occurs.
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(SE_TIMEOUT);
-
+	if (ret != Flash_Success) {
+		return ret;
+	}
+	
 	FlashReadFlagStatusRegister(&fsr_value);
 	FlashClearFlagStatusRegister();
 
@@ -1393,17 +1370,12 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashDieErase( uSectorType uscDieNr )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashDieErase\n");
-#endif	
-
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Addr[5];
 	uAddrType DieAddr;
 	NMX_uint8 fsr_value;
 	ReturnType ret;
-	UNUSED(ret);
-	
+
 	// Step 1: Validate the sector number input
 	if(!(uscDieNr < fdo->Desc.FlashDieCount))
 		return Flash_SectorNrInvalid;
@@ -1430,6 +1402,9 @@ ReturnType  FlashDieErase( uSectorType uscDieNr )
 
 	// Step 6: Wait until the operation completes or a timeout occurs.
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(DIE_TIMEOUT);
+	if (ret != Flash_Success) {
+		return ret;
+	}
 
 	FlashReadFlagStatusRegister(&fsr_value);
 	FlashClearFlagStatusRegister();
@@ -1473,10 +1448,6 @@ Pseudo Code:
 #ifdef SUPPORT_N25Q_STEP_B
 ReturnType FlashBulkErase( void )
 {
-	#ifdef PRINT_FUNCTION_CALL
-		NRF_LOG_RAW_INFO("FlashBulkErase\n");
-	#endif	
-
 	CharStream char_stream_send;
 	NMX_uint8  cBE = SPI_FLASH_INS_BE;
 	NMX_uint8 fsr_value;
@@ -1528,10 +1499,7 @@ Pseudo Code:
 *******************************************************************************/
 BOOL IsFlashBusy(void)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("IsFlashBusy\n");
-#endif	
-	
+
 	NMX_uint8 ucSR;
 	NMX_uint8 CheckBit;
 
@@ -1570,10 +1538,6 @@ Pseudo Code:
 *******************************************************************************/
 BOOL IsFlashWELBusy(void)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("IsFlashWELBusy\n");
-#endif		
-	
 	NMX_uint8 ucSR;
 
 	// Step 1: Read the Status Register.
@@ -1591,10 +1555,6 @@ Function:     	FlashDataProgram( )
 *******************************************************************************/
 ReturnType FlashDataProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint16 udNrOfElementsInArray, NMX_uint8 ubSpiInstruction)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashDataProgram\n");
-#endif		
-	
 	ReturnType retValue = Flash_Success;
 	NMX_uint16 dataOffset;
 
@@ -1646,10 +1606,6 @@ Pseudo Code:
  ******************************************************************************/
 ReturnType  FlashProgramEraseResume( void )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashProgramEraseResume\n");
-#endif		
-	
 	/* not implemented */
 	return Flash_FunctionNotSupported;
 }
@@ -1694,10 +1650,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashClearFlagStatusRegister( void )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashClearFlagStatusRegister\n");
-#endif		
-		
 	CharStream char_stream_send;
 	NMX_uint8  cCLFSR = SPI_FLASH_INS_CLFSR;
 
@@ -1732,10 +1684,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashReadNVConfigurationRegister(NMX_uint16 *ucpNVConfigurationRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadNVConfigurationRegister\n");
-#endif		
-	
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  cRDNVCR = SPI_FLASH_INS_RDNVCR;
@@ -1773,10 +1721,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashReadVolatileConfigurationRegister( NMX_uint8 *ucpVolatileConfigurationRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadVolatileConfigurationRegister\n");
-#endif		
-	
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  cRDVCR = SPI_FLASH_INS_RDVCR;
@@ -1814,10 +1758,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashReadVolatileEnhancedConfigurationRegister( NMX_uint8 *ucpVolatileEnhancedConfigurationRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadVolatileEnhancedConfigurationRegister\n");
-#endif		
-	
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  cRDVECR = SPI_FLASH_INS_RDVECR;
@@ -1855,10 +1795,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashReadFlagStatusRegister( NMX_uint8 *ucpFlagStatusRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadFlagStatusRegister\n");
-#endif		
-	
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  cRFSR = SPI_FLASH_INS_RFSR;
@@ -1897,11 +1833,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashWriteVolatileConfigurationRegister( NMX_uint8 ucVolatileConfigurationRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteVolatileConfigurationRegister\n");
-#endif		
-
-	
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Val[2];
 
@@ -1946,10 +1877,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashWriteVolatileEnhancedConfigurationRegister( NMX_uint8 ucVolatileEnhancedConfigurationRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteVolatileEnhancedConfigurationRegister\n");
-#endif		
-	
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Val[2];
 
@@ -1991,10 +1918,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType  FlashWriteNVConfigurationRegister( NMX_uint16 ucNVConfigurationRegister)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteNVConfigurationRegister\n");
-#endif		
-	
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Val[3];
 
@@ -2034,10 +1957,6 @@ Pseudo Code:
 *******************************************************************************/
 NMX_sint8 *FlashErrorStr( ReturnType rErrNum )
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("*FlashErrorStr\n");
-#endif		
-	
 	switch(rErrNum)
 	{
 	case Flash_AddressInvalid:
@@ -2095,8 +2014,7 @@ Description:   This function provides a timeout for Flash polling actions or
    The Routine uses the function clock() inside ANSI C library "time.h".
 -----------------------------------------------------------------------------*/
 ReturnType FlashTimeOut(NMX_uint32 udSeconds)
-{		
-	
+{
 	static clock_t clkReset,clkCount;
 
 	if (udSeconds == 0)   /* Set Timeout to 0 */
@@ -2123,7 +2041,6 @@ Description:   This function provides a timeout for Flash polling actions or
 ReturnType FlashTimeOut(NMX_uint32 udSeconds)
 {
 
-	
 	static NMX_uint32 udCounter = 0;
 	if (udSeconds == 0)   /* Set Timeout to 0 */
 	{
@@ -2150,10 +2067,7 @@ Description:   This function fill the vector in according with address mode
 -----------------------------------------------------------------------------*/
 void fill_addr_vect(uAddrType udAddr, NMX_uint8* pIns_Addr, NMX_uint8 num_address_byte)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("fill_addr_vect\n");
-#endif	
-	
+
 	/* 3-addr byte mode */
 	if(FLASH_3_BYTE_ADDR_MODE == num_address_byte)
 	{
@@ -2178,15 +2092,13 @@ Description:   This function wait till instruction execution is complete
 -----------------------------------------------------------------------------*/
 ReturnType WAIT_TILL_Instruction_EXECUTION_COMPLETE(NMX_sint16 second)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("WAIT_TILL_Instruction_EXECUTION_COMPLETE\n");
-#endif		
-	
 	FlashTimeOut(0);
 	while(IsFlashBusy())
 	{
 		if(Flash_OperationTimeOut == FlashTimeOut(second))
 			return  Flash_OperationTimeOut;
+		nrf_delay_ms(100);
+		
 	}
 	return Flash_Success;
 }
@@ -2209,10 +2121,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashEnter4ByteAddressMode(void)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashEnter4ByteAddressMode\n");
-#endif		
-	
 	CharStream char_stream_send;
 	NMX_uint8 cPER = SPI_FLASH_4B_MODE_ENTER;
 	ReturnType ret;
@@ -2231,7 +2139,7 @@ ReturnType FlashEnter4ByteAddressMode(void)
 	              OpsEndTransfer);
 
 #ifdef DEBUG
-	NRF_LOG_RAW_INFO("ENTER 4-byte-addr mode\n");
+	printf("ENTER 4-byte-addr mode\n");
 #endif
 
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(1);
@@ -2281,7 +2189,7 @@ ReturnType FlashExit4ByteAddressMode(void)
 	              OpsEndTransfer);
 
 #ifdef DEBUG
-	NRF_LOG_RAW_INFO("EXIT 4-byte-addr mode\n");
+	printf("EXIT 4-byte-addr mode\n");
 #endif
 
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(1);
@@ -2312,10 +2220,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashLockSector(uAddrType address,  NMX_uint32 len)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashLockSector\n");
-#endif	
-	
 	NMX_uint8 TB, BP, SR;
 	int i, protected_area, start_sector;
 	int sector_size, num_of_sectors;
@@ -2378,10 +2282,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashUnlockAllSector(void)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashUnlockAllSector\n");
-#endif	
-	
 	NMX_uint8 SR = 0;
 
 	/* Set BP2, BP1, BP0 to 0 (all flash sectors unlocked) */
@@ -2407,18 +2307,13 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashOTPProgram(NMX_uint8 *pArray , NMX_uint32 udNrOfElementsInArray)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashOTPProgram\n");
-#endif	
-
 	CharStream char_stream_send;
 	NMX_uint8 i;
 	NMX_uint8 pIns_Addr[5];
 	NMX_uint8 sentBuffer[fdo->Desc.FlashOTPSize+1];
 	NMX_uint32 udAddr;
 	ReturnType ret;
-	UNUSED(sentBuffer);
-	
+
 	// Step 1: Validate address input
 	if(udNrOfElementsInArray > fdo->Desc.FlashOTPSize)
 		return Flash_AddressInvalid;
@@ -2491,10 +2386,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashOTPRead(NMX_uint8 *ucpElements, NMX_uint32 udNrOfElementsToRead)
 {
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashOTPRead\n");
-#endif	
-
 	CharStream char_stream_send;
 	CharStream char_stream_recv;
 	NMX_uint8  pIns_Addr[5];
@@ -2539,10 +2430,6 @@ Pseudo Code:
 ReturnType FlashReadLockRegister(uAddrType address,  NMX_uint8 * val) 
 {
 
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashReadLockRegister\n");
-#endif	
-
 	CharStream char_stream_send;
     CharStream char_stream_recv;
 	NMX_uint8  pIns_Addr[5];
@@ -2582,11 +2469,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashWriteLockRegister(uAddrType address,  NMX_uint8 * val) 
 {
-
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashWriteLockRegister\n");
-#endif	
-
 
 	CharStream char_stream_send;
 	NMX_uint8  pIns_Addr[6];
@@ -2629,11 +2511,6 @@ Pseudo Code:
 ReturnType FlashLockOneSector(uAddrType address) 
 {
 
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashLockOneSector\n");
-#endif
-
-
 	NMX_uint8 LR;
 	int sector_size;
 
@@ -2673,11 +2550,6 @@ Pseudo Code:
 *******************************************************************************/
 ReturnType FlashUnlockOneSector(uAddrType address)
 {
-	
-#ifdef PRINT_FUNCTION_CALL
-	NRF_LOG_RAW_INFO("FlashUnlockOneSector\n");
-#endif
-
 	NMX_uint8 LR;
 	int sector_size;
 
@@ -2700,3 +2572,84 @@ ReturnType FlashUnlockOneSector(uAddrType address)
 	return Flash_Success;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*******************************************************************************
+Function:     Reset( void )
+Arguments:    void
+
+Return Value:
+   Flash_Success
+
+Description:
+
+Pseudo Code:
+
+*******************************************************************************/
+ReturnType  Reset( void )
+{
+	CharStream char_stream_send;
+	NMX_uint8 cWRDI = SPI_FLASH_INS_REN;
+	NMX_uint8 ucSR;
+
+	// Step 1: Initialize the data (i.e. Instruction) packet to be sent serially
+	char_stream_send.length = 1;
+	char_stream_send.pChar  = &cWRDI;
+
+	// Step 2: Send the packet serially
+	Serialize_SPI(&char_stream_send,
+	              NULL_PTR,
+	              OpsWakeUp,
+	              OpsEndTransfer);
+
+	// Step 3: Read the Status Register.
+	do
+	{
+		FlashReadStatusRegister(&ucSR);
+	}
+	while(ucSR & SPI_SR1_WEL);
+	
+	// Step 4:
+	cWRDI = SPI_FLASH_INS_REN;
+
+	// Step 2: Send the packet serially
+	Serialize_SPI(&char_stream_send,
+	              NULL_PTR,
+	              OpsWakeUp,
+	              OpsEndTransfer);	
+	
+	return Flash_Success;
+}
+

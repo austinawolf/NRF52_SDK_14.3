@@ -44,29 +44,31 @@ int mpu_helper_dmp_setup(void);
 int	mpu_helper_inv_setup(void);
 
 int imu_init(void) {
-		int ret;
 	
-		ret = mpu_helper_init();
-		if (ret != 0) return ret;
+	int ret;
 
-		ret = mpu_helper_dmp_setup();
-		if (ret != 0) return ret;	
+	ret = mpu_helper_init();
+	if (ret != 0) return ret;
 
-		mpu_compass_config();
+	ret = mpu_helper_dmp_setup();
+	if (ret != 0) return ret;	
+
+	mpu_compass_config();
+
+	ret = mpu_helper_inv_setup();
+	if (ret != 0) return ret;
 	
-		ret = mpu_helper_inv_setup();
-		if (ret != 0) return ret;
-		
-		
 	
-		return 0;
+
+	return 0;
 }
 
 int mpu_helper_init(void) {
+	
 		int ret;
 		struct int_param_s int_param;
 		
-	  //int_param.cb = NULL;
+		int_param.cb = NULL;
 		int_param.pin = 0;
 		int_param.lp_exit = 0;
 		int_param.active_low = 1;
@@ -120,7 +122,6 @@ int mpu_helper_dmp_setup(void) {
 															DMP_FEATURE_GYRO_CAL);
 		if (ret != 0) return -3;
 		
-		#define DEFAULT_MPU_HZ 21
 	
 		ret = dmp_set_fifo_rate(DEFAULT_MPU_HZ);
 		if (ret != 0) return -4;
@@ -140,8 +141,8 @@ int	mpu_helper_inv_setup(void) {
 	
 	static struct platform_data_s gyro_pdata = {
 			.orientation = { 0, 0, 1,
-											 0, 1, 0,
-											 -1, 0, 0}
+							 0, 1, 0,
+							 -1, 0, 0}
 	};
 
   ret = dmp_set_orientation(inv_orientation_matrix_to_scalar(gyro_pdata.orientation));
@@ -162,9 +163,7 @@ unsigned char imu_get_fifo(void) {
 	long quat[4];
 	unsigned long sensor_timestamp;
 
-	//taskENTER_CRITICAL();
 	ret = dmp_read_fifo(gyro, accel, quat, &sensor_timestamp, &sensors, &more);
-	//taskEXIT_CRITICAL();
 	//if (ret < 0) critical_error(BSP_BOARD_LED_0,2);
 
 	

@@ -10,6 +10,8 @@
 #define I2C_MST_STATUS 0x36
 #define INT_PIN_CFG 0x37
 
+#define DEFAULT_MPU_HZ 20
+
 
 typedef struct {
 	short x;

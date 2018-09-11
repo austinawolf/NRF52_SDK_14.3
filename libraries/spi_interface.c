@@ -28,13 +28,31 @@ void spi_event_handler(nrf_drv_spi_evt_t const * p_event, void *p_context)
 }
 
 void spi_transfer(uint8_t* m_tx_buf, uint8_t tx_length, uint8_t* m_rx_buf, uint8_t rx_length) {
-	memset(m_rx_buf, 0, rx_length);
+	
+	//setup temp buffer
+	uint8_t m_rx_buf_temp[rx_length+1];
+	memset(m_rx_buf_temp, 0, rx_length+1);
+	
+	//start transfer
 	spi_xfer_done = false;
 	
-	nrf_drv_spi_transfer(&spi, m_tx_buf, tx_length, m_rx_buf-1, rx_length+1);
+	if (m_rx_buf != 0x0) {
+		nrf_drv_spi_transfer(&spi, m_tx_buf, tx_length, m_rx_buf_temp, rx_length+1);
+	}
+	else {
+		nrf_drv_spi_transfer(&spi, m_tx_buf, tx_length, 0, 0);
+	}
 	
+	//wait
 	while (!spi_xfer_done)
 	{
 			__WFE();
 	}
+	
+	//copy temp buffer to original buffer
+	if (m_rx_buf != 0x0) {
+		memcpy(m_rx_buf, &m_rx_buf_temp[1], rx_length);
+	}	
+	
+	
 }
