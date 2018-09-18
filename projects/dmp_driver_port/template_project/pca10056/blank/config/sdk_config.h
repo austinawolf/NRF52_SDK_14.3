@@ -2744,7 +2744,7 @@
 // <e> TIMER_ENABLED - nrf_drv_timer - TIMER periperal driver
 //==========================================================
 #ifndef TIMER_ENABLED
-#define TIMER_ENABLED 0
+#define TIMER_ENABLED 1
 #endif
 // <o> TIMER_DEFAULT_CONFIG_FREQUENCY  - Timer frequency if in Timer mode
  
@@ -2769,7 +2769,7 @@
 // <1=> Counter 
 
 #ifndef TIMER_DEFAULT_CONFIG_MODE
-#define TIMER_DEFAULT_CONFIG_MODE 0
+#define TIMER_DEFAULT_CONFIG_MODE 1
 #endif
 
 // <o> TIMER_DEFAULT_CONFIG_BIT_WIDTH  - Timer counter bit width
@@ -2804,7 +2804,7 @@
  
 
 #ifndef TIMER0_ENABLED
-#define TIMER0_ENABLED 0
+#define TIMER0_ENABLED 1
 #endif
 
 // <q> TIMER1_ENABLED  - Enable TIMER1 instance
@@ -3295,7 +3295,7 @@
 // <i> This option can be used when app_timer is used for timestamping.
 
 #ifndef APP_TIMER_KEEPS_RTC_ACTIVE
-#define APP_TIMER_KEEPS_RTC_ACTIVE 0
+#define APP_TIMER_KEEPS_RTC_ACTIVE 1
 #endif
 
 // <o> APP_TIMER_CONFIG_SWI_NUMBER  - Configure SWI instance used.
@@ -5554,7 +5554,7 @@
 // <4=> Debug 
 
 #ifndef TWI_CONFIG_LOG_LEVEL
-#define TWI_CONFIG_LOG_LEVEL 3
+#define TWI_CONFIG_LOG_LEVEL 4
 #endif
 
 // <o> TWI_CONFIG_INFO_COLOR  - ANSI escape code prefix.
@@ -5587,6 +5587,57 @@
 
 #ifndef TWI_CONFIG_DEBUG_COLOR
 #define TWI_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> IMU_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef IMU_CONFIG_LOG_ENABLED
+#define IMU_CONFIG_LOG_ENABLED 0
+#endif
+// <o> IMU_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef IMU_CONFIG_LOG_LEVEL
+#define IMU_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> IMU_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef IMU_CONFIG_INFO_COLOR
+#define IMU_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> IMU_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef IMU_CONFIG_DEBUG_COLOR
+#define IMU_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -5638,6 +5689,57 @@
 
 #ifndef UART_CONFIG_DEBUG_COLOR
 #define UART_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> MPU_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef MPU_CONFIG_LOG_ENABLED
+#define MPU_CONFIG_LOG_ENABLED 1
+#endif
+// <o> MPU_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef MPU_CONFIG_LOG_LEVEL
+#define MPU_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> MPU_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef MPU_CONFIG_INFO_COLOR
+#define MPU_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> MPU_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef MPU_CONFIG_DEBUG_COLOR
+#define MPU_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>

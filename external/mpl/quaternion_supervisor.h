@@ -19,6 +19,7 @@ inv_error_t inv_disable_quaternion(void);
 inv_error_t inv_init_quaternion(void);
 inv_error_t inv_start_quaternion(void);
 void inv_set_quaternion(long *quat);
+unsigned char *mpl_key = (unsigned char*) "eMPL 5.1";
 
 #ifdef __cplusplus
 }

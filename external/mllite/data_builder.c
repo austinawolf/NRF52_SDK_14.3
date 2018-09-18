@@ -20,6 +20,7 @@
 
 #include <string.h>
 
+#include "nordic_common.h"
 #include "ml_math_func.h"
 #include "data_builder.h"
 #include "mlmath.h"

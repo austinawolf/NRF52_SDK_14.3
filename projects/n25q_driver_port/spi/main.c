@@ -61,8 +61,6 @@ int main(void)
 	//leds init
     bsp_board_leds_init();
 	
-	nrf_gpio_pin_clear(NRF_GPIO_PIN_MAP(0,27));
-
 	//log init
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
     NRF_LOG_DEFAULT_BACKENDS_INIT();
@@ -73,7 +71,7 @@ int main(void)
     ReturnType ret; /* return variable */
 	NMX_uint16 reg16;
 	NMX_uint8 reg8;
-    NMX_uint8 rbuffer[16];
+    NMX_uint8 rbuffer[20];
     NMX_uint8 wbuffer[16] = /* write buffer */
     {
 		0xBE, 0xEF, 0xFE, 0xED, 0xBE, 0xEF, 0xFE, 0xED,
@@ -81,7 +79,6 @@ int main(void)
     };
 	
 	NRF_LOG_RAW_INFO("SPI Example Running.\n\n");
-	NRF_LOG_FLUSH();
 	
 	//spi init
 	spi_init();
@@ -93,34 +90,37 @@ int main(void)
         NRF_LOG_RAW_INFO("Sorry, no device detected.\n"); 
     }
 	else {
-		NRF_LOG_RAW_INFO("Device detected.\n");	
-		
+		NRF_LOG_RAW_INFO("Device detected.\n");		
 	}
 	
+	Reset();
+	
+		
 	NRF_LOG_RAW_INFO("\nSECTOR ERASE\n");
 	ret = fdo.GenOp.SubSectorErase(0); /* erase first subsector */
 	NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
-	
+
 	NRF_LOG_RAW_INFO("\nDATA PROGRAM\n");	
-    para.PageProgram.udAddr = 0x00; /* program 16 byte at address 0 */
+    para.PageProgram.udAddr = 0x40; /* program 16 byte at address 0 */
     para.PageProgram.pArray = wbuffer;
     para.PageProgram.udNrOfElementsInArray = 16;
 	ret = fdo.GenOp.DataProgram(PageProgram, &para);
     NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
 
 	NRF_LOG_RAW_INFO("\nDATA READ\n");
-    para.Read.udAddr = 0x00; /* read 16 byte at address 0 */
+    para.Read.udAddr = 0x40; /* read 16 byte at address 0 */
     para.Read.pArray = rbuffer;
-    para.Read.udNrOfElementsToRead = 16;
+    para.Read.udNrOfElementsToRead = 20;
     ret = fdo.GenOp.DataRead(Read, &para);
     NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
 	
 	NMX_uint8 ucSR;
-	FlashReadStatusRegister(&ucSR);
+	FlashReadVolatileEnhancedConfigurationRegister(&ucSR);
 
 
     while (1)
     {
+		
         NRF_LOG_FLUSH();
         bsp_board_led_invert(BSP_BOARD_LED_0);
         nrf_delay_ms(1000);

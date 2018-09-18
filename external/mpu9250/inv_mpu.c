@@ -23,6 +23,7 @@
 #include <string.h>
 #include <math.h>
 #include "inv_mpu.h"
+#include "SEGGER_RTT.h"
 
 /* The following functions must be defined for this platform:
  * i2c_write(unsigned char slave_addr, unsigned char reg_addr,
@@ -51,6 +52,17 @@
 #define fabs(x)     (((x)>0)?(x):-(x))
 #define min(a,b) MIN(a,b)
 
+
+#define NRF_LOG_MODULE_NAME mpu
+#if MPU_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL MPU_CONFIG_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR MPU_CONFIG_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR MPU_CONFIG_DEBUG_COLOR
+#else //SPI_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL 0
+#endif //SPI_CONFIG_LOG_ENABLED
+#include "nrf_log.h"
+	
 static inline int reg_int_cb(struct int_param_s *int_param)
 {
 	return 0;
@@ -653,6 +665,7 @@ int mpu_read_reg(unsigned char reg, unsigned char *data)
  */
 int mpu_init(struct int_param_s *int_param)
 {
+		
     unsigned char data[6];
 
     /* Reset device. */
@@ -690,7 +703,7 @@ int mpu_init(struct int_param_s *int_param)
     st.chip_cfg.fifo_enable = 0xFF;
     st.chip_cfg.bypass_mode = 0xFF;
 		
-		/*
+		
 #ifdef AK89xx_SECONDARY
     st.chip_cfg.compass_sample_rate = 0xFFFF;
 #endif
@@ -721,6 +734,7 @@ int mpu_init(struct int_param_s *int_param)
         reg_int_cb(int_param);
 
 #ifdef AK89xx_SECONDARY
+	
     setup_compass();
     if (mpu_set_compass_sample_rate(10))
         return -1;
@@ -729,10 +743,8 @@ int mpu_init(struct int_param_s *int_param)
     if (mpu_set_bypass(0))
         return -1;
 #endif
-		*/
 		
-    mpu_set_sensors(0);
-    return 0;
+	return 0;
 }
 
 /**

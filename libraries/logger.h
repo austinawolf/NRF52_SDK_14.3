@@ -18,7 +18,6 @@ Source Files:
 
 */
 
-
 #if defined BLE_LOGGER
     #include "ble_logger.h"
     #define LOG         ble_log

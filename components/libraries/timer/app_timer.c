@@ -949,6 +949,8 @@ ret_code_t app_timer_init(void)
 
     m_ticks_latest = rtc1_counter_get();
 
+	rtc1_start();
+	
     return NRF_SUCCESS;
 }
 

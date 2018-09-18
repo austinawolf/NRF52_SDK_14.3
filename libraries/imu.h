@@ -10,8 +10,8 @@
 #define I2C_MST_STATUS 0x36
 #define INT_PIN_CFG 0x37
 
-#define DEFAULT_MPU_HZ 20
-
+#define DMP_RATE 10
+#define INV_RATE 100000
 
 typedef struct {
 	short x;
@@ -56,9 +56,9 @@ struct platform_data_s {
 
 
 int imu_init(void);
-unsigned char imu_get_fifo(void);
 Motion get_motion_data(void);
-
+void imu_log_fifo(void);
+void imu_self_test(void);
 
 Acc mpu_get_acc(void);
 Mag mpu_get_mag(void);

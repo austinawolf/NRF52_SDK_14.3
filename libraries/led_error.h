@@ -8,6 +8,8 @@
 #include "boards.h"
 
 #define ESB_TRANSMISSION_ERR (uint8_t) 3
+#define RESET (uint8_t) 5
+
 #define SPI_NULL_RX 2
 #define TWI_NO_RESP 4
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 - 2017, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2017, Nordic Semiconductor ASA
  * 
  * All rights reserved.
  * 
@@ -37,129 +37,45 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
- //std libraries
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
-#include "sdk_common.h"
+#ifndef NRF_LOG_DEFAULT_BACKENDS_H__
+#define NRF_LOG_DEFAULT_BACKENDS_H__
 
-//nrf libraries
-#include "nrf.h"
-#include "nrf_esb.h"
-#include "nrf_error.h"
-#include "nrf_esb_error_codes.h"
-#include "bsp.h"
-#include "nordic_common.h"
+/**@file
+ * @addtogroup nrf_log Logger module
+ * @ingroup    app_common
+ *
+ * @defgroup nrf_log_default_backends Functions for initializing and adding default backends
+ * @{
+ * @ingroup  nrf_log
+ * @brief    The nrf_log default backends.
+ */
+
+#include "sdk_config.h"
 #include "sdk_errors.h"
-#include "app_error.h" 
-#include "nrf_delay.h"
-#include "nrf_gpio.h"
-#include "boards.h"
-#include "app_util.h"
+#include <stdbool.h>
 
-//nrf drivers
-#include "nrf_drv_clock.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-//nrf log
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
+/**
+ * @def NRF_LOG_DEFAULT_BACKENDS_INIT
+ * @brief Macro for initializing default backends.
+ *
+ * Each backend enabled in configuration is initialized and added as a backend to the logger.
+ */
+#if NRF_LOG_ENABLED
+#define NRF_LOG_DEFAULT_BACKENDS_INIT() nrf_log_default_backends_init()
+#else
+#define NRF_LOG_DEFAULT_BACKENDS_INIT()
+#endif
 
-//local libraries
-#include "logger.h"
-#include "twi_interface.h"
-#include "led_error.h"
-#include "imu.h"
-#include "config.h"
-#include "app_timer.h"
-#include "clock_interface.h"
-#include "nrf_drv_timer.h"
+void nrf_log_default_backends_init(void);
 
-
-uint32_t event_number = 0;
-uint32_t packet_number = 0;
-const nrf_drv_timer_t TIMER_LED = NRF_DRV_TIMER_INSTANCE(0);
-
-
-void clocks_start( void )
-{
-	
-    NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
-    NRF_CLOCK->TASKS_HFCLKSTART = 1;
-    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);	
-	
-	app_timer_init();
-
-	NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
-	NRF_CLOCK->TASKS_LFCLKSTART = 1;
-	while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0);
-
-	app_timer_resume();
-
+#ifdef __cplusplus
 }
+#endif
 
+/** @} */
 
-
-
-
-void gpio_init( void )
-{
-    //nrf_gpio_range_cfg_output(8, 15);
-    bsp_board_leds_init();
-}
-
-
-
-int main(void)
-{
-	uint32_t err_code;
-
-
-	int imu_status;
-
-	//GPIO/LEDS INIT
-	gpio_init();
-	
-	//ESB LOGGER INIT
-	LOG_INIT();
-
-	//TWI INIT
-	twi_interface_init();
-
-	//CLOCKS INIT
-	clocks_start();
-
-	//TIMER INIT
-	app_timer_init();
-	
-	
-	//log init
-	err_code = NRF_LOG_INIT(NULL);
-	APP_ERROR_CHECK(err_code);
-	NRF_LOG_DEFAULT_BACKENDS_INIT();
-		
-	NRF_LOG_INFO("Enhanced ShockBurst Transmitter Example running.");
-	
-		
-	//MPU INIT
-	imu_status = imu_init();			
-	imu_self_test();
-	
-	//running	
-	LOG_PRINT("Esb Logger Running\r\n");
-	if (imu_status) {
-		//alert(BSP_BOARD_LED_2, RESET);	
-		NVIC_SystemReset();
-	}
-	
-	while (true) 
-	{
-		//Motion motion;
-		imu_log_fifo();
-		nrf_delay_ms(95);
-
-
-
-	}
-
-}
+#endif // NRF_LOG_DEFAULT_BACKENDS_H__

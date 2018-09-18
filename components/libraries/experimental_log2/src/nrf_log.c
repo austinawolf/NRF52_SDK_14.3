@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 - 2017, Nordic Semiconductor ASA
+ * Copyright (c) 2016 - 2017, Nordic Semiconductor ASA
  * 
  * All rights reserved.
  * 
@@ -37,129 +37,65 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
- //std libraries
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
 #include "sdk_common.h"
+#if NRF_MODULE_ENABLED(NRF_LOG) && NRF_MODULE_ENABLED(NRF_LOG_BACKEND_RTT)
+#include "nrf_log_backend_rtt.h"
+#include "nrf_log_backend_serial.h"
+#include "nrf_log_str_formatter.h"
+#include "nrf_log_internal.h"
+#include <SEGGER_RTT_Conf.h>
+#include <SEGGER_RTT.h>
 
-//nrf libraries
-#include "nrf.h"
-#include "nrf_esb.h"
-#include "nrf_error.h"
-#include "nrf_esb_error_codes.h"
-#include "bsp.h"
-#include "nordic_common.h"
-#include "sdk_errors.h"
-#include "app_error.h" 
-#include "nrf_delay.h"
-#include "nrf_gpio.h"
-#include "boards.h"
-#include "app_util.h"
+static uint8_t m_string_buff[NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE];
 
-//nrf drivers
-#include "nrf_drv_clock.h"
-
-//nrf log
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
-
-//local libraries
-#include "logger.h"
-#include "twi_interface.h"
-#include "led_error.h"
-#include "imu.h"
-#include "config.h"
-#include "app_timer.h"
-#include "clock_interface.h"
-#include "nrf_drv_timer.h"
-
-
-uint32_t event_number = 0;
-uint32_t packet_number = 0;
-const nrf_drv_timer_t TIMER_LED = NRF_DRV_TIMER_INSTANCE(0);
-
-
-void clocks_start( void )
+void nrf_log_backend_rtt_init(void)
 {
-	
-    NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
-    NRF_CLOCK->TASKS_HFCLKSTART = 1;
-    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);	
-	
-	app_timer_init();
+    SEGGER_RTT_Init();
+}
 
-	NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
-	NRF_CLOCK->TASKS_LFCLKSTART = 1;
-	while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0);
+static void serial_tx(void const * p_context, char const * buffer, size_t len)
+{
+    if (len)
+    {
+        uint32_t idx    = 0;
+        uint32_t processed;
+        uint32_t watchdog_counter = 10;
+        do
+        {
+            processed = SEGGER_RTT_WriteNoLock(0, &buffer[idx], len);
+            idx += processed;
+            len -= processed;
+            if (processed == 0)
+            {
+                // If RTT is not connected then ensure that logger does not block
+                watchdog_counter--;
+                if (watchdog_counter == 0)
+                {
+                    break;
+                }
+            }
+        } while (len);
+    }
+}
+static void nrf_log_backend_rtt_put(nrf_log_backend_t const * p_backend,
+                               nrf_log_entry_t * p_msg)
+{
+    nrf_log_backend_serial_put(p_backend, p_msg, m_string_buff, NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE, serial_tx);
+}
 
-	app_timer_resume();
+static void nrf_log_backend_rtt_flush(nrf_log_backend_t const * p_backend)
+{
 
 }
 
-
-
-
-
-void gpio_init( void )
+static void nrf_log_backend_rtt_panic_set(nrf_log_backend_t const * p_backend)
 {
-    //nrf_gpio_range_cfg_output(8, 15);
-    bsp_board_leds_init();
+
 }
 
-
-
-int main(void)
-{
-	uint32_t err_code;
-
-
-	int imu_status;
-
-	//GPIO/LEDS INIT
-	gpio_init();
-	
-	//ESB LOGGER INIT
-	LOG_INIT();
-
-	//TWI INIT
-	twi_interface_init();
-
-	//CLOCKS INIT
-	clocks_start();
-
-	//TIMER INIT
-	app_timer_init();
-	
-	
-	//log init
-	err_code = NRF_LOG_INIT(NULL);
-	APP_ERROR_CHECK(err_code);
-	NRF_LOG_DEFAULT_BACKENDS_INIT();
-		
-	NRF_LOG_INFO("Enhanced ShockBurst Transmitter Example running.");
-	
-		
-	//MPU INIT
-	imu_status = imu_init();			
-	imu_self_test();
-	
-	//running	
-	LOG_PRINT("Esb Logger Running\r\n");
-	if (imu_status) {
-		//alert(BSP_BOARD_LED_2, RESET);	
-		NVIC_SystemReset();
-	}
-	
-	while (true) 
-	{
-		//Motion motion;
-		imu_log_fifo();
-		nrf_delay_ms(95);
-
-
-
-	}
-
-}
+const nrf_log_backend_api_t nrf_log_backend_rtt_api = {
+        .put       = nrf_log_backend_rtt_put,
+        .flush     = nrf_log_backend_rtt_flush,
+        .panic_set = nrf_log_backend_rtt_panic_set,
+};
+#endif //NRF_MODULE_ENABLED(NRF_LOG) && NRF_MODULE_ENABLED(NRF_LOG_BACKEND_RTT)

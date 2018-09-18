@@ -1132,7 +1132,8 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	              OpsWakeUp,
 	              OpsInitTransfer);
 				  
-	FlashReadFlagStatusRegister(&ucSR);
+	//FlashReadFlagStatusRegister(&ucSR);
+	//nrf_delay_ms(10);
 
 	// Step 6: Initialize the data (data to be programmed) packet to be sent serially
 	char_stream_send.length   = udNrOfElementsInArray;
@@ -1143,33 +1144,12 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	              NULL_PTR,
 	              OpsWakeUp,
 	              OpsEndTransfer);
-			  
-
-	
-	// Alternate
-	/*
-	char_stream_send.length   = fdo->Desc.NumAddrByte + 1 + udNrOfElementsInArray;
-	uint8 buffer_tx[char_stream_send.length];
-	
-	buffer_tx[0]              = ubSpiInstruction;
-	fill_addr_vect(udAddr, buffer_tx, fdo->Desc.NumAddrByte);
-	
-	memcpy(&buffer_tx[fdo->Desc.NumAddrByte], pArray, udNrOfElementsInArray);
-	char_stream_send.pChar    = buffer_tx;
-
-	Serialize_SPI(&char_stream_send,
-	              NULL_PTR,
-	              OpsWakeUp,
-	              OpsEndTransfer);	
-	*/
 
 
 	// Step 8: Wait until the operation completes or a timeout occurs.
 	ret = WAIT_TILL_Instruction_EXECUTION_COMPLETE(1);
 
-	FlashReadStatusRegister(&ucSR);
 	FlashReadFlagStatusRegister(&fsr_value);
-	FlashClearFlagStatusRegister();
 
 	if((fsr_value & SPI_FSR_PROT) && (fsr_value & SPI_FSR_PROGRAM))
 		return Flash_SectorProtected;
@@ -2627,7 +2607,7 @@ ReturnType  Reset( void )
 	// Step 1: Initialize the data (i.e. Instruction) packet to be sent serially
 	char_stream_send.length = 1;
 	char_stream_send.pChar  = &cWRDI;
-
+	
 	// Step 2: Send the packet serially
 	Serialize_SPI(&char_stream_send,
 	              NULL_PTR,
@@ -2635,11 +2615,7 @@ ReturnType  Reset( void )
 	              OpsEndTransfer);
 
 	// Step 3: Read the Status Register.
-	do
-	{
-		FlashReadStatusRegister(&ucSR);
-	}
-	while(ucSR & SPI_SR1_WEL);
+	nrf_delay_ms(10);
 	
 	// Step 4:
 	cWRDI = SPI_FLASH_INS_REN;
@@ -2648,7 +2624,12 @@ ReturnType  Reset( void )
 	Serialize_SPI(&char_stream_send,
 	              NULL_PTR,
 	              OpsWakeUp,
-	              OpsEndTransfer);	
+	              OpsEndTransfer);
+	
+	nrf_delay_ms(10);
+	FlashReadFlagStatusRegister(&ucSR);
+
+	
 	
 	return Flash_Success;
 }

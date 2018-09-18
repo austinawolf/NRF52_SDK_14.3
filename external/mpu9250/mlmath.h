@@ -83,12 +83,12 @@ double  ml_acos(double);
 #define ABS(x) (((x)>=0)?(x):-(x))
 #endif
 
-#ifndef MIN
-#define MIN(x,y) (((x)<(y))?(x):(y))
+#ifndef INV_MIN
+#define INV_MIN(x,y) (((x)<(y))?(x):(y))
 #endif
 
-#ifndef MAX
-#define MAX(x,y) (((x)>(y))?(x):(y))
+#ifndef INV_MAX
+#define INV_MAX(x,y) (((x)>(y))?(x):(y))
 #endif
 
 /*---------------------------*/
