@@ -41,18 +41,6 @@
 #include "twi_interface.h"
 #include "nrf_delay.h"
 #include "clock_interface.h"
-#define i2c_write   nrf_twi_write
-#define i2c_read    nrf_twi_read
-#define delay_ms    nrf_delay_ms
-#define get_ms      nrf_get_ms
-#define log_i(...)     do {} while (0)
-#define log_e(...)     do {} while (0)
-
-#define labs        labs
-#define fabs(x)     (((x)>0)?(x):-(x))
-#define min(a,b) MIN(a,b)
-
-
 #define NRF_LOG_MODULE_NAME mpu
 #if MPU_CONFIG_LOG_ENABLED
 #define NRF_LOG_LEVEL MPU_CONFIG_LOG_LEVEL
@@ -62,6 +50,21 @@
 #define NRF_LOG_LEVEL 0
 #endif //SPI_CONFIG_LOG_ENABLED
 #include "nrf_log.h"
+
+
+#define i2c_write   nrf_twi_write
+#define i2c_read    nrf_twi_read
+#define delay_ms    nrf_delay_ms
+#define get_ms      nrf_get_ms
+#define log_i     NRF_LOG_DEBUG
+#define log_e     NRF_LOG_ERROR
+
+#define labs        labs
+#define fabs(x)     (((x)>0)?(x):-(x))
+#define min(a,b) MIN(a,b)
+
+#define debug 1
+
 	
 static inline int reg_int_cb(struct int_param_s *int_param)
 {
@@ -629,7 +632,7 @@ int mpu_reg_dump(void)
             continue;
         if (i2c_read(st.hw->addr, ii, 1, &data))
             return -1;
-        log_i("%#5x: %#5x\r\n", ii, data);
+        log_i("%#5x: %#5x", ii, data);
     }
     return 0;
 }
@@ -1728,7 +1731,7 @@ int mpu_read_fifo(short *gyro, short *accel, unsigned long *timestamp,
     fifo_count = (data[0] << 8) | data[1];
     if (fifo_count < packet_size)
         return 0;
-//    log_i("FIFO count: %hd\n", fifo_count);
+//    log_i("FIFO count: %hd", fifo_count);
     if (fifo_count > (st.hw->max_fifo >> 1)) {
         /* FIFO is 50% full, better check overflow bit. */
         if (i2c_read(st.hw->addr, st.reg->int_status, 1, data))
@@ -1944,20 +1947,20 @@ static int accel_self_test(long *bias_regular, long *bias_st)
 
     accel_max_z_bias = (.23f * 65535.f);
     accel_max_xy_bias = (.18f * 65535.f);
-    log_i("ACCEL Bias Test:\r\n");
-    log_i("Initial Biases:%ld, %ld, %ld\r\n", bias_regular[0], bias_regular[1], bias_regular[2]);
+    log_i("ACCEL Bias Test:");
+    log_i("Initial Biases:%ld, %ld, %ld", bias_regular[0], bias_regular[1], bias_regular[2]);
 
     if(result == 0) {
     	if(bias_regular[0]>accel_max_xy_bias) {
-    		log_e("ACCEL FAIL X\r\n");
+    		log_e("ACCEL FAIL X");
     		result |= 1;
     	}
     	if(bias_regular[1]>accel_max_xy_bias) {
-    		log_e("ACCEL FAIL Y\r\n");
+    		log_e("ACCEL FAIL Y");
     		result |= 2;
     	}
     	if(bias_regular[2]>accel_max_z_bias) {
-    		log_e("ACCEL FAIL Z\r\n");
+    		log_e("ACCEL FAIL Z");
     		result |= 4;
     	}
     }
@@ -1994,19 +1997,19 @@ static int gyro_self_test(long *bias_regular, long *bias_st)
     }
 
     gyro_max_bias = (20.f * 65535.f);
-    log_i("GYRO Bias Test:\r\n");
-    log_i("Initial Biases:%ld, %ld, %ld\r\n", bias_regular[0], bias_regular[1], bias_regular[2]);
+    log_i("GYRO Bias Test:");
+    log_i("Initial Biases:%ld, %ld, %ld", bias_regular[0], bias_regular[1], bias_regular[2]);
     if(result == 0) {
     	if(bias_regular[0]>gyro_max_bias) {
-    		log_e("GYRO FAIL X\r\n");
+    		log_e("GYRO FAIL X");
     		result |= 1;
     	}
     	if(bias_regular[1]>gyro_max_bias) {
-    		log_e("GYRO FAIL Y\r\n");
+    		log_e("GYRO FAIL Y");
     		result |= 2;
     	}
     	if(bias_regular[2]>gyro_max_bias) {
-    		log_e("GYRO FAIL Z\r\n");
+    		log_e("GYRO FAIL Z");
     		result |= 4;
     	}
     }
@@ -2237,7 +2240,7 @@ static const unsigned short mpu_6500_st_tb[256] = {
 	28538,28823,29112,29403,29697,29994,30294,30597,
 	30903,31212,31524,31839,32157,32479,32804,33132
 };
-static int accel_6500_self_test(long *bias_regular, long *bias_st, int debug)
+static int accel_6500_self_test(long *bias_regular, long *bias_st, int toggle_debug)
 {
     int i, result = 0, otp_value_zero = 0;
     float accel_st_al_min, accel_st_al_max;
@@ -2245,11 +2248,11 @@ static int accel_6500_self_test(long *bias_regular, long *bias_st, int debug)
     unsigned char regs[3];
     if (i2c_read(st.hw->addr, REG_6500_XA_ST_DATA, 3, regs)) {
     	if(debug)
-    		log_i("Reading OTP Register Error.\n");
+    		log_i("Reading OTP Register Error.");
     	return 0x07;
     }
     if(debug)
-    	log_i("Accel OTP:%d, %d, %d\n", regs[0], regs[1], regs[2]);
+    	log_i("Accel OTP:%d, %d, %d", regs[0], regs[1], regs[2]);
 	for (i = 0; i < 3; i++) {
 		if (regs[i] != 0) {
 			ct_shift_prod[i] = mpu_6500_st_tb[regs[i] - 1];
@@ -2263,25 +2266,29 @@ static int accel_6500_self_test(long *bias_regular, long *bias_st, int debug)
 	}
 	if(otp_value_zero == 0) {
 		if(debug)
-			log_i("ACCEL:CRITERIA A\n");
+			log_i("ACCEL:CRITERIA A");
 		for (i = 0; i < 3; i++) {
 			st_shift_cust[i] = bias_st[i] - bias_regular[i];
 			if(debug) {
-				log_i("Bias_Shift=%7.4f, Bias_Reg=%7.4f, Bias_HWST=%7.4f\r\n",
-						st_shift_cust[i]/1.f, bias_regular[i]/1.f,
-						bias_st[i]/1.f);
-				log_i("OTP value: %7.4f\r\n", ct_shift_prod[i]/1.f);
+	
+				NRF_LOG_DEBUG("Bias_Shift=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(st_shift_cust[i]/1.f));		
+				NRF_LOG_DEBUG("Bias_Reg=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_regular[i]/1.f));		
+				NRF_LOG_DEBUG("Bias_HWST=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_st[i]/1.f))			
+				NRF_LOG_DEBUG("OTP value: " NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(ct_shift_prod[i]/1.f))			
+
 			}
 
 			st_shift_ratio[i] = st_shift_cust[i] / ct_shift_prod[i] - 1.f;
 
 			if(debug)
-				log_i("ratio=%7.4f, threshold=%7.4f\r\n", st_shift_ratio[i]/1.f,
-							test.max_accel_var/1.f);
+
+				NRF_LOG_DEBUG("ratio=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(st_shift_ratio[i]/1.f))			
+				NRF_LOG_DEBUG("threshold=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(test.max_accel_var/1.f))			
+			
 
 			if (fabs(st_shift_ratio[i]) > test.max_accel_var) {
 				if(debug)
-					log_i("ACCEL Fail Axis = %d\n", i);
+					log_i("ACCEL Fail Axis = %d", i);
 				result |= 1 << i;	//Error condition
 			}
 		}
@@ -2292,19 +2299,25 @@ static int accel_6500_self_test(long *bias_regular, long *bias_st, int debug)
 		accel_st_al_max = test.max_g * 65536.f;
 
 		if(debug) {
-			log_i("ACCEL:CRITERIA B\r\n");
-			log_i("Min MG: %7.4f\r\n", accel_st_al_min/1.f);
-			log_i("Max MG: %7.4f\r\n", accel_st_al_max/1.f);
+			log_i("ACCEL:CRITERIA B");
+			NRF_LOG_DEBUG("Min MG:" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(accel_st_al_min/1.f))			
+			NRF_LOG_DEBUG("Max MG: " NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(accel_st_al_max/1.f))			
+
 		}
 
 		for (i = 0; i < 3; i++) {
 			st_shift_cust[i] = bias_st[i] - bias_regular[i];
 
 			if(debug)
-				log_i("Bias_shift=%7.4f, st=%7.4f, reg=%7.4f\n", st_shift_cust[i]/1.f, bias_st[i]/1.f, bias_regular[i]/1.f);
+			
+				NRF_LOG_DEBUG("Bias_shift=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(st_shift_cust[i]/1.f))			
+				NRF_LOG_DEBUG("st=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_st[i]/1.f))			
+				NRF_LOG_DEBUG("reg=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_regular[i]/1.f))			
+			
+
 			if(st_shift_cust[i] < accel_st_al_min || st_shift_cust[i] > accel_st_al_max) {
 				if(debug)
-					log_i("Accel FAIL axis:%d <= 225mg or >= 675mg\n", i);
+					log_i("Accel FAIL axis:%d <= 225mg or >= 675mg", i);
 				result |= 1 << i;	//Error condition
 			}
 		}
@@ -2314,11 +2327,12 @@ static int accel_6500_self_test(long *bias_regular, long *bias_st, int debug)
 	/* Self Test Pass/Fail Criteria C */
 		accel_offset_max = test.max_g_offset * 65536.f;
 		if(debug)
-			log_i("Accel:CRITERIA C: bias less than %7.4f\n", accel_offset_max/1.f);
+			NRF_LOG_DEBUG("Accel:CRITERIA C: bias less than " NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(accel_offset_max/1.f))			
+
 		for (i = 0; i < 3; i++) {
 			if(fabs(bias_regular[i]) > accel_offset_max) {
 				if(debug)
-					log_i("FAILED: Accel axis:%d = %ld > 500mg\n", i, bias_regular[i]);
+					log_i("FAILED: Accel axis:%d = %ld > 500mg", i, bias_regular[i]);
 				result |= 1 << i;	//Error condition
 			}
 		}
@@ -2327,7 +2341,7 @@ static int accel_6500_self_test(long *bias_regular, long *bias_st, int debug)
     return result;
 }
 
-static int gyro_6500_self_test(long *bias_regular, long *bias_st, int debug)
+static int gyro_6500_self_test(long *bias_regular, long *bias_st, int toggle_debug)
 {
     int i, result = 0, otp_value_zero = 0;
     float gyro_st_al_max;
@@ -2336,12 +2350,12 @@ static int gyro_6500_self_test(long *bias_regular, long *bias_st, int debug)
 
     if (i2c_read(st.hw->addr, REG_6500_XG_ST_DATA, 3, regs)) {
     	if(debug)
-    		log_i("Reading OTP Register Error.\n");
+    		log_i("Reading OTP Register Error.");
         return 0x07;
     }
 
     if(debug)
-    	log_i("Gyro OTP:%d, %d, %d\r\n", regs[0], regs[1], regs[2]);
+    	log_i("Gyro OTP:%d, %d, %d", regs[0], regs[1], regs[2]);
 
 	for (i = 0; i < 3; i++) {
 		if (regs[i] != 0) {
@@ -2357,27 +2371,33 @@ static int gyro_6500_self_test(long *bias_regular, long *bias_st, int debug)
 
 	if(otp_value_zero == 0) {
 		if(debug)
-			log_i("GYRO:CRITERIA A\n");
+			log_i("GYRO:CRITERIA A");
 		/* Self Test Pass/Fail Criteria A */
 		for (i = 0; i < 3; i++) {
 			st_shift_cust[i] = bias_st[i] - bias_regular[i];
 
 			if(debug) {
-				log_i("Bias_Shift=%7.4f, Bias_Reg=%7.4f, Bias_HWST=%7.4f\r\n",
-						st_shift_cust[i]/1.f, bias_regular[i]/1.f,
-						bias_st[i]/1.f);
-				log_i("OTP value: %7.4f\r\n", ct_shift_prod[i]/1.f);
+				
+			
+				NRF_LOG_DEBUG("Bias_shift=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(st_shift_cust[i]/1.f))			
+				NRF_LOG_DEBUG("st=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_st[i]/1.f))			
+				NRF_LOG_DEBUG("reg=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_regular[i]/1.f))						
+				NRF_LOG_DEBUG("OTP value: " NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(ct_shift_prod[i]/1.f))			
+
 			}
 
 			st_shift_ratio[i] = st_shift_cust[i] / ct_shift_prod[i];
 
 			if(debug)
-				log_i("ratio=%7.4f, threshold=%7.4f\r\n", st_shift_ratio[i]/1.f,
-							test.max_gyro_var/1.f);
 
+
+				NRF_LOG_DEBUG("ratio=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(st_shift_ratio[i]/1.f))			
+				NRF_LOG_DEBUG("threshold=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(test.max_gyro_var/1.f))			
+			
+			
 			if (fabs(st_shift_ratio[i]) < test.max_gyro_var) {
 				if(debug)
-					log_i("Gyro Fail Axis = %d\n", i);
+					log_i("Gyro Fail Axis = %d", i);
 				result |= 1 << i;	//Error condition
 			}
 		}
@@ -2387,18 +2407,24 @@ static int gyro_6500_self_test(long *bias_regular, long *bias_st, int debug)
 		gyro_st_al_max = test.max_dps * 65536.f;
 
 		if(debug) {
-			log_i("GYRO:CRITERIA B\r\n");
-			log_i("Max DPS: %7.4f\r\n", gyro_st_al_max/1.f);
+			log_i("GYRO:CRITERIA B");
+			NRF_LOG_DEBUG("Max DPS: " NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(gyro_st_al_max/1.f))			
+
 		}
 
 		for (i = 0; i < 3; i++) {
 			st_shift_cust[i] = bias_st[i] - bias_regular[i];
 
 			if(debug)
-				log_i("Bias_shift=%7.4f, st=%7.4f, reg=%7.4f\n", st_shift_cust[i]/1.f, bias_st[i]/1.f, bias_regular[i]/1.f);
+				NRF_LOG_DEBUG("Bias_shift=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(st_shift_cust[i]/1.f))			
+				NRF_LOG_DEBUG("st=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_st[i]/1.f))			
+				NRF_LOG_DEBUG("reg=" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(bias_regular[i]/1.f))					
+			
+
 			if(st_shift_cust[i] < gyro_st_al_max) {
 				if(debug)
-					log_i("GYRO FAIL axis:%d greater than 60dps\n", i);
+					log_i("GYRO FAIL axis:%d greater than 60dps", i);
+
 				result |= 1 << i;	//Error condition
 			}
 		}
@@ -2408,11 +2434,12 @@ static int gyro_6500_self_test(long *bias_regular, long *bias_st, int debug)
 	/* Self Test Pass/Fail Criteria C */
 		gyro_offset_max = test.min_dps * 65536.f;
 		if(debug)
-			log_i("Gyro:CRITERIA C: bias less than %7.4f\n", gyro_offset_max/1.f);
+			NRF_LOG_DEBUG("Gyro:CRITERIA C: bias less than" NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(gyro_offset_max/1.f))		
+		
 		for (i = 0; i < 3; i++) {
 			if(fabs(bias_regular[i]) > gyro_offset_max) {
 				if(debug)
-					log_i("FAILED: Gyro axis:%d = %ld > 20dps\n", i, bias_regular[i]);
+					log_i("FAILED: Gyro axis:%d = %ld > 20dps", i, bias_regular[i]);
 				result |= 1 << i;	//Error condition
 			}
 		}
@@ -2420,7 +2447,7 @@ static int gyro_6500_self_test(long *bias_regular, long *bias_st, int debug)
     return result;
 }
 
-static int get_st_6500_biases(long *gyro, long *accel, unsigned char hw_test, int debug)
+static int get_st_6500_biases(long *gyro, long *accel, unsigned char hw_test, int toggle_debug)
 {
     unsigned char data[HWST_MAX_PACKET_LENGTH];
     unsigned char packet_count, ii;
@@ -2482,7 +2509,7 @@ static int get_st_6500_biases(long *gyro, long *accel, unsigned char hw_test, in
     accel[0] = accel[1] = accel[2] = 0;
 
     if(debug)
-    	log_i("Starting Bias Loop Reads\n");
+    	log_i("Starting Bias Loop Reads");
 
     //start reading samples
     while (s < test.packet_thresh) {
@@ -2519,7 +2546,7 @@ static int get_st_6500_biases(long *gyro, long *accel, unsigned char hw_test, in
     }
 
     if(debug)
-    	log_i("Samples: %d\n", s);
+    	log_i("Samples: %d", s);
 
     //stop FIFO
     data[0] = 0;
@@ -2540,8 +2567,16 @@ static int get_st_6500_biases(long *gyro, long *accel, unsigned char hw_test, in
 
 
     if(debug) {
-    	log_i("Accel offset data HWST bit=%d: %7.4f %7.4f %7.4f\r\n", hw_test, accel[0]/65536.f, accel[1]/65536.f, accel[2]/65536.f);
-    	log_i("Gyro offset data HWST bit=%d: %7.4f %7.4f %7.4f\r\n", hw_test, gyro[0]/65536.f, gyro[1]/65536.f, gyro[2]/65536.f);
+    	log_i("Accel offset data HWST bit=%d:", hw_test)
+		NRF_LOG_DEBUG(NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(accel[0]/65536.f));
+		NRF_LOG_DEBUG(NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(accel[1]/65536.f));		
+		NRF_LOG_DEBUG(NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(accel[2]/65536.f));		
+		
+    	log_i("Gyro offset data HWST bit=%d:", hw_test);
+		NRF_LOG_DEBUG(NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(gyro[0]/65536.f));
+		NRF_LOG_DEBUG(NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(gyro[1]/65536.f));		
+		NRF_LOG_DEBUG(NRF_LOG_FLOAT_MARKER, NRF_LOG_FLOAT(gyro[2]/65536.f));	
+
     }
 
     return 0;
@@ -2562,7 +2597,7 @@ static int get_st_6500_biases(long *gyro, long *accel, unsigned char hw_test, in
  *  @param[in]  debug       Debug flag used to print out more detailed logs. Must first set up logging in Motion Driver.
  *  @return     Result mask (see above).
  */
-int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
+int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char toggle_debug)
 {
     const unsigned char tries = 2;
     long gyro_st[3], accel_st[3];
@@ -2580,7 +2615,7 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
 
 
     if(debug)
-    	log_i("Starting MPU6500 HWST!\r\n");
+    	log_i("Starting MPU6500 HWST!");
 
     if (st.chip_cfg.dmp_on) {
         mpu_set_dmp_state(0);
@@ -2597,7 +2632,7 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
     mpu_get_fifo_config(&fifo_sensors);
 
     if(debug)
-    	log_i("Retrieving Biases\r\n");
+    	log_i("Retrieving Biases");
 
     for (ii = 0; ii < tries; ii++)
         if (!get_st_6500_biases(gyro, accel, 0, debug))
@@ -2607,14 +2642,14 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
          * We'll just report an error for all three sensors.
          */
         if(debug)
-        	log_i("Retrieving Biases Error - possible I2C error\n");
+        	log_i("Retrieving Biases Error - possible I2C error");
 
         result = 0;
         goto restore;
     }
 
     if(debug)
-    	log_i("Retrieving ST Biases\n");
+    	log_i("Retrieving ST Biases");
 
     for (ii = 0; ii < tries; ii++)
         if (!get_st_6500_biases(gyro_st, accel_st, 1, debug))
@@ -2622,7 +2657,7 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
     if (ii == tries) {
 
         if(debug)
-        	log_i("Retrieving ST Biases Error - possible I2C error\n");
+        	log_i("Retrieving ST Biases Error - possible I2C error");
 
         /* Again, probably an I2C error. */
         result = 0;
@@ -2631,11 +2666,11 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
 
     accel_result = accel_6500_self_test(accel, accel_st, debug);
     if(debug)
-    	log_i("Accel Self Test Results: %d\n", accel_result);
+    	log_i("Accel Self Test Results: %d", accel_result);
 
     gyro_result = gyro_6500_self_test(gyro, gyro_st, debug);
     if(debug)
-    	log_i("Gyro Self Test Results: %d\n", gyro_result);
+    	log_i("Gyro Self Test Results: %d", gyro_result);
 
     result = 0;
     if (!gyro_result)
@@ -2646,7 +2681,7 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
 #ifdef AK89xx_SECONDARY
     compass_result = compass_self_test();
     if(debug)
-    	log_i("Compass Self Test Results: %d\n", compass_result);
+    	log_i("Compass Self Test Results: %d", compass_result);
     if (!compass_result)
         result |= 0x04;
 #else
@@ -2654,7 +2689,7 @@ int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug)
 #endif
 restore:
 	if(debug)
-		log_i("Exiting HWST\n");
+		log_i("Exiting HWST");
 	/* Set to invalid values to ensure no I2C writes are skipped. */
 	st.chip_cfg.gyro_fsr = 0xFF;
 	st.chip_cfg.accel_fsr = 0xFF;
@@ -2956,7 +2991,7 @@ static int setup_compass(void)
 
     if (akm_addr > 0x0F) {
         /* TODO: Handle this case in all compass-related functions. */
-        log_e("Compass not found.\n");
+        log_e("Compass not found.");
         return -1;
     }
 

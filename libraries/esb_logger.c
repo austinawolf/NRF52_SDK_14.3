@@ -9,9 +9,6 @@
 #include <string.h>
 #include "nrf.h"
 #include "app_error.h"
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
 #include "nordic_common.h"
 #include "nrf_drv_clock.h"
 #include "sdk_errors.h"
@@ -20,6 +17,20 @@
 #include "led_error.h"
 #include "app_fifo.h"
 #include "nrf_delay.h"
+#include "nrf_esb.h"
+
+
+#define NRF_LOG_MODULE_NAME esb_log
+#if ESB_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL ESB_CONFIG_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR ESB_CONFIG_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR ESB_CONFIG_DEBUG_COLOR
+#else
+#define NRF_LOG_LEVEL 0
+#endif
+#include "nrf_log.h"
+NRF_LOG_MODULE_REGISTER();
+
 
 #define TX_BUFFER_SIZE 256
 
@@ -92,13 +103,12 @@ void esb_log_print(const char* format, ...) {
 	va_start(arglist,format);
 	vsprintf(string,format,arglist);
 	va_end(arglist);
-	
+
 	uint8_t i = 0;
 	while(string[i] != 0) {
 		esb_log( (uint8_t) string[i++]);
 	}
-	//esb_log(0);
-	//esb_log_flush();
+
 	return;
 }
 

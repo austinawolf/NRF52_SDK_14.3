@@ -58,18 +58,13 @@ static struct platform_data_s compass_pdata = {
 
 };
 
-/*
-{ 0, 1, 0,
- 1, 0, 0,
- 0, 0,-1}
-
-*/
 
 uint32_t fifo_num = 0;
 
 int mpu_helper_init(void);
 int mpu_helper_dmp_setup(void);
 int	mpu_helper_inv_setup(void);
+
 
 int imu_init(void) {
 	
@@ -113,113 +108,6 @@ int imu_init(void) {
 
 
 	return 0;
-}
-
-int mpu_helper_init(void) {
-	
-		int ret;
-		unsigned short gyro_rate, gyro_fsr, compass_fsr;
-		unsigned char accel_fsr;
-
-		ret = mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
-		if (ret != 0) {
-			NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
-			return ret;		
-		}	
-		
-		ret = mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-		if (ret != 0) {
-			NRF_LOG_ERROR("mpu_configure_fifo ret:%d",ret);		
-			return ret;		
-		}			
-
-		mpu_set_sample_rate(DMP_RATE);
-
-		#define COMPASS_READ_MS 100
-		mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
-		
-		mpu_get_sample_rate(&gyro_rate);
-		mpu_get_gyro_fsr(&gyro_fsr);
-		mpu_get_accel_fsr(&accel_fsr);
-		mpu_get_compass_fsr(&compass_fsr);
-
-		NRF_LOG_DEBUG("Gyro Rate: %d",gyro_rate);
-		NRF_LOG_DEBUG("Gyro FSR: %d",gyro_fsr);
-		NRF_LOG_DEBUG("Accel FSR: %d",accel_fsr);
-		NRF_LOG_DEBUG("Compass FSR: %d",compass_fsr);
-
-		inv_set_gyro_sample_rate(1000000L / gyro_rate);				
-		inv_set_accel_sample_rate(1000000L / gyro_rate);					
-		inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);		
-
-		inv_set_gyro_orientation_and_scale(
-				inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
-				(long)gyro_fsr<<15);	
-	
-		inv_set_accel_orientation_and_scale(
-				inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
-				(long)accel_fsr<<15);
-		
-		inv_set_compass_orientation_and_scale(
-				inv_orientation_matrix_to_scalar(compass_pdata.orientation),
-				(long)compass_fsr<<15);
-	
-	
-		//const long accel_bias[3] = {0, 0, 0};
-		//const long accel_bias[3] = {33, 12, -162};
-		//const long accel_bias[3] = {5, 20, -200};
-		//mpu_set_accel_bias_6500_reg(accel_bias);
-
-		//long gyro_bias[3] = {0, 0, 0};
-		//long gyro_bias[3] = {-40, 1, 3};
-		//long gyro_bias[3] = {-45, 20, -58};
-		//mpu_set_gyro_bias_reg(gyro_bias);
-
-		return 0;
-
-}
-
-int mpu_helper_dmp_setup(void) {
-    int ret;
-
-	ret = dmp_load_motion_driver_firmware();
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
-		return ret;		
-	}	
-
-    dmp_set_orientation(
-        inv_orientation_matrix_to_scalar(gyro_pdata.orientation));
-
-    dmp_register_tap_cb(NULL);
-	dmp_register_android_orient_cb(NULL);
-
-	ret = dmp_enable_feature(	DMP_FEATURE_6X_LP_QUAT |
-								DMP_FEATURE_SEND_RAW_ACCEL | 
-								DMP_FEATURE_SEND_CAL_GYRO |
-								DMP_FEATURE_GYRO_CAL);
-	
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
-		return ret;		
-	}	
-	
-
-	ret = dmp_set_fifo_rate(DMP_RATE);
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
-		return ret;		
-	}	
-	
-	inv_set_quat_sample_rate(INV_RATE);
-	
-	ret = mpu_set_dmp_state(1);
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
-		return ret;		
-	}		
-	
-	return ret;
 }
 
 
@@ -279,6 +167,7 @@ int	mpu_helper_inv_setup(void) {
 		NRF_LOG_ERROR("inv_start_mpl ret:INV_ERROR_NOT_AUTHORIZED");
 		return result;
     }
+	
     else if (result) {
 		NRF_LOG_ERROR("inv_start_mpl ret:%d",result);
 		return result;		
@@ -288,16 +177,212 @@ int	mpu_helper_inv_setup(void) {
 	return 0;
 }
 
-void mpu_compass_config(void) {
-	mpu_set_bypass(0);
+
+int mpu_helper_init(void) {
+	
+		int ret;
+		unsigned short gyro_rate, gyro_fsr, compass_fsr;
+		unsigned char accel_fsr;
+
+		ret = mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+		if (ret != 0) {
+			NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+			return ret;		
+		}	
+		
+		ret = mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
+		if (ret != 0) {
+			NRF_LOG_ERROR("mpu_configure_fifo ret:%d",ret);		
+			return ret;		
+		}			
+
+		mpu_set_sample_rate(DMP_RATE);
+
+		#define COMPASS_READ_MS 100
+		mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
+		
+		mpu_get_sample_rate(&gyro_rate);
+		mpu_get_gyro_fsr(&gyro_fsr);
+		mpu_get_accel_fsr(&accel_fsr);
+		mpu_get_compass_fsr(&compass_fsr);
+
+		NRF_LOG_DEBUG("Gyro Rate: %d",gyro_rate);
+		NRF_LOG_DEBUG("Gyro FSR: %d",gyro_fsr);
+		NRF_LOG_DEBUG("Accel FSR: %d",accel_fsr);
+		NRF_LOG_DEBUG("Compass FSR: %d",compass_fsr);
+
+		inv_set_gyro_sample_rate(1000000L / gyro_rate);				
+		inv_set_accel_sample_rate(1000000L / gyro_rate);					
+		inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);		
+
+		
+		inv_set_gyro_orientation_and_scale(
+				inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
+				(long)gyro_fsr<<15);	
+	
+		inv_set_accel_orientation_and_scale(
+				inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
+				(long)accel_fsr<<15);
+		
+		inv_set_compass_orientation_and_scale(
+				inv_orientation_matrix_to_scalar(compass_pdata.orientation),
+				(long)compass_fsr<<15);
+	
+	
+		//const long accel_bias[3] = {0, 0, 0};
+		//const long accel_bias[3] = {33, 12, -162};
+		//const long accel_bias[3] = {561, -302, -80};
+		//mpu_set_accel_bias_6500_reg(accel_bias);
+
+		//long gyro_bias[3] = {0, 0, 0};
+		//long gyro_bias[3] = {-40, 1, 3};
+		//long gyro_bias[3] = {0, 0, 0};
+		//mpu_set_gyro_bias_reg(gyro_bias);
+
+		return 0;
+
 }
+
+int mpu_helper_dmp_setup(void) {
+    int ret;
+
+	ret = dmp_load_motion_driver_firmware();
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
+
+    dmp_set_orientation(
+        inv_orientation_matrix_to_scalar(gyro_pdata.orientation));
+
+    dmp_register_tap_cb(NULL);
+	dmp_register_android_orient_cb(NULL);
+
+	ret = dmp_enable_feature(	DMP_FEATURE_6X_LP_QUAT |
+								DMP_FEATURE_SEND_RAW_ACCEL | 
+								DMP_FEATURE_SEND_CAL_GYRO |
+								DMP_FEATURE_GYRO_CAL);
+	
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
+	
+
+	ret = dmp_set_fifo_rate(DMP_RATE);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
+	
+	inv_set_quat_sample_rate(INV_RATE);
+	
+	ret = mpu_set_dmp_state(1);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}		
+	
+	return ret;
+}
+
+
+int imu_init_madgwick(void) {
+	
+	int ret;
+
+	struct int_param_s int_param;
+	int_param.cb = NULL;
+	int_param.pin = 0;
+	int_param.lp_exit = 0;
+	int_param.active_low = 1;
+	
+	//mpu init
+	ret = mpu_init(&int_param);
+	if (ret != 0) {
+		NRF_LOG_DEBUG("mpu_init ret:%d",ret);
+		return ret;
+	}
+
+	//sensor init
+	ret = mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
+	
+	//configure fifo
+	ret = mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_configure_fifo ret:%d",ret);		
+		return ret;		
+	}			
+
+	//set sample rate
+	mpu_set_sample_rate(DMP_RATE);
+
+	//compass sample rate
+	#define COMPASS_READ_MS 100
+	mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
+
+	//program biases
+	#define Ka 1/8
+	#define Kg 2
+
+	//const long accel_bias[3] = {0, 0, 0};
+	//const long accel_bias[3] = {42/8, 133/8, -1287/8};
+	const long accel_bias[3] = {38*Ka, 120*Ka, -1752*Ka};
+	mpu_set_accel_bias_6500_reg(accel_bias);
+
+	//long gyro_bias[3] = {0, 0, 0};
+	//long gyro_bias[3] = {-21*2, 11*2, -24*2};
+	long gyro_bias[3] = {-21*Kg, 11*Kg, -26*Kg};
+	mpu_set_gyro_bias_reg(gyro_bias);	
+	
+	
+	//load dmp
+	ret = dmp_load_motion_driver_firmware();
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
+	
+    dmp_set_orientation(
+        inv_orientation_matrix_to_scalar(gyro_pdata.orientation));
+
+    dmp_register_tap_cb(NULL);
+	dmp_register_android_orient_cb(NULL);
+
+	ret = dmp_enable_feature(	DMP_FEATURE_SEND_RAW_ACCEL | 
+								DMP_FEATURE_SEND_RAW_GYRO);
+	
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
+	
+	ret = dmp_set_fifo_rate(DMP_RATE);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}		
+	ret = mpu_set_dmp_state(1);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}			
+	
+	return 0;
+}
+
+
 
 void imu_self_test(void) {
 	
     int result;
     long gyro[3], accel[3];
 
-    result = mpu_run_6500_self_test(gyro, accel, 0);
+    result = mpu_run_6500_self_test(gyro, accel, 1);
 
     if (result == 0x7) {
 		NRF_LOG_INFO("Passed!\n");
@@ -341,7 +426,6 @@ void imu_self_test(void) {
      }
 
 }
-
 
 void imu_log_fifo(void) {
 
@@ -419,16 +503,28 @@ void imu_log_fifo(void) {
 	}
 }
 
-Motion get_motion_data(void) {
-
-	Motion motion;
-	nrf_get_ms(&motion.sensor_timestamp);
-	NRF_LOG_DEBUG("Sample @ %d ms",motion.sensor_timestamp);
-	motion.sensor_num = SENSOR_NUM;
-	motion.event = fifo_num++;
-	motion.status = dmp_read_fifo(motion.gyro, motion.accel, motion.quat, &motion.sensor_timestamp, &motion.sensors, &motion.more);
+void get_motion_data(Motion *motion) {
 	
-	return motion;
+	motion->sensor_num = SENSOR_NUM;
+	motion->event = fifo_num++;
+	motion->status = dmp_read_fifo(motion->gyro, motion->accel, motion->quat, &motion->sensor_timestamp, &motion->sensors, &motion->more);
+	if (motion->status) {
+		NRF_LOG_DEBUG("dmp_read_fifo ret: ",motion->status);		
+	}	
+	NRF_LOG_DEBUG("Motion Sample @ %d ms",motion->sensor_timestamp);
+
+	return;
+}
+
+void get_compass_data(Motion *motion) {
+
+	motion->cstatus = mpu_get_compass_reg( motion->compass, &motion->compass_timestamp);
+	if (motion->cstatus) {
+		NRF_LOG_DEBUG("mpu_get_compass_reg ret: ",motion->status);		
+	}		
+	
+	NRF_LOG_DEBUG("Compass Sample @ %d ms",motion->compass_timestamp);
+	
 }
 
 
@@ -513,10 +609,10 @@ void mpu_write_reg(uint8_t reg, unsigned char data) {
 
 
 
-Mag mpu_get_mag(void) {
+Compass mpu_get_mag(void) {
 	
 	int ret;
-	Mag mag;
+	Compass mag;
 	
 	unsigned char data[7];
 	

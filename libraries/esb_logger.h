@@ -2,12 +2,9 @@
 #ifndef NRF_ESB_LOGGER_H_
 #define NRF_ESB_LOGGER_H_
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <string.h>
-#include "nrf_esb.h"
-
+#include "stdint.h"
 
 
 

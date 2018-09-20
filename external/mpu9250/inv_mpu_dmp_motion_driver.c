@@ -36,11 +36,22 @@
 #include "clock_interface.h"
 #include "nrf_delay.h"
 
+#define NRF_LOG_MODULE_NAME mpu
+#if MPU_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL MPU_CONFIG_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR MPU_CONFIG_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR MPU_CONFIG_DEBUG_COLOR
+#else
+#define NRF_LOG_LEVEL 0
+#endif
+#include "nrf_log.h"
+
 #define delay_ms    nrf_delay_ms
 #define get_ms      nrf_get_ms
-#define log_i(...)     do {} while (0)
-#define log_e(...)     do {} while (0)
+#define log_i(...)     NRF_LOG_DEBUG(...)
+#define log_e(...)     NRF_LOG_ERROR(...)
 
+#define debug 1
 
 	
 /* These defines are copied from dmpDefaultMPU6050.c in the general MPL
