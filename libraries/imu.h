@@ -6,36 +6,23 @@
 #include <stdio.h>
 #include "twi_interface.h"
 
-#define WHO_AM_I 0x75
-#define I2C_MST_STATUS 0x36
-#define INT_PIN_CFG 0x37
 
-#define DMP_RATE 10
-#define INV_RATE 100000
+/* IMU CONFIG */
+#define SENSOR_NUM 1
+#define IMU_SAMPLE_RATE_HZ 10
+#define IMU_SAMPLE_PERIOD_MS (uint32_t) 1000/IMU_SAMPLE_RATE_HZ
+#define INV_QUAT_SAMPLE_RATE 10000
 
+/* IMU CONVERSIONS */
+#define RAW_GYRO_TO_RADS (float) 2000.0f*2.0f/0xFFFFf * 3.14f/180.0f
+#define RAW_ACCEL_TO_GS (float) 2.0f * 2.0f/0xFFFFf
 
-typedef struct {
-	short x;
-	short y;
-	short z;
-} Acc;
-
-typedef struct {
-	short x;
-	short y;
-	short z;
-} Gyro;	
-
-typedef struct {
-	short x;
-	short y;
-	short z;
-} Compass;	
 
 typedef struct {
 	uint8_t sensor_num;
 	uint32_t event;	
-	short gyro[3], accel[3], compass[3], sensors;
+	short gyro[3], accel[3], sensors;
+	float compass[3];
 	unsigned char more;
 	long quat[4];
 	unsigned long sensor_timestamp;
@@ -49,24 +36,27 @@ struct platform_data_s {
     signed char orientation[9];
 };
 
+// Offsets applied to raw x/y/z values
+extern const float mag_offsets[3];
+// Soft iron error compensation matrix
+extern const float mag_softiron_matrix[3][3];
+extern const float mag_field_strength;
+										
+//program biases
+#define SCALE_ACC_OFFSET 1/8
+#define SCALE_GYRO_OFFSET 2
+extern const long accel_bias[3];
+extern long gyro_bias[3];
+
 
 int imu_init(void);
+void imu_self_test(void);
 int imu_init_madgwick(void);
 
-void get_motion_data(Motion *motion);
-void get_compass_data(Motion *motion);
+void imu_get_data(Motion *motion);
+void imu_get_compass(Motion *motion);
+void imu_send_to_mpl(Motion *motion);
+void imu_log_data(Motion *motion);
 
-void imu_log_fifo(void);
-void imu_self_test(void);
-
-Acc mpu_get_acc(void);
-Compass mpu_get_mag(void);
-Gyro mpu_get_gyro(void);
-
-void mpu_compass_config(void);
-void mpu_get_reg(uint8_t reg);
-void mpu_write_reg(uint8_t reg, unsigned char data);
-void mag_get_reg(uint8_t reg);
-void mag_write_reg(uint8_t reg, unsigned char data);
 
 #endif

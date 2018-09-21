@@ -17,12 +17,12 @@
 
 #include "MadgwickAHRS.h"
 #include <math.h>
-
+#include "imu.h"
 //---------------------------------------------------------------------------------------------------
 // Definitions
 
-#define sampleFreq	9.0f		// sample frequency in Hz
-#define betaDef		0.05f		// 2 * proportional gain
+#define sampleFreq	IMU_SAMPLE_RATE_HZ		// sample frequency in Hz
+#define betaDef		0.3f		// 2 * proportional gain
 
 //---------------------------------------------------------------------------------------------------
 // Variable definitions

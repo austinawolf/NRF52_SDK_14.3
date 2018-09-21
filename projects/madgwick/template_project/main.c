@@ -75,37 +75,35 @@
 #include "app_timer.h"
 #include "clock_interface.h"
 #include "nrf_drv_timer.h"
-
 #include "MadgwickAHRS.h"
+
+app_timer_id_t my_timer_id;
+
 
 uint32_t event_number = 0;
 uint32_t packet_number = 0;
-const nrf_drv_timer_t TIMER_LED = NRF_DRV_TIMER_INSTANCE(0);
 
-// Offsets applied to raw x/y/z values
-const float mag_offsets[3]            = { -2.20F, -5.53F, -26.34F };
 
-// Soft iron error compensation matrix
-const float mag_softiron_matrix[3][3] = { { 0.934, 0.005, 0.013 },
-										{ 0.005, 0.948, 0.012 },
-										{ 0.013, 0.012, 1.129 } }; 
+//#define LOG_OUTPUT
+#define MAG_CAL
+#define CAL_OUTPUT
 
-const float mag_field_strength        = 48.41f;
-										
-void clocks_start( void )
+
+void timeout_handler(void * p_context);
+									
+void clocks_start()
 {
 	
     NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
     NRF_CLOCK->TASKS_HFCLKSTART = 1;
     while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);	
 	
-	app_timer_init();
+	
 
 	NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
 	NRF_CLOCK->TASKS_LFCLKSTART = 1;
 	while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0);
 
-	app_timer_resume();
 
 }
 
@@ -119,16 +117,113 @@ void gpio_init( void )
     bsp_board_leds_init();
 }
 
+void timer_init(void) {
+	
+	ret_code_t err_code;
+	app_timer_init();
 
+	APP_TIMER_DEF(my_timer_id);
+	err_code = app_timer_create(&my_timer_id, APP_TIMER_MODE_REPEATED, timeout_handler);
+	if (err_code) {
+		NRF_LOG_ERROR("app_timer_create ret:%d",err_code);
+	}
+
+	
+	void * p_context;
+	uint32_t ticks = APP_TIMER_TICKS(IMU_SAMPLE_PERIOD_MS+10);
+	
+	err_code = app_timer_start(my_timer_id,ticks,p_context);
+	if (err_code) {
+		NRF_LOG_ERROR("app_timer_create ret:%d",err_code);
+	}	
+}
+
+void timeout_handler(void * p_context) {
+	
+	Motion motion;
+	
+	imu_get_data(&motion);
+	imu_get_compass(&motion);
+
+	float x, y, z, mx, my, mz, gx, gy, gz, ax, ay, az;
+	
+	
+	/* PROCESS COMPASS DATA */
+	#ifndef MAG_CAL
+	// Apply mag offset compensation (base values in uTesla)
+	x = motion.compass[0] - mag_offsets[0];
+	y = motion.compass[1] - mag_offsets[1];
+	z = motion.compass[2] - mag_offsets[2];
+	// Apply mag soft iron error compensation
+	mx = x * mag_softiron_matrix[0][0] + y * mag_softiron_matrix[0][1] + z * mag_softiron_matrix[0][2];
+	my = x * mag_softiron_matrix[1][0] + y * mag_softiron_matrix[1][1] + z * mag_softiron_matrix[1][2];
+	mz = x * mag_softiron_matrix[2][0] + y * mag_softiron_matrix[2][1] + z * mag_softiron_matrix[2][2];
+	#else
+	(void) x;
+	(void) y;
+	(void) z;
+	mx = (float) motion.compass[0];
+	my = (float) motion.compass[1];
+	mz = (float) motion.compass[2];
+	#endif
+	
+	/* PROCESS GYRO DATA */
+	gx = motion.gyro[0] * RAW_GYRO_TO_RADS;
+	gy = motion.gyro[1] * RAW_GYRO_TO_RADS;
+	gz = motion.gyro[2] * RAW_GYRO_TO_RADS;			
+	
+	/* PROCESS ACCEL DATA */
+	ax = motion.accel[0] * RAW_ACCEL_TO_GS;
+	ay = motion.accel[1] * RAW_ACCEL_TO_GS;
+	az = motion.accel[2] * RAW_ACCEL_TO_GS;		
+	
+	/* RUN SENSOR FUSION */	
+	if (motion.status == 0) {	
+		if (false) {
+			MadgwickAHRSupdate(gx, gy, gz, ax, ay, az, mx, my, mz);
+		}
+		else {
+			MadgwickAHRSupdateIMU(gx, gy, gz, ax, ay, az);
+		}
+
+	}
+	else {
+		NRF_LOG_DEBUG("Motion.status: %d", motion.status);
+	}
+	
+	#ifdef LOG_OUTPUT
+	LOG_PRINT("\r\nPacket:%u,",motion.event);
+	LOG_PRINT("%u,",motion.sensor_timestamp);
+	LOG_PRINT("%.3f,", q0);
+	LOG_PRINT("%.3f,", q1);
+	LOG_PRINT("%.3f,", q2);
+	LOG_PRINT("%.3f,", q3);
+	LOG_PRINT("%d,", motion.accel[0]);
+	LOG_PRINT("%d,", motion.accel[1]);
+	LOG_PRINT("%d,", motion.accel[2]);
+	LOG_PRINT("%d,", motion.gyro[0]);
+	LOG_PRINT("%d,", motion.gyro[1]);
+	LOG_PRINT("%d,", motion.gyro[2]);
+	LOG_PRINT("%i,",motion.sensor_num);
+	LOG_PRINT("%i\r\n", motion.status);				
+	#endif
+	
+	#ifdef CAL_OUTPUT
+	LOG_PRINT("Raw:");
+	LOG_PRINT("%d,%d,%d,",motion.accel[0],motion.accel[1],motion.accel[2]);		
+	LOG_PRINT("%d,%d,%d,",motion.gyro[0],motion.gyro[1],motion.gyro[2]);
+	LOG_PRINT("%d,%d,%d", (int) mx,(int) my, (int) mz);
+	LOG_PRINT("\n\r");
+	#endif
+	
+	LOG_FLUSH();
+}
 
 int main(void)
 {
 	uint32_t err_code;
 
-
 	int imu_status;
-
-	float x, y, z, mx, my, mz, gx, gy, gz, ax, ay, az;
 	
 	//GPIO/LEDS INIT
 	gpio_init();
@@ -141,21 +236,16 @@ int main(void)
 
 	//CLOCKS INIT
 	clocks_start();
-
-	//TIMER INIT
-	app_timer_init();
-	
 	
 	//log init
 	err_code = NRF_LOG_INIT(NULL);
 	APP_ERROR_CHECK(err_code);
 	NRF_LOG_DEFAULT_BACKENDS_INIT();
-		
-	NRF_LOG_INFO("Enhanced ShockBurst Transmitter Example running.");
 	
-		
 	//MPU INIT
-	imu_status = imu_init_madgwick();			
+	imu_status = imu_init_madgwick();		
+		
+	NRF_LOG_INFO("Enhanced ShockBurst Transmitter Example running.");		
 	
 	//running	
 	LOG_PRINT("Esb Logger Running\r\n");
@@ -164,87 +254,14 @@ int main(void)
 		NVIC_SystemReset();
 	}
 	
-	while (true) 
-	{
-		Motion motion;
+	//TIMER INIT
+	timer_init();
+	
+	while(true) {
 		
-		get_motion_data(&motion);
-		get_compass_data(&motion);
-					
-		// process compass data
-
-		// Apply mag offset compensation (base values in uTesla)
-		x = motion.compass[0] - mag_offsets[0];
-		y = motion.compass[1] - mag_offsets[1];
-		z = motion.compass[2] - mag_offsets[2];
-		// Apply mag soft iron error compensation
-		mx = x * mag_softiron_matrix[0][0] + y * mag_softiron_matrix[0][1] + z * mag_softiron_matrix[0][2];
-		my = x * mag_softiron_matrix[1][0] + y * mag_softiron_matrix[1][1] + z * mag_softiron_matrix[1][2];
-		mz = x * mag_softiron_matrix[2][0] + y * mag_softiron_matrix[2][1] + z * mag_softiron_matrix[2][2];
-
-		
-		// process gyro data
-		
-		// The filter library expects gyro data in degrees/s, but adafruit sensor
-		// uses rad/s so we need to convert them first (or adapt the filter lib
-		// where they are being converted)
-		gx = motion.gyro[0] * 0.00106528;
-		gy = motion.gyro[1] * 0.00106528;
-		gz = motion.gyro[2] * 0.00106528;			
-		
-		// process accel dat
-		
-		ax = motion.accel[0] * 0.0000610361;
-		ay = motion.accel[1] * 0.0000610361;
-		az = motion.accel[2] * 0.0000610361;		
-		
-		//MadgwickAHRSupdate(gx, gy, gz,
-        //        (float) motion.accel[0], (float) motion.accel[1], (float) motion.accel[2],
-        //        mx, my, mz);
-
-		if (motion.status == 0) {
-			
-			//MadgwickAHRSupdateIMU(gx, gy, gz, ax, ay, az);
-
-			MadgwickAHRSupdate(gx, gy, gz, ax, ay, az, mx, my, mz);
-
-
-		}
-		else {
-			NRF_LOG_DEBUG("Motion.status: %d", motion.status);
-		}
-
-		nrf_delay_ms(95);
-
-		
-        LOG_PRINT("\r\nPacket:%u,",motion.event);
-        LOG_PRINT("%u,",motion.sensor_timestamp);
-        LOG_PRINT("%.3f,", q0);
-        LOG_PRINT("%.3f,", q1);
-        LOG_PRINT("%.3f,", q2);
-        LOG_PRINT("%.3f,", q3);
-        LOG_PRINT("%d,", motion.accel[0]);
-        LOG_PRINT("%d,", motion.accel[1]);
-        LOG_PRINT("%d,", motion.accel[2]);
-        LOG_PRINT("%d,", motion.gyro[0]);
-        LOG_PRINT("%d,", motion.gyro[1]);
-        LOG_PRINT("%d,", motion.gyro[2]);
-        LOG_PRINT("%i,",motion.sensor_num);
-        LOG_PRINT("%i\r\n", motion.status);				
-		
-		//LOG_PRINT("Raw:");
-		//LOG_PRINT("%d,%d,%d,",motion.accel[0],motion.accel[1],motion.accel[2]);		
-		//LOG_PRINT("%d,%d,%d,",motion.gyro[0],motion.gyro[1],motion.gyro[2]);
-		//LOG_PRINT("%d,%d,%d", (int) mx,(int) my, (int) mz);
-		//LOG_PRINT("\n\r");
-		
-		
-		
-		
-		LOG_FLUSH();
-
-
-
 	}
+	
 
 }
+
+

@@ -80,6 +80,7 @@ uint32_t event_number = 0;
 uint32_t packet_number = 0;
 const nrf_drv_timer_t TIMER_LED = NRF_DRV_TIMER_INSTANCE(0);
 
+void timeout_handler(void * p_context);
 
 void clocks_start( void )
 {
@@ -87,14 +88,10 @@ void clocks_start( void )
     NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
     NRF_CLOCK->TASKS_HFCLKSTART = 1;
     while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);	
-	
-	app_timer_init();
 
 	NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
 	NRF_CLOCK->TASKS_LFCLKSTART = 1;
 	while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0);
-
-	app_timer_resume();
 
 }
 
@@ -109,12 +106,31 @@ void gpio_init( void )
 }
 
 
+void timer_init(void) {
+	
+	ret_code_t err_code;
+	app_timer_init();
+
+	APP_TIMER_DEF(my_timer_id);
+	err_code = app_timer_create(&my_timer_id, APP_TIMER_MODE_REPEATED, timeout_handler);
+	if (err_code) {
+		NRF_LOG_ERROR("app_timer_create ret:%d",err_code);
+	}
+
+	void * p_context;
+	uint32_t ticks = APP_TIMER_TICKS(IMU_SAMPLE_PERIOD_MS+10);
+	
+	err_code = app_timer_start(my_timer_id,ticks,p_context);
+	if (err_code) {
+		NRF_LOG_ERROR("app_timer_start ret:%d",err_code);
+	}	
+}
 
 int main(void)
 {
 	uint32_t err_code;
 
-
+	
 	int imu_status;
 
 	//GPIO/LEDS INIT
@@ -128,42 +144,45 @@ int main(void)
 
 	//CLOCKS INIT
 	clocks_start();
-
-	//TIMER INIT
-	app_timer_init();
-	
 	
 	//log init
 	err_code = NRF_LOG_INIT(NULL);
 	APP_ERROR_CHECK(err_code);
 	NRF_LOG_DEFAULT_BACKENDS_INIT();
-		
 	NRF_LOG_INFO("Enhanced ShockBurst Transmitter Example running.");
 	
-		
 	//MPU INIT
 	imu_status = imu_init();			
-	imu_self_test();
-	
-	//running	
-	LOG_PRINT("Esb Logger Running\r\n");
 	if (imu_status) {
-		//alert(BSP_BOARD_LED_2, RESET);	
+		NRF_LOG_INFO("IMU init failed. Restarting.");
+		NRF_LOG_FINAL_FLUSH();
 		NVIC_SystemReset();
 	}
+	imu_self_test();
+	
+	
+	LOG_PRINT("Esb Logger Running\r\n");
+	LOG_FLUSH();
+	
+	//run
+	timer_init();
 	
 	while (true) 
 	{
-		//Motion motion;
-		imu_log_fifo();
-		nrf_delay_ms(95);
-		
-		while(1) {
-			
-		}
-
-
-
+		//WFE
 	}
 
+}
+void timeout_handler(void * p_context) {
+	Motion motion;
+
+
+	imu_get_data(&motion);
+	if (motion.status) {
+		return;	
+	}	
+	imu_get_compass(&motion);
+	imu_send_to_mpl(&motion);
+	imu_log_data(&motion);	
+	
 }
