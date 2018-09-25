@@ -40,20 +40,10 @@
 #define EXT_MOD
 
 #define ENABLE_PRINT_DEBUG
-#define printf NRF_LOG_DEBUG
-
-
-#define NRF_LOG_MODULE_NAME n25q
-#if N25_CONFIG_LOG_ENABLED
-#define NRF_LOG_LEVEL       N25_CONFIG_LOG_LEVEL
-#define NRF_LOG_INFO_COLOR  N25_CONFIG_INFO_COLOR
-#define NRF_LOG_DEBUG_COLOR N25_CONFIG_DEBUG_COLOR
-#else
-#define NRF_LOG_LEVEL       0
-#endif
+#define printf NRF_LOG_RAW_INFO
 #include "nrf_log.h"
-NRF_LOG_MODULE_REGISTER();
-
+#include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
 
 /*******************************************************************************
 Function:     ConfigureSpi(SpiConfigOptions opt)
@@ -127,10 +117,10 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
 
 	#ifdef ENABLE_PRINT_DEBUG
 		int i;
-		NRF_LOG_RAW_INFO("SEND: ");
+		printf("SEND: ");
 		for(i=0; i<tx_len; i++)
-			NRF_LOG_RAW_INFO(" 0x%x ", char_send[i]);
-		NRF_LOG_RAW_INFO("\n");
+			printf(" 0x%x ", char_send[i]);
+		printf("\n");
 	#endif	
 	
 	
@@ -154,11 +144,10 @@ SPI_STATUS Serialize_SPI(const CharStream* char_stream_send,
 	
 
 #ifdef ENABLE_PRINT_DEBUG
-	NRF_LOG_RAW_INFO("RECV: ");
-	
+	printf("RECV: ");
 	for(i=0; i<rx_len; i++)
-		NRF_LOG_RAW_INFO(" 0x%x ", char_recv[i]);
-	NRF_LOG_RAW_INFO("\n");
+		printf(" 0x%x ", char_recv[i]);
+	printf("\n");
 #endif
 
 	ConfigureSpi(optAfter);

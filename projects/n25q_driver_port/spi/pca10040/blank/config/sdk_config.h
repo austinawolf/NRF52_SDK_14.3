@@ -120,7 +120,7 @@
 // <2147483648=> 8 MHz 
 
 #ifndef SPI_DEFAULT_FREQUENCY
-#define SPI_DEFAULT_FREQUENCY -2147483648
+#define SPI_DEFAULT_FREQUENCY -33554432
 #endif
 
 // <o> NRF_SPI_DRV_MISO_PULLUP_CFG  - MISO PIN pull-up configuration.
@@ -130,7 +130,7 @@
 // <3=> NRF_GPIO_PIN_PULLUP 
 
 #ifndef NRF_SPI_DRV_MISO_PULLUP_CFG
-#define NRF_SPI_DRV_MISO_PULLUP_CFG 0
+#define NRF_SPI_DRV_MISO_PULLUP_CFG 1
 #endif
 
 // <e> SPI0_ENABLED - Enable SPI0 instance
@@ -194,7 +194,7 @@
 // <e> UART_ENABLED - nrf_drv_uart - UART/UARTE peripheral driver
 //==========================================================
 #ifndef UART_ENABLED
-#define UART_ENABLED 1
+#define UART_ENABLED 0
 #endif
 // <o> UART_DEFAULT_CONFIG_HWFC  - Hardware Flow Control
  
@@ -608,7 +608,7 @@
 // <4=> Debug 
 
 #ifndef NRF_LOG_DEFAULT_LEVEL
-#define NRF_LOG_DEFAULT_LEVEL 3
+#define NRF_LOG_DEFAULT_LEVEL 4
 #endif
 
 // <q> NRF_LOG_DEFERRED  - Enable deffered logger.
@@ -1938,6 +1938,57 @@
 
 #ifndef USBD_CONFIG_DEBUG_COLOR
 #define USBD_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> N25_CONFIG_LOG_ENABLED - Enable logging in the module
+//==========================================================
+#ifndef N25_CONFIG_LOG_ENABLED
+#define N25_CONFIG_LOG_ENABLED 1
+#endif
+// <o> N25_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef N25_CONFIG_LOG_LEVEL
+#define N25_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> N25_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef N25_CONFIG_INFO_COLOR
+#define N25_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> N25_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef N25_CONFIG_DEBUG_COLOR
+#define N25_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>

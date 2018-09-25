@@ -43,11 +43,13 @@
 #include "nrf_delay.h"
 #include "boards.h"
 #include "app_error.h"
+#include "nrf_drv_gpiote.h"
+
 #include <string.h>
+#include "N25Q.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-#include "N25Q.h"
 
 /*
 static uint8_t       m_tx_buf[] = {0x9E};           // TX buffer.
@@ -55,11 +57,22 @@ static uint8_t       m_rx_buf[30];    // RX buffer
 static const uint8_t tx_length = sizeof(m_tx_buf);        // Transfer length
 static const uint8_t rx_length = 30;        // Transfer length
 */
+#define PIN NRF_GPIO_PIN_MAP(1,3)
+#define TRIGGER nrf_gpio_pin_set(PIN)
 
+
+void gpio_init(void) {
+	
+	nrf_gpio_cfg_output(PIN);
+	nrf_gpio_pin_clear(PIN);
+}
 int main(void)
 {
 	//leds init
-    bsp_board_leds_init();
+    //bsp_board_leds_init();
+	gpio_init();
+
+	
 	
 	//log init
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
@@ -72,7 +85,7 @@ int main(void)
 	NMX_uint16 reg16;
 	NMX_uint8 reg8;
     NMX_uint8 rbuffer[20];
-    NMX_uint8 wbuffer[16] = /* write buffer */
+    NMX_uint8 wbuffer[32] = /* write buffer */
     {
 		0xBE, 0xEF, 0xFE, 0xED, 0xBE, 0xEF, 0xFE, 0xED,
 		0xBE, 0xEF, 0xFE, 0xED, 0xBE, 0xEF, 0xFE, 0xED
@@ -84,38 +97,33 @@ int main(void)
 	spi_init();
 
 	//driver init
-    ret = Driver_Init(&fdo); /* initialize the flash driver */
+	ret = Driver_Init(&fdo); /* initialize the flash driver */
     if (Flash_WrongType == ret)
     {
         NRF_LOG_RAW_INFO("Sorry, no device detected.\n"); 
     }
 	else {
 		NRF_LOG_RAW_INFO("Device detected.\n");		
-	}
-	
-	Reset();
-	
+	}	
 		
+	
 	NRF_LOG_RAW_INFO("\nSECTOR ERASE\n");
-	ret = fdo.GenOp.SubSectorErase(0); /* erase first subsector */
-	NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
-
+	ret = fdo.GenOp.SectorErase(0); /* erase first subsector */
+	NRF_LOG_RAW_INFO("TrRet: %d\n", ret);
+	
 	NRF_LOG_RAW_INFO("\nDATA PROGRAM\n");	
-    para.PageProgram.udAddr = 0x40; /* program 16 byte at address 0 */
+    para.PageProgram.udAddr = 0x0; /* program 16 byte at address 0 */
     para.PageProgram.pArray = wbuffer;
     para.PageProgram.udNrOfElementsInArray = 16;
 	ret = fdo.GenOp.DataProgram(PageProgram, &para);
-    NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
-
+    NRF_LOG_RAW_INFO("Ret: %d\n", ret);
+	
 	NRF_LOG_RAW_INFO("\nDATA READ\n");
-    para.Read.udAddr = 0x40; /* read 16 byte at address 0 */
+    para.Read.udAddr = 0x0; /* read 16 byte at address 0 */
     para.Read.pArray = rbuffer;
     para.Read.udNrOfElementsToRead = 20;
     ret = fdo.GenOp.DataRead(Read, &para);
-    NRF_LOG_RAW_INFO("\nRet: %d\n", ret);
-	
-	NMX_uint8 ucSR;
-	FlashReadVolatileEnhancedConfigurationRegister(&ucSR);
+    NRF_LOG_RAW_INFO("Ret: %d\n", ret);
 
 
     while (1)

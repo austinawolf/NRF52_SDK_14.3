@@ -96,9 +96,11 @@ ReturnType WAIT_TILL_Instruction_EXECUTION_COMPLETE(NMX_sint16 second);
 #define DEBUG
 #define printf NRF_LOG_RAW_INFO
 #include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
 
+
+#define PIN NRF_GPIO_PIN_MAP(1,3)
+#define TRIGGER nrf_gpio_pin_set(PIN)
+#include "nrf_gpio.h"
 /*******************************************************************************
 Function:     uAddrType BlockOffset ( uSectorType uscSectorNr);
 Arguments:    Sector Number
@@ -1108,6 +1110,9 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	NMX_uint8 fsr_value;
 	ReturnType ret;
 
+	TRIGGER;
+
+	
 	// Step 1: Validate address input
 	if(!(udAddr < fdo->Desc.FlashSize))
 		return Flash_AddressInvalid;
@@ -1116,7 +1121,9 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	if(IsFlashBusy()) return Flash_OperationOngoing;
 
 	// Step 3: Disable Write protection
-	//fdo->GenOp.WriteEnable();
+	fdo->GenOp.WriteEnable();
+
+	FlashReadFlagStatusRegister(&fsr_value);
 
 	// Step 4: Initialize the data (Instruction & address only) packet to be sent serially
 	char_stream_send.length   = fdo->Desc.NumAddrByte + 1;
@@ -1127,14 +1134,13 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	fill_addr_vect(udAddr, pIns_Addr, fdo->Desc.NumAddrByte);
 
 	// Step 5: Send the packet (Instruction & address only) serially
+
 	Serialize_SPI(&char_stream_send,
 	              NULL_PTR,
 	              OpsWakeUp,
 	              OpsInitTransfer);
 				  
-	//FlashReadFlagStatusRegister(&ucSR);
-	//nrf_delay_ms(10);
-
+	
 	// Step 6: Initialize the data (data to be programmed) packet to be sent serially
 	char_stream_send.length   = udNrOfElementsInArray;
 	char_stream_send.pChar    = pArray;
@@ -1144,6 +1150,8 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	              NULL_PTR,
 	              OpsWakeUp,
 	              OpsEndTransfer);
+	
+	FlashReadFlagStatusRegister(&fsr_value);
 
 
 	// Step 8: Wait until the operation completes or a timeout occurs.
@@ -2336,7 +2344,7 @@ ReturnType FlashOTPProgram(NMX_uint8 *pArray , NMX_uint32 udNrOfElementsInArray)
 
 	// Step 6: Initialize the data (data to be programmed) packet to be sent serially
 	char_stream_send.length   = udNrOfElementsInArray;
-	char_stream_send.pChar    = pArray;
+	char_stream_send.pChar    = sentBuffer;
 
 	// Step 7: Send the packet (data to be programmed) serially
 	Serialize_SPI(&char_stream_send,
