@@ -8,14 +8,17 @@
 
 
 /* IMU CONFIG */
-#define SENSOR_NUM 1
+#define SENSOR_NUM 2
 #define IMU_SAMPLE_RATE_HZ 10
 #define IMU_SAMPLE_PERIOD_MS (uint32_t) 1000/IMU_SAMPLE_RATE_HZ
 #define INV_QUAT_SAMPLE_RATE 10000
+#define MAG_USE_CAL
 
 /* IMU CONVERSIONS */
 #define RAW_GYRO_TO_RADS (float) 2000.0f*2.0f/0xFFFFf * 3.14f/180.0f
 #define RAW_ACCEL_TO_GS (float) 2.0f * 2.0f/0xFFFFf
+
+//
 
 
 typedef struct {
@@ -57,6 +60,7 @@ void imu_get_data(Motion *motion);
 void imu_get_compass(Motion *motion);
 void imu_send_to_mpl(Motion *motion);
 void imu_log_data(Motion *motion);
+void imu_log_motion_cal(Motion *motion);
 
 
 #endif

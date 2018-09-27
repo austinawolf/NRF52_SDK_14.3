@@ -99,10 +99,6 @@ int mpu_helper_init(void);
 int mpu_helper_dmp_setup(void);
 int	mpu_helper_inv_setup(void);
 
-static void mpu_get_reg(uint8_t reg);
-static void mpu_write_reg(uint8_t reg, unsigned char data);
-static void mag_get_reg(uint8_t reg);
-static void mag_write_reg(uint8_t reg, unsigned char data);
 
 
 int imu_init(void) {
@@ -158,6 +154,8 @@ int	mpu_helper_inv_setup(void) {
 		NRF_LOG_ERROR("inv_init_mpl ret:%d",result);
 		return result;		
     }
+	
+	inv_init_9x_fusion();
 
 	result = inv_enable_quaternion();
 	if (result) {
@@ -183,13 +181,13 @@ int	mpu_helper_inv_setup(void) {
 		return result;		
     }
     
-	result = inv_enable_vector_compass_cal();
+	//result = inv_enable_vector_compass_cal();
 	if (result) {
 		NRF_LOG_ERROR("inv_enable_vector_compass_cal ret:%d",result);
 		return result;		
     }    
 	
-	result = inv_enable_magnetic_disturbance();	
+	//result = inv_enable_magnetic_disturbance();	
 	if (result) {
 		NRF_LOG_ERROR("inv_enable_magnetic_disturbance ret:%d",result);
 		return result;		
@@ -485,12 +483,11 @@ void imu_send_to_mpl(Motion *motion) {
 		NRF_LOG_ERROR("inv_build_gyro ret:%d",result);		
     }	
 	
-	
-	/*mpu_get_temperature(&temperature, &timestamp);
+	mpu_get_temperature(&temperature, &timestamp);
     result = inv_build_temp(temperature, timestamp);
 	if (result) {
 		NRF_LOG_ERROR("inv_build_temp ret:%d",result);		
-    }*/	
+    }
 
 	compass[0] = (long)motion->compass[0];
 	compass[1] = (long)motion->compass[1];
@@ -524,18 +521,12 @@ void imu_send_to_mpl(Motion *motion) {
 		NRF_LOG_ERROR("inv_get_sensor_type_quat ret:%d",result);
 		return;
 	}
-	else {
-		//NRF_LOG_INFO("accuracy: %d, d0: %d, d1: %d, d2: %d, d3: %d",accuracy, data[0],data[1],data[2],data[3]);
-		
-	}
 
-	
+	NRF_LOG_DEBUG("Mag State: %d", inv_get_magnetic_disturbance_state());
 }
 
 void imu_log_data(Motion *motion) {	
 	
-	#define LOG_OUTPUT
-	#ifdef LOG_OUTPUT
 	LOG_PRINT("\r\nPacket:%u,",motion->event);
 	LOG_PRINT("%u,",motion->sensor_timestamp);
 	LOG_PRINT("%d,", motion->quat[0]);
@@ -554,10 +545,20 @@ void imu_log_data(Motion *motion) {
 	LOG_PRINT("%i,",motion->sensor_num);
 	LOG_PRINT("%i\r\n", motion->status);
 	LOG_FLUSH();
-	#endif	
-	
 	
 
+}
+
+void imu_log_motion_cal(Motion *motion) {	
+	
+	LOG_PRINT("Raw:");
+	LOG_PRINT("%d,%d,%d,",motion->accel[0],motion->accel[1],motion->accel[2]);		
+	LOG_PRINT("%d,%d,%d,",motion->gyro[0],motion->gyro[1],motion->gyro[2]);
+	LOG_PRINT("%d,%d,%d", (int) motion->compass[0], (int)motion->compass[1], (int) motion->compass[2]);
+	LOG_PRINT("\n\r");
+	LOG_FLUSH();
+
+	
 }
 
 void imu_get_data(Motion *motion) {
@@ -586,7 +587,7 @@ void imu_get_compass(Motion *motion) {
 	
 	
 	/* PROCESS COMPASS DATA */
-	#ifndef MAG_CAL
+	#ifdef MAG_USE_CAL
 	// Apply mag offset compensation (base values in uTesla)
 	x = (float) compass[0] - mag_offsets[0];
 	y = (float) compass[1] - mag_offsets[1];
@@ -597,85 +598,13 @@ void imu_get_compass(Motion *motion) {
 	motion->compass[1] = x * mag_softiron_matrix[1][0] + y * mag_softiron_matrix[1][1] + z * mag_softiron_matrix[1][2];
 	motion->compass[2] = x * mag_softiron_matrix[2][0] + y * mag_softiron_matrix[2][1] + z * mag_softiron_matrix[2][2];
 	
-	#else
-	motion.compass[0] = (float) compass[0];
-	motion.compass[1] = (float) compass[1];
-	motion.compass[2] = (float) compass[2];
+	#else	
+	motion->compass[0] = (float) compass[0];
+	motion->compass[1] = (float) compass[1];
+	motion->compass[2] = (float) compass[2];
 	#endif	
 	
 	
 	
 }
-
-static void mpu_get_reg(uint8_t reg) {
-	
-	int ret;
-	
-	unsigned char data[7];
-	
-	ret = nrf_twi_read(MPU9150_ADDR, reg, 1, data);
-	if (ret != 0) {
-		critical_error(BSP_BOARD_LED_0,3);
-	}	
-
-	LOG_PRINT("Read Reg: %d, Data: %d\n\r",reg, data[0]);
-
-	return;
-		
-}
-
-
-
-
-static void mpu_write_reg(uint8_t reg, unsigned char data) {
-	
-	int ret;
-		
-	ret = nrf_twi_write(MPU9150_ADDR, reg, 1, &data);
-	
-	if (ret != 0) {
-		critical_error(BSP_BOARD_LED_0,3);
-	}	
-
-	LOG_PRINT("Write Reg: %d, Data: %d\n\r",reg, data);
-
-	return;
-		
-}
-
-static void mag_get_reg(uint8_t reg) {
-	
-	int ret;
-	
-	unsigned char data[7];
-	
-	ret = nrf_twi_read(AK8963_ADDR, reg, 1, data);
-	if (ret != 0) {
-		critical_error(BSP_BOARD_LED_0,3);
-	}	
-
-	LOG_PRINT("Read Reg: %d, Data: %d\n\r",reg, data[0]);
-
-	return;
-		
-}
-
-static void mag_write_reg(uint8_t reg, unsigned char data) {
-	
-	int ret;
-			
-	ret = nrf_twi_write(AK8963_ADDR, reg, 1, &data);
-	
-	if (ret != 0) {
-		critical_error(BSP_BOARD_LED_0,3);
-	}	
-
-	LOG_PRINT("Write Reg: %d, Data: %d\n\r",reg, data);
-
-	return;
-		
-		
-}
-
-
 
