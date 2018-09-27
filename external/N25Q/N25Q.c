@@ -1110,7 +1110,6 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	NMX_uint8 fsr_value;
 	ReturnType ret;
 
-	TRIGGER;
 
 	
 	// Step 1: Validate address input
@@ -1134,6 +1133,7 @@ ReturnType FlashGenProgram(uAddrType udAddr, NMX_uint8 *pArray , NMX_uint32 udNr
 	fill_addr_vect(udAddr, pIns_Addr, fdo->Desc.NumAddrByte);
 
 	// Step 5: Send the packet (Instruction & address only) serially
+	TRIGGER;
 
 	Serialize_SPI(&char_stream_send,
 	              NULL_PTR,

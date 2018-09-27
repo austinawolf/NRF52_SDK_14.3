@@ -183,7 +183,7 @@ void timeout_handler(void * p_context) {
 	}	
 	imu_get_compass(&motion);
 	imu_send_to_mpl(&motion);
-	imu_log_motion_cal(&motion);
+	imu_log_data(&motion);
 	
 	
 }

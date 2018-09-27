@@ -57,7 +57,7 @@ static uint8_t       m_rx_buf[30];    // RX buffer
 static const uint8_t tx_length = sizeof(m_tx_buf);        // Transfer length
 static const uint8_t rx_length = 30;        // Transfer length
 */
-#define PIN NRF_GPIO_PIN_MAP(1,3)
+#define PIN NRF_GPIO_PIN_MAP(0,3)
 #define TRIGGER nrf_gpio_pin_set(PIN)
 
 

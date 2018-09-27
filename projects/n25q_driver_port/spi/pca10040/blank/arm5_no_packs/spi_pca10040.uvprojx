@@ -604,16 +604,19 @@
           <GroupName>N25Q</GroupName>
           <Files>
             <File>
-              <FileName>N25Q.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\external\N25Q\N25Q.C</FilePath>
-            </File>
-            <File>
               <FileName>Serialize.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\external\N25Q\Serialize.c</FilePath>
             </File>
+            <File>
+              <FileName>N25Q.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\external\N25Q\N25Q.C</FilePath>
+            </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>MT25Q</GroupName>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>
