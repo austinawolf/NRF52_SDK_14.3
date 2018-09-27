@@ -37,7 +37,6 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-#include "nrf_esb.h"
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -48,7 +47,11 @@
 #include "nrf_gpio.h"
 #include "nrf_error.h"
 #include "boards.h"
-
+#include "bsp.h"
+#include "app_timer.h"
+#include "nrf_drv_clock.h"
+#include "nrf_esb.h"
+#include "app_util_platform.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -148,6 +151,43 @@ uint32_t esb_init( void )
 }
 
 
+
+static void bsp_evt_handler(bsp_event_t evt)
+{
+    switch (evt)
+    {
+        // Button 1 - switch to the previous demo.
+        case BSP_EVENT_KEY_0:
+			
+			printf("Setting Baud to 1M...\n\r");
+			set_baud(UART_BAUDRATE_BAUDRATE_Baud1M);
+			return;
+				
+        // Button 2 - switch to the next demo.
+        case BSP_EVENT_KEY_1:
+  
+		
+			printf("Setting Baud to 115200...\n\r");
+			
+			set_baud(UART_BAUDRATE_BAUDRATE_Baud115200);
+			return;
+				
+        default:
+            return;
+    }
+
+}
+
+static void init_bsp()
+{
+    APP_ERROR_CHECK(nrf_drv_clock_init());
+    nrf_drv_clock_lfclk_request(NULL);
+
+    APP_ERROR_CHECK(app_timer_init());
+    APP_ERROR_CHECK(bsp_init(BSP_INIT_BUTTONS, bsp_evt_handler));
+    APP_ERROR_CHECK(bsp_buttons_enable());
+}
+
 int main(void)
 {
     uint32_t err_code;
@@ -155,10 +195,8 @@ int main(void)
 	//gpio init
     gpio_init();
 	
-	//log init
-    //err_code = NRF_LOG_INIT(NULL);
-    //APP_ERROR_CHECK(err_code);
-    //NRF_LOG_DEFAULT_BACKENDS_INIT();
+	//bsp init
+	init_bsp();
 	
 	//clocks start
     clocks_start();
@@ -172,14 +210,14 @@ int main(void)
     APP_ERROR_CHECK(err_code);
 		
 	//uart helper init
-	uart_init();   
+	uart_helper_init();   
 		
 	//running		
     printf("Enhanced ShockBurst Receiver Example running.\n\r");
 
     while (true)
     {
-				
+		__WFE();	
     }
 }
 

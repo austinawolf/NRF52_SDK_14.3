@@ -27,7 +27,7 @@ void uart_event_handle(app_uart_evt_t* p_event) {
 	}
 }
 
-void uart_init(void) {
+void uart_helper_init(void) {
 	uint32_t err_code;
 	const app_uart_comm_params_t comm_params = 
 	{
@@ -49,5 +49,31 @@ void uart_init(void) {
 									
 	APP_ERROR_CHECK(err_code);
 }
+
+void set_baud(uint32_t baud_rate) {
+	
+	app_uart_close();
+	
+	uint32_t err_code;
+	const app_uart_comm_params_t comm_params = 
+	{
+		RX_PIN_NUMBER,
+		TX_PIN_NUMBER,
+		RTS_PIN_NUMBER,
+		CTS_PIN_NUMBER,
+		APP_UART_FLOW_CONTROL_DISABLED,
+		false,
+		baud_rate
+	};
+	
+	APP_UART_FIFO_INIT(&comm_params,
+											UART_RX_BUF_SIZE,
+											UART_TX_BUF_SIZE,
+											uart_event_handle,
+											APP_IRQ_PRIORITY_LOWEST,
+											err_code);
+	
+}
+	
 
 #endif

@@ -12,6 +12,7 @@
 
 
 //void uart_event_handle(app_uart_evt_t* p_event);
-void uart_init(void);
+void uart_helper_init(void);
+void set_baud(uint32_t baud_rate);
 
 #endif
