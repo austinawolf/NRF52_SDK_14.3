@@ -1186,7 +1186,7 @@
  
 
 #ifndef BLE_ADVERTISING_ENABLED
-#define BLE_ADVERTISING_ENABLED 0
+#define BLE_ADVERTISING_ENABLED 1
 #endif
 
 // <q> BLE_DTM_ENABLED  - ble_dtm - Module for testing RF/PHY using DTM commands
@@ -1206,7 +1206,7 @@
 // <e> NRF_BLE_CONN_PARAMS_ENABLED - ble_conn_params - Initiating and executing a connection parameters negotiation procedure
 //==========================================================
 #ifndef NRF_BLE_CONN_PARAMS_ENABLED
-#define NRF_BLE_CONN_PARAMS_ENABLED 0
+#define NRF_BLE_CONN_PARAMS_ENABLED 1
 #endif
 // <o> NRF_BLE_CONN_PARAMS_MAX_SLAVE_LATENCY_DEVIATION - The largest acceptable deviation in slave latency. 
 // <i> The largest deviation (+ or -) from the requested slave latency that will not be renegotiated.
@@ -1223,6 +1223,14 @@
 #endif
 
 // </e>
+
+// <q> NRF_BLE_GATT_ENABLED  - nrf_ble_gatt - GATT module
+ 
+
+#ifndef NRF_BLE_GATT_ENABLED
+#define NRF_BLE_GATT_ENABLED 1
+#endif
+
 
 // <q> NRF_BLE_QWR_ENABLED  - nrf_ble_qwr - Queued writes support module (prepare/execute write)
  
@@ -1389,7 +1397,7 @@
  
 
 #ifndef BLE_NUS_ENABLED
-#define BLE_NUS_ENABLED 0
+#define BLE_NUS_ENABLED 1
 #endif
 
 // <q> BLE_RSCS_C_ENABLED  - ble_rscs_c - Running Speed and Cadence Client
@@ -2159,7 +2167,7 @@
 // <e> PWM_ENABLED - nrf_drv_pwm - PWM peripheral driver
 //==========================================================
 #ifndef PWM_ENABLED
-#define PWM_ENABLED 1
+#define PWM_ENABLED 0
 #endif
 // <o> PWM_DEFAULT_CONFIG_OUT0_PIN - Out0 pin  <0-31> 
 
@@ -2259,21 +2267,21 @@
  
 
 #ifndef PWM0_ENABLED
-#define PWM0_ENABLED 1
+#define PWM0_ENABLED 0
 #endif
 
 // <q> PWM1_ENABLED  - Enable PWM1 instance
  
 
 #ifndef PWM1_ENABLED
-#define PWM1_ENABLED 1
+#define PWM1_ENABLED 0
 #endif
 
 // <q> PWM2_ENABLED  - Enable PWM2 instance
  
 
 #ifndef PWM2_ENABLED
-#define PWM2_ENABLED 1
+#define PWM2_ENABLED 0
 #endif
 
 // <q> PWM3_ENABLED  - Enable PWM3 instance
@@ -2491,7 +2499,7 @@
 // <e> SAADC_ENABLED - nrf_drv_saadc - SAADC peripheral driver
 //==========================================================
 #ifndef SAADC_ENABLED
-#define SAADC_ENABLED 0
+#define SAADC_ENABLED 1
 #endif
 // <o> SAADC_CONFIG_RESOLUTION  - Resolution
  
@@ -2736,7 +2744,7 @@
 // <e> TIMER_ENABLED - nrf_drv_timer - TIMER periperal driver
 //==========================================================
 #ifndef TIMER_ENABLED
-#define TIMER_ENABLED 0
+#define TIMER_ENABLED 1
 #endif
 // <o> TIMER_DEFAULT_CONFIG_FREQUENCY  - Timer frequency if in Timer mode
  
@@ -2761,7 +2769,7 @@
 // <1=> Counter 
 
 #ifndef TIMER_DEFAULT_CONFIG_MODE
-#define TIMER_DEFAULT_CONFIG_MODE 0
+#define TIMER_DEFAULT_CONFIG_MODE 1
 #endif
 
 // <o> TIMER_DEFAULT_CONFIG_BIT_WIDTH  - Timer counter bit width
@@ -2796,7 +2804,7 @@
  
 
 #ifndef TIMER0_ENABLED
-#define TIMER0_ENABLED 0
+#define TIMER0_ENABLED 1
 #endif
 
 // <q> TIMER1_ENABLED  - Enable TIMER1 instance
@@ -2918,7 +2926,7 @@
 // <e> TWI_ENABLED - nrf_drv_twi - TWI/TWIM peripheral driver
 //==========================================================
 #ifndef TWI_ENABLED
-#define TWI_ENABLED 0
+#define TWI_ENABLED 1
 #endif
 // <o> TWI_DEFAULT_CONFIG_FREQUENCY  - Frequency
  
@@ -2964,7 +2972,7 @@
 // <e> TWI0_ENABLED - Enable TWI0 instance
 //==========================================================
 #ifndef TWI0_ENABLED
-#define TWI0_ENABLED 0
+#define TWI0_ENABLED 1
 #endif
 // <q> TWI0_USE_EASY_DMA  - Use EasyDMA (if present)
  
@@ -2994,7 +3002,7 @@
 // <e> UART_ENABLED - nrf_drv_uart - UART/UARTE peripheral driver
 //==========================================================
 #ifndef UART_ENABLED
-#define UART_ENABLED 1
+#define UART_ENABLED 0
 #endif
 // <o> UART_DEFAULT_CONFIG_HWFC  - Hardware Flow Control
  
@@ -3034,7 +3042,7 @@
 // <268435456=> 1000000 baud 
 
 #ifndef UART_DEFAULT_CONFIG_BAUDRATE
-#define UART_DEFAULT_CONFIG_BAUDRATE 268435456
+#define UART_DEFAULT_CONFIG_BAUDRATE 30801920
 #endif
 
 // <o> UART_DEFAULT_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -3186,12 +3194,6 @@
 #define APP_FIFO_ENABLED 1
 #endif
 
-// <q> RETARGET_ENABLED  - retarget - Retargeting stdio functions
- 
-#ifndef RETARGET_ENABLED
-#define RETARGET_ENABLED 1
-#endif
-
 // <q> APP_GPIOTE_ENABLED  - app_gpiote - GPIOTE events dispatcher
  
 
@@ -3209,7 +3211,7 @@
 // <e> APP_SCHEDULER_ENABLED - app_scheduler - Events scheduler
 //==========================================================
 #ifndef APP_SCHEDULER_ENABLED
-#define APP_SCHEDULER_ENABLED 1
+#define APP_SCHEDULER_ENABLED 0
 #endif
 // <q> APP_SCHEDULER_WITH_PAUSE  - Enabling pause feature
  
@@ -3293,7 +3295,7 @@
 // <i> This option can be used when app_timer is used for timestamping.
 
 #ifndef APP_TIMER_KEEPS_RTC_ACTIVE
-#define APP_TIMER_KEEPS_RTC_ACTIVE 0
+#define APP_TIMER_KEEPS_RTC_ACTIVE 1
 #endif
 
 // <o> APP_TIMER_CONFIG_SWI_NUMBER  - Configure SWI instance used.
@@ -4394,7 +4396,7 @@
 // <i> marker is injected informing about overflow.
 
 #ifndef NRF_LOG_ALLOW_OVERFLOW
-#define NRF_LOG_ALLOW_OVERFLOW 0
+#define NRF_LOG_ALLOW_OVERFLOW 1
 #endif
 
 // <q> NRF_LOG_USES_TIMESTAMP  - Enable timestamping
@@ -5552,7 +5554,7 @@
 // <4=> Debug 
 
 #ifndef TWI_CONFIG_LOG_LEVEL
-#define TWI_CONFIG_LOG_LEVEL 3
+#define TWI_CONFIG_LOG_LEVEL 4
 #endif
 
 // <o> TWI_CONFIG_INFO_COLOR  - ANSI escape code prefix.
@@ -5585,6 +5587,57 @@
 
 #ifndef TWI_CONFIG_DEBUG_COLOR
 #define TWI_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> IMU_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef IMU_CONFIG_LOG_ENABLED
+#define IMU_CONFIG_LOG_ENABLED 0
+#endif
+// <o> IMU_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef IMU_CONFIG_LOG_LEVEL
+#define IMU_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> IMU_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef IMU_CONFIG_INFO_COLOR
+#define IMU_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> IMU_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef IMU_CONFIG_DEBUG_COLOR
+#define IMU_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -5636,6 +5689,57 @@
 
 #ifndef UART_CONFIG_DEBUG_COLOR
 #define UART_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
+// <e> MPU_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef MPU_CONFIG_LOG_ENABLED
+#define MPU_CONFIG_LOG_ENABLED 1
+#endif
+// <o> MPU_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef MPU_CONFIG_LOG_LEVEL
+#define MPU_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> MPU_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef MPU_CONFIG_INFO_COLOR
+#define MPU_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> MPU_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef MPU_CONFIG_DEBUG_COLOR
+#define MPU_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -6112,12 +6216,12 @@
 
 // </e>
 
-// <e> NRF_ESB_LOG_ENABLED - Enable logging in SoftDevice handler (ANT) module.
+// <e>  ESB_LOG_ENABLED - Enable logging in SoftDevice handler (ANT) module.
 //==========================================================
-#ifndef NRF_ESB_LOG_ENABLED
-#define NRF_ESB_LOG_ENABLED 1
+#ifndef ESB_LOG_CONFIG_LOG_ENABLED
+#define ESB_LOG_CONFIG_LOG_ENABLED 1
 #endif
-// <o> NRF_ESB_LOG_LEVEL  - Default Severity level
+// <o> ESB_LOG_LOG_LEVEL  - Default Severity level
  
 // <0=> Off 
 // <1=> Error 
@@ -6125,11 +6229,11 @@
 // <3=> Info 
 // <4=> Debug 
 
-#ifndef NRF_ESB_LOG_LEVEL
-#define NRF_ESB_LOG_LEVEL 4
+#ifndef ESB_LOG_CONFIG_LOG_LEVEL
+#define ESB_LOG_CONFIG_LOG_LEVEL 4
 #endif
 
-// <o> NRF_ESB_INFO_COLOR  - ANSI escape code prefix.
+// <o> ESB_LOG_INFO_COLOR  - ANSI escape code prefix.
  
 // <0=> Default 
 // <1=> Black 
@@ -6141,11 +6245,11 @@
 // <7=> Cyan 
 // <8=> White 
 
-#ifndef NRF_ESB_INFO_COLOR
-#define NRF_ESB_INFO_COLOR 0
+#ifndef ESB_LOG_CONFIG_INFO_COLOR
+#define ESB_LOG_CONFIG_INFO_COLOR 0
 #endif
 
-// <o> NRF_ESB_DEBUG_COLOR  - ANSI escape code prefix.
+// <o> ESB_LOG_DEBUG_COLOR  - ANSI escape code prefix.
  
 // <0=> Default 
 // <1=> Black 
@@ -6157,8 +6261,8 @@
 // <7=> Cyan 
 // <8=> White 
 
-#ifndef NRF_ESB_DEBUG_COLOR
-#define NRF_ESB_DEBUG_COLOR 0
+#ifndef ESB_LOG_CONFIG_DEBUG_COLOR
+#define ESB_LOG_CONFIG_DEBUG_COLOR 0
 #endif
 
 // </e>
@@ -6166,7 +6270,7 @@
 // <e> NRF_SDH_BLE_LOG_ENABLED - Enable logging in SoftDevice handler (BLE) module.
 //==========================================================
 #ifndef NRF_SDH_BLE_LOG_ENABLED
-#define NRF_SDH_BLE_LOG_ENABLED 1
+#define NRF_SDH_BLE_LOG_ENABLED 0
 #endif
 // <o> NRF_SDH_BLE_LOG_LEVEL  - Default Severity level
  
@@ -6217,7 +6321,7 @@
 // <e> NRF_SDH_LOG_ENABLED - Enable logging in SoftDevice handler module.
 //==========================================================
 #ifndef NRF_SDH_LOG_ENABLED
-#define NRF_SDH_LOG_ENABLED 1
+#define NRF_SDH_LOG_ENABLED 0
 #endif
 // <o> NRF_SDH_LOG_LEVEL  - Default Severity level
  
@@ -6268,7 +6372,7 @@
 // <e> NRF_SDH_SOC_LOG_ENABLED - Enable logging in SoftDevice handler (SoC) module.
 //==========================================================
 #ifndef NRF_SDH_SOC_LOG_ENABLED
-#define NRF_SDH_SOC_LOG_ENABLED 1
+#define NRF_SDH_SOC_LOG_ENABLED 0
 #endif
 // <o> NRF_SDH_SOC_LOG_LEVEL  - Default Severity level
  

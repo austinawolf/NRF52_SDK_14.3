@@ -21,10 +21,10 @@
 
 
 #define NRF_LOG_MODULE_NAME esb_log
-#if ESB_CONFIG_LOG_ENABLED
-#define NRF_LOG_LEVEL ESB_CONFIG_LOG_LEVEL
-#define NRF_LOG_INFO_COLOR ESB_CONFIG_INFO_COLOR
-#define NRF_LOG_DEBUG_COLOR ESB_CONFIG_DEBUG_COLOR
+#if ESB_LOG_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL ESB_LOG_CONFIG_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR ESB_LOG_CONFIG_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR ESB_LOG_CONFIG_DEBUG_COLOR
 #else
 #define NRF_LOG_LEVEL 0
 #endif
@@ -62,7 +62,7 @@ uint32_t esb_init(void) {
     nrf_esb_config.bitrate                  = NRF_ESB_BITRATE_2MBPS;
     nrf_esb_config.event_handler            = nrf_esb_event_handler;
     nrf_esb_config.mode                     = NRF_ESB_MODE_PTX;
-    nrf_esb_config.selective_auto_ack       = false;
+    nrf_esb_config.selective_auto_ack       = true;
 
     err_code = nrf_esb_init(&nrf_esb_config);
     VERIFY_SUCCESS(err_code);
@@ -117,7 +117,7 @@ void nrf_esb_event_handler(nrf_esb_evt_t const * p_event)
     switch (p_event->evt_id)
     {
         case NRF_ESB_EVENT_TX_SUCCESS:
-            NRF_LOG_DEBUG("TX SUCCESS EVENT");
+            //NRF_LOG_DEBUG("TX SUCCESS EVENT");
 						
             break;
         case NRF_ESB_EVENT_TX_FAILED:
@@ -127,12 +127,15 @@ void nrf_esb_event_handler(nrf_esb_evt_t const * p_event)
             break;
 		
         case NRF_ESB_EVENT_RX_RECEIVED:
-            NRF_LOG_DEBUG("RX RECEIVED EVENT");
+            //NRF_LOG_DEBUG("RX RECEIVED EVENT");
             while (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS)
             {
                 if (rx_payload.length > 0)
                 {
                     NRF_LOG_DEBUG("RX RECEIVED PAYLOAD");
+                    NRF_LOG_HEXDUMP_DEBUG(rx_payload.data, rx_payload.length);
+					memset(rx_payload.data,0,32);
+					
                 }
             }
             break;
@@ -171,10 +174,9 @@ void esb_log_flush(void)
 		
 		tx_payload.data[i++] = 0;
 		tx_payload.length = i;
-		tx_payload.noack = false;
 		
 		//Send payload
-		NRF_LOG_DEBUG("pl:%s, len: %d",tx_payload.data, tx_payload.length);
+		//NRF_LOG_DEBUG("pl:%s, len: %d",tx_payload.data, tx_payload.length);
 
 		if (nrf_esb_write_payload(&tx_payload) != NRF_SUCCESS) {
 			NRF_LOG_WARNING("Sending packet failed");

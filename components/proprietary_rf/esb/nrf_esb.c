@@ -47,7 +47,21 @@
 #include "sdk_common.h"
 #include "sdk_macros.h"
 #include "app_util.h"
+
+#define NRF_LOG_MODULE_NAME esb
+
+#if NRF_ESB_LOG_ENABLED
+#define NRF_LOG_LEVEL       NRF_ESB_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR  NRF_ESB_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR NRF_ESB_DEBUG_COLOR
+
+#else
+#define NRF_LOG_LEVEL       0
+#endif
 #include "nrf_log.h"
+NRF_LOG_MODULE_REGISTER();
+
+
 #include "nrf_delay.h"
 
 #define BIT_MASK_UINT_8(x) (0xFF >> (8 - (x)))
@@ -1076,6 +1090,8 @@ void ESB_EVT_IRQHandler(void)
 
 uint32_t nrf_esb_write_payload(nrf_esb_payload_t const * p_payload)
 {
+	NRF_LOG_DEBUG("nrf_esb_write_payload");
+	
     VERIFY_TRUE(m_esb_initialized, NRF_ERROR_INVALID_STATE);
     VERIFY_PARAM_NOT_NULL(p_payload);
     VERIFY_PAYLOAD_LENGTH(p_payload);

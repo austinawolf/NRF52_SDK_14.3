@@ -58,26 +58,36 @@
 #include "nrf_log_default_backends.h"
 #include "led_error.h"
 #include "uart_helper.h"
+#include "app_fifo.h"
+#include "SEGGER_RTT.h"
+
+#define TX_BUFFER_SIZE 256
+
 
 uint8_t led_nr;
 
-nrf_esb_payload_t rx_payload;
+static nrf_esb_payload_t        tx_payload = NRF_ESB_CREATE_PAYLOAD(0, 0x01, 0x00, 0x00, 0x00, 0x00);
+static nrf_esb_payload_t        rx_payload;
 
 uint32_t success_event_total, fail_event_total = 0;
 
 /*lint -save -esym(40, BUTTON_1) -esym(40, BUTTON_2) -esym(40, BUTTON_3) -esym(40, BUTTON_4) -esym(40, LED_1) -esym(40, LED_2) -esym(40, LED_3) -esym(40, LED_4) */
+#define PREAMBLE 0xaa
+#define POSTAMBLE 0xbb
 
+app_fifo_t my_fifo;
 
+static void fifo_init(void);
 
 void nrf_esb_event_handler(nrf_esb_evt_t const * p_event)
 {
     switch (p_event->evt_id)
     {
         case NRF_ESB_EVENT_TX_SUCCESS:
-            printf("TX SUCCESS EVENT");
+            NRF_LOG_DEBUG("TX SUCCESS EVENT");
             break;
         case NRF_ESB_EVENT_TX_FAILED:
-            printf("TX FAILED EVENT");
+            NRF_LOG_DEBUG("TX FAILED EVENT");
             break;
         case NRF_ESB_EVENT_RX_RECEIVED:
             if (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS)
@@ -100,7 +110,7 @@ void nrf_esb_event_handler(nrf_esb_evt_t const * p_event)
 							
             }
 			else {
-				printf("FAILED EVENT: %u",fail_event_total++);
+				NRF_LOG_DEBUG("FAILED EVENT: %u",fail_event_total++);
 			}
             break;
     }
@@ -128,12 +138,12 @@ uint32_t esb_init( void )
     uint8_t base_addr_1[4] = {0xC2, 0xC2, 0xC2, 0xC2};
     uint8_t addr_prefix[8] = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8 };
     nrf_esb_config_t nrf_esb_config         = NRF_ESB_DEFAULT_CONFIG;
-    nrf_esb_config.payload_length           = 8;
+    nrf_esb_config.payload_length           = 32;
     nrf_esb_config.protocol                 = NRF_ESB_PROTOCOL_ESB_DPL;
     nrf_esb_config.bitrate                  = NRF_ESB_BITRATE_2MBPS;
     nrf_esb_config.mode                     = NRF_ESB_MODE_PRX;
     nrf_esb_config.event_handler            = nrf_esb_event_handler;
-    nrf_esb_config.selective_auto_ack       = false;
+    nrf_esb_config.selective_auto_ack       = true;
 
     err_code = nrf_esb_init(&nrf_esb_config);
     VERIFY_SUCCESS(err_code);
@@ -161,6 +171,7 @@ static void bsp_evt_handler(bsp_event_t evt)
 			
 			printf("Setting Baud to 1M...\n\r");
 			set_baud(UART_BAUDRATE_BAUDRATE_Baud1M);
+		
 			return;
 				
         // Button 2 - switch to the next demo.
@@ -168,8 +179,8 @@ static void bsp_evt_handler(bsp_event_t evt)
   
 		
 			printf("Setting Baud to 115200...\n\r");
-			
 			set_baud(UART_BAUDRATE_BAUDRATE_Baud115200);
+		
 			return;
 				
         default:
@@ -186,6 +197,64 @@ static void init_bsp()
     APP_ERROR_CHECK(app_timer_init());
     APP_ERROR_CHECK(bsp_init(BSP_INIT_BUTTONS, bsp_evt_handler));
     APP_ERROR_CHECK(bsp_buttons_enable());
+}
+
+static void fifo_init(void) {
+
+	// Create a buffer for the FIFO
+	uint16_t buffer_size = TX_BUFFER_SIZE;
+	uint8_t buffer[buffer_size];
+
+	// Initialize FIFO structure
+	uint32_t err_code = app_fifo_init(&my_fifo, buffer, (uint16_t)sizeof(buffer));	
+	
+}
+
+
+static int load_packet(void) {
+
+	nrf_esb_flush_tx();	
+	
+	uint8_t byte; //takes bytes from fifo
+	uint8_t i = 0; //packet index for loading
+	uint8_t integer; //integer
+	char str[12]; //temp string to be converted to integer
+	uint8_t k; //temp string index
+	
+	//clear payload
+	memset(tx_payload.data, 0, 32);
+				
+	//load payload
+	k = 0;
+
+	tx_payload.data[i++] = PREAMBLE;
+	while(!app_fifo_get(&my_fifo, &byte)) {
+
+		
+		if (byte == ' ') {
+			NRF_LOG_HEXDUMP_DEBUG(str, k);
+			integer = (uint8_t) strtol(str, NULL, 0);
+			if (integer) {
+				tx_payload.data[i++] = integer;
+			}
+			k = 0;
+			continue;
+		}
+
+		if (i > 30) {
+			return -1;
+		}
+		NRF_LOG_DEBUG("load: %d", byte);
+
+		str[k++] = byte;
+
+	}
+	tx_payload.data[i++] = POSTAMBLE;	
+	tx_payload.length = i;
+	
+	//terminate payload
+	
+	return 0;
 }
 
 int main(void)
@@ -211,16 +280,100 @@ int main(void)
 		
 	//uart helper init
 	uart_helper_init();   
-		
+	
+	//fifo init
+	fifo_init();
+	
+	//nrf log init
+	err_code = NRF_LOG_INIT(NULL);
+	APP_ERROR_CHECK(err_code);
+	NRF_LOG_DEFAULT_BACKENDS_INIT();
+	NRF_LOG_INFO("esb logger rx running.");	
+	
+	
 	//running		
     printf("Enhanced ShockBurst Receiver Example running.\n\r");
 
+	#define LENGTH 32
+	char segger_rx_buffer[LENGTH];
+	uint8_t len;
+	
     while (true)
-    {
-		__WFE();	
-    }
+    {	
+		uint32_t err_code;
+        uint8_t cr;
+		
+		
+		//CHECK UART BUFFER
+        if(app_uart_get(&cr) == NRF_SUCCESS) {
+			
+			//if endline send packet
+			if (cr == '\r') {
+				
+				if (my_fifo.write_pos == my_fifo.read_pos) {
+					continue;
+				}
+				
+				err_code = app_fifo_put(&my_fifo, ' ');
+				if (err_code) {
+					printf("app_fifo_put ret: %d", err_code);
+				}
+				
+				load_packet();
+				
+				//log payload
+				NRF_LOG_DEBUG("SENDING FROM UART");
+				NRF_LOG_HEXDUMP_DEBUG(tx_payload.data, tx_payload.length);
+				
+				//send payload
+				if (nrf_esb_write_payload(&tx_payload) != NRF_SUCCESS) {
+					printf("Sending packet failed\n\r");
+				}
+				memset(tx_payload.data,0,32);
+				nrf_esb_flush_tx();
+				nrf_esb_flush_rx();
+				
+				
+			}
+			
+			//if char load fifo
+			else {
+				
+				//load fifo on uart rx
+				err_code = app_fifo_put(&my_fifo, cr);
+				NRF_LOG_DEBUG("char: %d", cr);
+				if (err_code) {
+					printf("app_fifo_put ret: %d", err_code);
+				}
+
+			}			
+		}
+		
+		//CHECK RTT BUGGER
+		len = SEGGER_RTT_Read(0, segger_rx_buffer, LENGTH);
+		if (len > 0) {
+			
+			for (int i = 0; i < len && segger_rx_buffer[i] != '\r'; i++) {
+				app_fifo_put(&my_fifo, segger_rx_buffer[i]);
+				
+			}		
+			app_fifo_put(&my_fifo, ' ');
+
+		
+			load_packet();
+			
+			//log payload
+			NRF_LOG_DEBUG("SENDING FROM RTT");
+			NRF_LOG_HEXDUMP_DEBUG(tx_payload.data, tx_payload.length);
+			//send payload
+			if (nrf_esb_write_payload(&tx_payload) != NRF_SUCCESS) {
+				printf("Sending packet failed\n\r");
+			}
+			memset(tx_payload.data,0,32);
+		
+		}	
+	}
 }
 
 
 
-/*lint -restore */
