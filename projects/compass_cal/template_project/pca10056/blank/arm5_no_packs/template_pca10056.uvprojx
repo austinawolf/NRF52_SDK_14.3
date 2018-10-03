@@ -765,11 +765,6 @@
           <targetInfo name="nrf52840_xxaa" versionMatchMode="fixed"/>
         </targetInfos>
       </package>
-      <package name="CMSIS" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0">
-        <targetInfos>
-          <targetInfo name="nrf52840_xxaa" versionMatchMode="fixed"/>
-        </targetInfos>
-      </package>
       <package name="nRF_DeviceFamilyPack" url="http://developer.nordicsemi.com/nRF51_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.15.0">
         <targetInfos>
           <targetInfo name="nrf52840_xxaa" versionMatchMode="fixed"/>

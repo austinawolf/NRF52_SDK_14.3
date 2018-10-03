@@ -539,9 +539,9 @@ void imu_log_data(Motion *motion) {
 	LOG_PRINT("%d,", motion->gyro[0]);
 	LOG_PRINT("%d,", motion->gyro[1]);
 	LOG_PRINT("%d,", motion->gyro[2]);
-	LOG_PRINT("%.2f,", motion->compass[0]);
-	LOG_PRINT("%.2f,", motion->compass[1]);
-	LOG_PRINT("%.2f,", motion->compass[2]);	
+	LOG_PRINT("%.2f,", motion->compass[0] * RAW_MAG_TO_uT);
+	LOG_PRINT("%.2f,", motion->compass[1] * RAW_MAG_TO_uT);
+	LOG_PRINT("%.2f,", motion->compass[2] * RAW_MAG_TO_uT);	
 	LOG_PRINT("%i,",motion->sensor_num);
 	LOG_PRINT("%i\r\n", motion->status);
 	LOG_FLUSH();
@@ -584,6 +584,8 @@ void imu_get_compass(Motion *motion) {
 		NRF_LOG_DEBUG("mpu_get_compass_reg ret: ",motion->status);		
 	}
 	NRF_LOG_DEBUG("Compass Sample @ %d ms",motion->compass_timestamp);
+	
+	NRF_LOG_DEBUG("RAW COMPASS x: %x, y: %x, z: %x", compass[0], compass[1], compass[2]);
 	
 	
 	/* PROCESS COMPASS DATA */

@@ -17,8 +17,8 @@
 /* IMU CONVERSIONS */
 #define RAW_GYRO_TO_RADS (float) 2000.0f*2.0f/0xFFFFf * 3.14f/180.0f
 #define RAW_ACCEL_TO_GS (float) 2.0f * 2.0f/0xFFFFf
+#define RAW_MAG_TO_uT (float) 4800.0f*2.0f/(0x4000f)
 
-//
 
 
 typedef struct {
