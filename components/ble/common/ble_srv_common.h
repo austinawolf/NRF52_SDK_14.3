@@ -86,7 +86,8 @@ extern "C" {
 #define BLE_UUID_CGM_SERVICE                                     0x181F     /**< Continuous Glucose Monitoring service UUID*/
 #define BLE_UUID_PLX_SERVICE                                     0x1822     /**< Pulse Oximeter Service UUID*/
 #define BLE_UUID_OTS_SERVICE                                     0x1825     /**< Object Transfer Service UUID*/
-
+#define BLE_UUID_QUATERNION_ORIENTATION_SERVICE                  0x18FF     /**< Quaternion Orientation service UUID. */
+		
 /** @} */
 
 /** @defgroup UUID_CHARACTERISTICS Characteristic UUID definitions
@@ -189,7 +190,8 @@ extern "C" {
 #define BLE_UUID_OTS_OLCP                                        0x2AC6     /**< OTS Service, Object List Control Point characteristic UUID*/
 #define BLE_UUID_OTS_LF                                          0x2AC7     /**< OTS Service, Object List Filter characteristic UUID*/
 #define BLE_UUID_OTS_OBJECT_CHANGED                              0x2AC8     /**< OTS Service, Object Changed characteristic UUID*/
-
+#define BLE_UUID_QUATERNION_ORIENTATION_CONTROL_POINT_CHAR       0x2AFD     /**< Quaternion Orientation Control Point characteristic UUID. */
+#define BLE_UUID_QUATERNION_ORIENTATION_MEASUREMENT_CHAR         0x2AFF     /**< Quaternion Orientation characteristic UUID. */
 
 
 
