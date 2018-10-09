@@ -164,6 +164,8 @@ static void on_hvx(ble_qos_c_t * p_ble_qos_c, const ble_evt_t * p_ble_evt)
         return;
     }
 
+	NRF_LOG_HEXDUMP_DEBUG(p_ble_evt->evt.gattc_evt.params.hvx.data, p_ble_evt->evt.gattc_evt.params.hvx.len);
+	
     NRF_LOG_DEBUG("Received HVX on link 0x%x, qom_handle 0x%x",
     p_ble_evt->evt.gattc_evt.params.hvx.handle,
     p_ble_qos_c->peer_qos_db.qom_handle);
@@ -178,10 +180,11 @@ static void on_hvx(ble_qos_c_t * p_ble_qos_c, const ble_evt_t * p_ble_evt)
         ble_qos_c_evt.conn_handle                 = p_ble_qos_c->conn_handle;
         ble_qos_c_evt.params.qom.rr_intervals_cnt = 0;
 
+		/*
         if (!(p_ble_evt->evt.gattc_evt.params.hvx.data[index++] & QOM_FLAG_MASK_HR_16BIT))
         {
             // 8 Bit quaternion orientation value received.
-            ble_qos_c_evt.params.qom.hr_value = p_ble_evt->evt.gattc_evt.params.hvx.data[index++];  //lint !e415 suppress Lint Warning 415: Likely access out of bond
+			ble_qos_c_evt.params.qom.hr_value = p_ble_evt->evt.gattc_evt.params.hvx.data[index++];  //lint !e415 suppress Lint Warning 415: Likely access out of bond
         }
         else
         {
@@ -194,7 +197,6 @@ static void on_hvx(ble_qos_c_t * p_ble_qos_c, const ble_evt_t * p_ble_evt)
         if ((p_ble_evt->evt.gattc_evt.params.hvx.data[0] & QOM_FLAG_MASK_HR_RR_INT))
         {
             uint32_t i;
-            /*lint --e{415} --e{416} --e{662} --e{661} -save suppress Warning 415: possible access out of bond */
             for (i = 0; i < BLE_QOS_C_RR_INTERVALS_MAX_CNT; i ++)
             {
                 if (index >= p_ble_evt->evt.gattc_evt.params.hvx.len)
@@ -205,9 +207,12 @@ static void on_hvx(ble_qos_c_t * p_ble_qos_c, const ble_evt_t * p_ble_evt)
                     uint16_decode(&(p_ble_evt->evt.gattc_evt.params.hvx.data[index]));
                 index += sizeof(uint16_t);
             }
-            /*lint -restore*/
             ble_qos_c_evt.params.qom.rr_intervals_cnt = (uint8_t)i;
         }
+		*/
+		
+		
+		ble_qos_c_evt.params.qom.hr_value = 10;
         p_ble_qos_c->evt_handler(p_ble_qos_c, &ble_qos_c_evt);
     }
 }

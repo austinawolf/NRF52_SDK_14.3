@@ -4942,6 +4942,57 @@
 
 // </e>
 
+// <e> BLE_SRV_QOS_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef BLE_SRV_QOS_CONFIG_LOG_ENABLED
+#define BLE_SRV_QOS_CONFIG_LOG_ENABLED 1
+#endif
+// <o> BLE_SRV_QOS_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef BLE_SRV_QOS_CONFIG_LOG_LEVEL
+#define BLE_SRV_QOS_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> BLE_SRV_QOS_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_SRV_QOS_CONFIG_INFO_COLOR
+#define BLE_SRV_QOS_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> BLE_SRV_QOS_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef BLE_SRV_QOS_CONFIG_DEBUG_COLOR
+#define BLE_SRV_QOS_CONFIG_DEBUG_COLOR 0
+#endif
+
+// </e>
+
 // <e> NRF_SDH_ANT_LOG_ENABLED - Enable logging in SoftDevice handler (ANT) module.
 //==========================================================
 #ifndef NRF_SDH_ANT_LOG_ENABLED

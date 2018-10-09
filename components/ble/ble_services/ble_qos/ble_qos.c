@@ -46,6 +46,20 @@
 #include "ble_qos.h"
 #include <string.h>
 #include "ble_srv_common.h"
+#include "sdk_config.h"
+
+#define NRF_LOG_MODULE_NAME qos
+
+#if BLE_SRV_QOS_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL       BLE_SRV_QOS_CONFIG_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR  BLE_SRV_QOS_CONFIG_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR BLE_SRV_QOS_CONFIG_DEBUG_COLOR
+#else
+#define NRF_LOG_LEVEL       0
+#endif
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+NRF_LOG_MODULE_REGISTER();
 
 
 #define OPCODE_LENGTH 1                                                              /**< Length of opcode inside Quaternion Orientation packet. */
@@ -264,9 +278,9 @@ static uint32_t heart_rate_measurement_char_add(ble_qos_t            * p_qos,
 
     attr_char_value.p_uuid    = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = qom_encode(p_qos, INITIAL_VALUE_QOM, encoded_initial_qom);
+    attr_char_value.init_len  = 2;
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = MAX_QOM_LEN;
+    attr_char_value.max_len   = 2;
     attr_char_value.p_value   = encoded_initial_qom;
 
     return sd_ble_gatts_characteristic_add(p_qos->service_handle,
@@ -384,8 +398,13 @@ uint32_t ble_qos_orientation_measurement_send(ble_qos_t * p_qos, uint16_t heart_
         uint16_t               hvx_len;
         ble_gatts_hvx_params_t hvx_params;
 
-        len     = qom_encode(p_qos, heart_rate, encoded_qom);
-        hvx_len = len;
+        //len     = qom_encode(p_qos, heart_rate, encoded_qom);
+        //hvx_len = len;
+		
+		encoded_qom[0] = 0xBE;
+		encoded_qom[1] = 0xEF;
+		len = 2;
+		hvx_len = len;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
 
