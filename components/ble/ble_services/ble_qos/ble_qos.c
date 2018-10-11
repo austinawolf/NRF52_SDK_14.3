@@ -278,9 +278,9 @@ static uint32_t heart_rate_measurement_char_add(ble_qos_t            * p_qos,
 
     attr_char_value.p_uuid    = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = 2;
+    attr_char_value.init_len  = 8;
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = 2;
+    attr_char_value.max_len   = 8;
     attr_char_value.p_value   = encoded_initial_qom;
 
     return sd_ble_gatts_characteristic_add(p_qos->service_handle,
@@ -393,17 +393,16 @@ uint32_t ble_qos_orientation_measurement_send(ble_qos_t * p_qos, uint16_t heart_
     // Send value if connected and notifying
     if (p_qos->conn_handle != BLE_CONN_HANDLE_INVALID)
     {
-        uint8_t                encoded_qom[MAX_QOM_LEN];
+        uint8_t                encoded_qom[MAX_QOM_LEN] = {0xDE,0xAD,0xBE,0xEF,0xDE,0xAD,0xBE,0xEF};
         uint16_t               len;
         uint16_t               hvx_len;
         ble_gatts_hvx_params_t hvx_params;
 
         //len     = qom_encode(p_qos, heart_rate, encoded_qom);
         //hvx_len = len;
+
 		
-		encoded_qom[0] = 0xBE;
-		encoded_qom[1] = 0xEF;
-		len = 2;
+		len = 8;
 		hvx_len = len;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
