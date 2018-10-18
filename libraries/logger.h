@@ -37,7 +37,9 @@ Source Files:
 	#include "SEGGER_RTT.h"
 	#define LOG_PRINT	SEGGER_RTT_printf0
 #else
-    #error NO LOGGER DEFINED
+
+
+    //#warning NO LOGGER DEFINED
 #endif
 
 #endif

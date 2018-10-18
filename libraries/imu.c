@@ -1,3 +1,5 @@
+#include "imu.h"
+
 //std lib
 #include <stdbool.h>
 #include <stddef.h>
@@ -9,8 +11,6 @@
 //local libraries
 #include "twi_interface.h"
 #include "led_error.h"
-#include "imu.h"
-#include "config.h"
 #include "clock_interface.h"
 
 //mpu9250 drivers
@@ -24,6 +24,9 @@
 #include "invensense.h"
 #include "invensense_adv.h"
 #include "eMPL_outputs.h"
+
+//config
+#include "config.h"
 
 #define MPU9150_ADDR 0x68
 #define AK8963_ADDR 0x0C
@@ -59,40 +62,14 @@ static struct platform_data_s compass_pdata = {
 
 };
 
+long gyro_bias[3] = 		GYRO_BIAS;
+const long accel_bias[3] = 	ACCEL_BIAS;
 // Offsets applied to raw x/y/z values
-const float mag_offsets[3]            = { -2.20F, -5.53F, -26.34F };
-
+const float mag_offsets[3]            = MAG_OFFSETS;
 // Soft iron error compensation matrix
-const float mag_softiron_matrix[3][3] = { { 0.934, 0.005, 0.013 },
-										{ 0.005, 0.948, 0.012 },
-										{ 0.013, 0.012, 1.129 } }; 
+const float mag_softiron_matrix[3][3] = MAG_SOFTIRON_MATRIX;
+		
 
-const float mag_field_strength        = 48.41f;
-
-
-
-#if SENSOR_NUM == 1
-	long gyro_bias[3] = 	{-21*SCALE_GYRO_OFFSET, \
-							  11*SCALE_GYRO_OFFSET, \
-							 -26*SCALE_GYRO_OFFSET};
-	const long accel_bias[3] = 	{42*SCALE_ACC_OFFSET, \
-								 133*SCALE_ACC_OFFSET, 
-								-1287*SCALE_ACC_OFFSET};
-	
-#elif SENSOR_NUM == 2
-	long gyro_bias[3] = 	{-21*SCALE_GYRO_OFFSET, \
-							  11*SCALE_GYRO_OFFSET, \
-							 -26*SCALE_GYRO_OFFSET};
-	const long accel_bias[3] = 	{38*SCALE_ACC_OFFSET, \
-								120*SCALE_ACC_OFFSET, 
-								-1752*SCALE_ACC_OFFSET};
-#else
-	
-	long gyro_bias[3] = {0, 0, 0};
-	const long accel_bias[3] = {0, 0, 0};
-	
-#endif
-							
 uint32_t fifo_num = 0;
 
 int mpu_helper_init(void);
@@ -114,21 +91,21 @@ int imu_init(void) {
 	//mpu init
 	ret = mpu_init(&int_param);
 	if (ret != 0) {
-		NRF_LOG_DEBUG("mpu_init ret:%d",ret);
+		NRF_LOG_ERROR("mpu_init ret:%d",ret);
 		return ret;
 	}
 	
 	//inv setup
 	ret = mpu_helper_inv_setup();
 	if (ret != 0) {
-		NRF_LOG_DEBUG("mpu_helper_inv_setup ret:%d",ret);
+		NRF_LOG_ERROR("mpu_helper_inv_setup ret:%d",ret);
 		return ret;
 	}
 	
 	//config
 	ret = mpu_helper_init();
 	if (ret != 0) {
-		NRF_LOG_DEBUG("mpu_helper_init ret:%d",ret);
+		NRF_LOG_ERROR("mpu_helper_init ret:%d",ret);
 		return ret;
 	}	
 	
@@ -187,7 +164,7 @@ int	mpu_helper_inv_setup(void) {
 		return result;		
     }    
 	
-	//result = inv_enable_magnetic_disturbance();	
+	result = inv_enable_magnetic_disturbance();	
 	if (result) {
 		NRF_LOG_ERROR("inv_enable_magnetic_disturbance ret:%d",result);
 		return result;		
@@ -279,7 +256,7 @@ int mpu_helper_dmp_setup(void) {
 
 	ret = dmp_load_motion_driver_firmware();
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("dmp_load_motion_driver_firmware ret:%d",ret);		
 		return ret;		
 	}	
 
@@ -295,28 +272,44 @@ int mpu_helper_dmp_setup(void) {
 								DMP_FEATURE_GYRO_CAL);
 	
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("dmp_enable_feature ret:%d",ret);		
 		return ret;		
 	}	
 	
 
 	ret = dmp_set_fifo_rate(IMU_SAMPLE_RATE_HZ);
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("dmp_set_fifo_rate ret:%d",ret);		
 		return ret;		
 	}	
 	
 	inv_set_quat_sample_rate(INV_QUAT_SAMPLE_RATE);
 	
+	
+	return 0;
+	
+}
+
+int imu_start(void) {
+	int ret;
 	ret = mpu_set_dmp_state(1);
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("mpu_set_dmp_state ret:%d",ret);		
 		return ret;		
-	}		
-	
+	}
 	return ret;
 }
 
+int imu_stop(void) {
+	int ret;
+	ret = mpu_set_dmp_state(0);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_dmp_state ret:%d",ret);		
+		return ret;		
+	}
+	return ret;
+}	
+	
 
 int imu_init_madgwick(void) {
 	
@@ -370,7 +363,7 @@ int imu_init_madgwick(void) {
 	//load dmp
 	ret = dmp_load_motion_driver_firmware();
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("dmp_load_motion_driver_firmware ret:%d",ret);		
 		return ret;		
 	}	
 	
@@ -384,18 +377,18 @@ int imu_init_madgwick(void) {
 								DMP_FEATURE_SEND_RAW_GYRO);
 	
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("dmp_enable_feature ret:%d",ret);		
 		return ret;		
 	}	
 	
 	ret = dmp_set_fifo_rate(IMU_SAMPLE_RATE_HZ);
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("dmp_set_fifo_rate ret:%d",ret);		
 		return ret;		
 	}		
 	ret = mpu_set_dmp_state(1);
 	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		NRF_LOG_ERROR("mpu_set_dmp_state ret:%d",ret);		
 		return ret;		
 	}			
 	
@@ -525,8 +518,9 @@ void imu_send_to_mpl(Motion *motion) {
 	NRF_LOG_DEBUG("Mag State: %d", inv_get_magnetic_disturbance_state());
 }
 
+#ifdef LOG_PRINT
+#ifdef LOG_FLUSH
 void imu_log_data(Motion *motion) {	
-	
 	LOG_PRINT("\r\nPacket:%u,",motion->event);
 	LOG_PRINT("%u,",motion->sensor_timestamp);
 	LOG_PRINT("%d,", motion->quat[0]);
@@ -545,21 +539,18 @@ void imu_log_data(Motion *motion) {
 	LOG_PRINT("%i,",motion->sensor_num);
 	LOG_PRINT("%i\r\n", motion->status);
 	LOG_FLUSH();
-	
-
 }
 
-void imu_log_motion_cal(Motion *motion) {	
-	
+void imu_log_motion_cal(Motion *motion) {		
 	LOG_PRINT("Raw:");
 	LOG_PRINT("%d,%d,%d,",motion->accel[0],motion->accel[1],motion->accel[2]);		
 	LOG_PRINT("%d,%d,%d,",motion->gyro[0],motion->gyro[1],motion->gyro[2]);
 	LOG_PRINT("%d,%d,%d", (int) motion->compass[0], (int)motion->compass[1], (int) motion->compass[2]);
 	LOG_PRINT("\n\r");
 	LOG_FLUSH();
-
-	
 }
+#endif	
+#endif
 
 void imu_get_data(Motion *motion) {
 	
@@ -609,4 +600,5 @@ void imu_get_compass(Motion *motion) {
 	
 	
 }
+
 

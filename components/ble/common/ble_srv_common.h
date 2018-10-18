@@ -86,7 +86,9 @@ extern "C" {
 #define BLE_UUID_CGM_SERVICE                                     0x181F     /**< Continuous Glucose Monitoring service UUID*/
 #define BLE_UUID_PLX_SERVICE                                     0x1822     /**< Pulse Oximeter Service UUID*/
 #define BLE_UUID_OTS_SERVICE                                     0x1825     /**< Object Transfer Service UUID*/
-#define BLE_UUID_QUATERNION_ORIENTATION_SERVICE                  0x18FF     /**< Quaternion Orientation service UUID. */
+
+#define BLE_UUID_MOTION_SERVICE_BASE {0xBC, 0x8A, 0xBF, 0x45, 0xCA, 0x05, 0x50, 0xBA, 0x40, 0x42, 0xB0, 0x00, 0xC9, 0xAD, 0x64, 0xF3}
+#define BLE_UUID_MOTION_SERVICE                  			     0x18FF     /**< Quaternion Orientation service UUID. */
 		
 /** @} */
 
@@ -190,8 +192,12 @@ extern "C" {
 #define BLE_UUID_OTS_OLCP                                        0x2AC6     /**< OTS Service, Object List Control Point characteristic UUID*/
 #define BLE_UUID_OTS_LF                                          0x2AC7     /**< OTS Service, Object List Filter characteristic UUID*/
 #define BLE_UUID_OTS_OBJECT_CHANGED                              0x2AC8     /**< OTS Service, Object Changed characteristic UUID*/
-#define BLE_UUID_QUATERNION_ORIENTATION_CONTROL_POINT_CHAR       0x2AFD     /**< Quaternion Orientation Control Point characteristic UUID. */
-#define BLE_UUID_QUATERNION_ORIENTATION_MEASUREMENT_CHAR         0x2AFF     /**< Quaternion Orientation characteristic UUID. */
+#define BLE_UUID_QUATERNION_CONTROL_POINT_CHAR       0x2AFE     /**< Quaternion Orientation Control Point characteristic UUID. */
+#define BLE_UUID_QUATERNION_MEASUREMENT_CHAR         0x2AFF     /**< Quaternion Orientation characteristic UUID. */
+#define BLE_UUID_IMU_CONTROL_POINT_CHAR       0x2AFC     /**< Quaternion Orientation Control Point characteristic UUID. */
+#define BLE_UUID_IMU_MEASUREMENT_CHAR         0x2AFD     /**< Quaternion Orientation characteristic UUID. */
+#define BLE_UUID_COMPASS_CONTROL_POINT_CHAR       0x2AFA	   /**< Quaternion Orientation Control Point characteristic UUID. */
+#define BLE_UUID_COMPASS_MEASUREMENT_CHAR         0x2AFB   	  /**< Quaternion Orientation characteristic UUID. */
 
 
 

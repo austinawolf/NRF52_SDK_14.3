@@ -421,7 +421,7 @@
             <File>
               <FileName>config.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\pca10040\blank\config\config.h</FilePath>
+              <FilePath>..\config\config.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -8,8 +8,6 @@
 
 
 /* IMU CONFIG */
-#define SENSOR_NUM 2
-#define IMU_SAMPLE_RATE_HZ 10
 #define IMU_SAMPLE_PERIOD_MS (uint32_t) 1000/IMU_SAMPLE_RATE_HZ
 #define INV_QUAT_SAMPLE_RATE 10000
 #define MAG_USE_CAL
@@ -20,12 +18,41 @@
 #define RAW_MAG_TO_uT (float) 4800.0f*2.0f/(0x4000f)
 
 
+typedef struct {
+	long q0;
+	long q1;
+	long q2;
+	long q3;	
+} Quaternion;
+
+typedef struct {
+	short x;
+	short y;
+	short z;
+} Accel;
+
+typedef struct {
+	short x;
+	short y;
+	short z;
+} Gyro;
+
+typedef struct {
+	float x;
+	float y;
+	float z;
+} Compass;
+
+#define X 0
+#define Y 1
+#define Z 2
+#define XYZ 3
 
 typedef struct {
 	uint8_t sensor_num;
 	uint32_t event;	
-	short gyro[3], accel[3], sensors;
-	float compass[3];
+	short gyro[XYZ], accel[XYZ], sensors;
+	float compass[XYZ];
 	unsigned char more;
 	long quat[4];
 	unsigned long sensor_timestamp;
@@ -55,7 +82,8 @@ extern long gyro_bias[3];
 int imu_init(void);
 void imu_self_test(void);
 int imu_init_madgwick(void);
-
+int imu_start(void);
+int imu_stop(void);
 void imu_get_data(Motion *motion);
 void imu_get_compass(Motion *motion);
 void imu_send_to_mpl(Motion *motion);

@@ -57,7 +57,7 @@ int twi_scan(void)
         err_code = nrf_drv_twi_rx(&m_twi, address, &sample_data, sizeof(sample_data));
         if (err_code == NRF_SUCCESS)
         {
-						return sample_data;
+			return address;
         }
         NRF_LOG_FLUSH();
     }
@@ -75,17 +75,7 @@ int nrf_twi_write(unsigned char slave_addr, unsigned char reg_addr, unsigned cha
 	err_code = nrf_drv_twi_tx(&m_twi, slave_addr, out, length+1, false);
 	if (err_code != NRF_SUCCESS) return err_code;  
 	
-	//err_code = nrf_drv_twi_tx(&m_twi, slave_addr, data, 1, false);
-	//if (err_code != NRF_SUCCESS) return err_code;  	
-
-/*	
-	err_code = nrf_drv_twi_tx(&m_twi, slave_addr, data, (length-1), false);							
-	if (err_code != NRF_SUCCESS) return err_code;
-
-	err_code = nrf_drv_twi_tx(&m_twi, slave_addr, &data[length-1], 1, true);							
-	if (err_code != NRF_SUCCESS) return err_code;
-*/	
-	return 0;
+	return NRF_SUCCESS;
 }
 
 int nrf_twi_read(unsigned char slave_addr, unsigned char reg_addr, unsigned char length, unsigned char *data) {
