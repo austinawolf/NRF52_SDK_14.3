@@ -156,8 +156,10 @@ int main(void)
 	if (imu_status) {
 		NRF_LOG_INFO("IMU init failed. Restarting.");
 		NRF_LOG_FINAL_FLUSH();
+		nrf_delay_ms(1000);
 		NVIC_SystemReset();
 	}
+	imu_start();
 	imu_self_test();
 	
 	

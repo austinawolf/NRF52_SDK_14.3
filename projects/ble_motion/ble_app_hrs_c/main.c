@@ -71,7 +71,7 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-
+#include "uart_helper.h"
 
 #define APP_BLE_CONN_CFG_TAG        1                                   /**< A tag identifying the SoftDevice BLE configuration. */
 
@@ -811,7 +811,7 @@ static void motion_c_evt_handler(ble_motion_c_t * p_motion_c, ble_motion_c_evt_t
         case BLE_MOTION_C_EVT_MOTIONM_NOTIFICATION:
         {
             NRF_LOG_INFO("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", p_motion_c_evt->params.motionm.q0, p_motion_c_evt->params.motionm.q1, p_motion_c_evt->params.motionm.q2, p_motion_c_evt->params.motionm.q3);
-   
+			printf("%d,%d,%d,%d,\n\r",p_motion_c_evt->params.motionm.q0, p_motion_c_evt->params.motionm.q1, p_motion_c_evt->params.motionm.q2, p_motion_c_evt->params.motionm.q3);
         } break;
 
         default:
@@ -1144,11 +1144,13 @@ int main(void)
     peer_manager_init();
     db_discovery_init();
     motion_c_init();
-    //bas_c_init();
-
+    bas_c_init();
+	uart_helper_init();
+	printf("Uart Start\n\r");
     // Start scanning for peripherals and initiate connection
     // with devices that advertise Heart Rate UUID.
     NRF_LOG_INFO("Quaternion Orientation collector example started.");
+	
     if (erase_bonds == true)
     {
         delete_bonds();

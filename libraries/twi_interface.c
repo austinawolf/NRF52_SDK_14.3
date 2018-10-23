@@ -48,7 +48,7 @@ void twi_interface_init (void)
 
 int twi_scan(void)
 {
-	  ret_code_t err_code;
+	ret_code_t err_code;
     uint8_t address;
     uint8_t sample_data;
 

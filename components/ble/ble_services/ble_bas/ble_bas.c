@@ -47,6 +47,18 @@
 #include <string.h>
 #include "ble_srv_common.h"
 
+#define NRF_LOG_MODULE_NAME bas
+
+#if BLE_SRV_MOTION_CONFIG_LOG_ENABLED
+#define NRF_LOG_LEVEL       BLE_SRV_MOTION_CONFIG_LOG_LEVEL
+#define NRF_LOG_INFO_COLOR  BLE_SRV_MOTION_CONFIG_INFO_COLOR
+#define NRF_LOG_DEBUG_COLOR BLE_SRV_MOTION_CONFIG_DEBUG_COLOR
+#else
+#define NRF_LOG_LEVEL 0
+#endif
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+NRF_LOG_MODULE_REGISTER();
 
 #define INVALID_BATTERY_LEVEL 255
 
@@ -296,7 +308,7 @@ uint32_t ble_bas_battery_level_update(ble_bas_t * p_bas, uint8_t battery_level)
 
     uint32_t err_code = NRF_SUCCESS;
     ble_gatts_value_t gatts_value;
-
+	NRF_LOG_DEBUG("Battery level update");
     if (battery_level != p_bas->battery_level_last)
     {
         // Initialize value struct.
@@ -307,6 +319,7 @@ uint32_t ble_bas_battery_level_update(ble_bas_t * p_bas, uint8_t battery_level)
         gatts_value.p_value = &battery_level;
 
         // Update database.
+		NRF_LOG_DEBUG("Update database");
         err_code = sd_ble_gatts_value_set(p_bas->conn_handle,
                                           p_bas->battery_level_handles.value_handle,
                                           &gatts_value);
@@ -323,6 +336,7 @@ uint32_t ble_bas_battery_level_update(ble_bas_t * p_bas, uint8_t battery_level)
         // Send value if connected and notifying.
         if ((p_bas->conn_handle != BLE_CONN_HANDLE_INVALID) && p_bas->is_notification_supported)
         {
+			NRF_LOG_DEBUG("Sending notification");
             ble_gatts_hvx_params_t hvx_params;
 
             memset(&hvx_params, 0, sizeof(hvx_params));

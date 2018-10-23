@@ -12,21 +12,18 @@
 #include "twi_interface.h"
 #include "led_error.h"
 #include "clock_interface.h"
+#include "logger.h"
 
 //mpu9250 drivers
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
 #include "dmpKey.h"
 #include "dmpmap.h"
-#include "logger.h"
 
 //mpl
 #include "invensense.h"
 #include "invensense_adv.h"
 #include "eMPL_outputs.h"
-
-//config
-#include "config.h"
 
 #define MPU9150_ADDR 0x68
 #define AK8963_ADDR 0x0C
@@ -61,6 +58,9 @@ static struct platform_data_s compass_pdata = {
 					0, 0,-1}
 
 };
+
+
+
 
 long gyro_bias[3] = 		GYRO_BIAS;
 const long accel_bias[3] = 	ACCEL_BIAS;
@@ -112,7 +112,7 @@ int imu_init(void) {
 	//dmp
 	ret = mpu_helper_dmp_setup();
 	if (ret != 0) {
-		NRF_LOG_DEBUG("mpu_helper_dmp_setup ret:%d",ret);		
+		NRF_LOG_ERROR("mpu_helper_dmp_setup ret:%d",ret);		
 		return ret;
 	}
 
@@ -324,7 +324,7 @@ int imu_init_madgwick(void) {
 	//mpu init
 	ret = mpu_init(&int_param);
 	if (ret != 0) {
-		NRF_LOG_DEBUG("mpu_init ret:%d",ret);
+		NRF_LOG_ERROR("mpu_init ret:%d",ret);
 		return ret;
 	}
 
@@ -515,7 +515,7 @@ void imu_send_to_mpl(Motion *motion) {
 		return;
 	}
 
-	NRF_LOG_DEBUG("Mag State: %d", inv_get_magnetic_disturbance_state());
+	//NRF_LOG_DEBUG("Mag State: %d", inv_get_magnetic_disturbance_state());
 }
 
 #ifdef LOG_PRINT
@@ -558,9 +558,10 @@ void imu_get_data(Motion *motion) {
 	motion->event = fifo_num++;
 	motion->status = dmp_read_fifo(motion->gyro, motion->accel, motion->quat, &motion->sensor_timestamp, &motion->sensors, &motion->more);
 	if (motion->status) {
-		NRF_LOG_DEBUG("dmp_read_fifo ret: %d",motion->status);		
+		NRF_LOG_ERROR("dmp_read_fifo ret: %d",motion->status);
+		return;
 	}	
-	NRF_LOG_DEBUG("Motion Sample @ %d ms",motion->sensor_timestamp);
+	//NRF_LOG_DEBUG("Motion Sample @ %d ms",motion->sensor_timestamp);
 
 	return;
 }
@@ -574,9 +575,8 @@ void imu_get_compass(Motion *motion) {
 	if (motion->cstatus) {
 		NRF_LOG_DEBUG("mpu_get_compass_reg ret: ",motion->status);		
 	}
-	NRF_LOG_DEBUG("Compass Sample @ %d ms",motion->compass_timestamp);
-	
-	NRF_LOG_DEBUG("RAW COMPASS x: %x, y: %x, z: %x", compass[0], compass[1], compass[2]);
+	//NRF_LOG_DEBUG("Compass Sample @ %d ms",motion->compass_timestamp);
+	//NRF_LOG_DEBUG("RAW COMPASS x: %x, y: %x, z: %x", compass[0], compass[1], compass[2]);
 	
 	
 	/* PROCESS COMPASS DATA */

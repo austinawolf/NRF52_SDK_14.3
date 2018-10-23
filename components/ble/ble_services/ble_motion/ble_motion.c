@@ -75,6 +75,7 @@ NRF_LOG_MODULE_REGISTER();
 #define MOTIONM_FLAG_MASK_EXPENDED_ENERGY_INCLUDED  (0x01 << 3)                           /**< Energy Expended Status bit. Feature Not Supported */
 #define MOTIONM_FLAG_MASK_RR_INTERVAL_INCLUDED      (0x01 << 4)                           /**< RR-Interval bit. */
 
+uint8_t packet_num = 0;
 
 /**@brief Function for handling the Connect event.
  *
@@ -346,14 +347,16 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_mo
     return NRF_SUCCESS;
 }
 
-static void motion_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, Motion * motion) {
+static void motion_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, uint8_t packet_number, Motion * motion) {
 	//byte 0: 0xaa (preamble)
 	//byte 1: flags
+	//byte 2: packet number
 	//byte 3-17: quaternion
 	//byte 18-19: empty
 	memcpy(&data[0], &preamble, 1);
-	memcpy(&data[1], &flags,    1);	
-	memcpy(&data[2], &motion->quat, 16);
+	memcpy(&data[1], &flags,    1);
+	memcpy(&data[2], &packet_number, 1);
+	memcpy(&data[3], &motion->quat, 16);
 }
 
 uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion)
@@ -374,7 +377,7 @@ uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion)
 		
 		preamble = 0xaa;
 		flags = 0;
-		motion_encode(encoded_data, preamble, flags, motion);
+		motion_encode(encoded_data, preamble, flags, packet_num++, motion);
 		hvx_len = 20;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
@@ -393,6 +396,7 @@ uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion)
 		NRF_LOG_ERROR("NRF_ERROR_INVALID_STATE");
         err_code = NRF_ERROR_INVALID_STATE;
     }
+
     return err_code;
 }
 

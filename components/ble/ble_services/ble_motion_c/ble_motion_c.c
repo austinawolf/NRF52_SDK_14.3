@@ -185,7 +185,8 @@ static void on_hvx(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_ble_evt)
 				return;
 			}
 			else {
-				memcpy(&ble_motion_c_evt.params.motionm.q0, &p_ble_evt->evt.gattc_evt.params.hvx.data[2], p_ble_evt->evt.gattc_evt.params.hvx.len);
+				memcpy(&ble_motion_c_evt.params.motionm.q0, &p_ble_evt->evt.gattc_evt.params.hvx.data[3], p_ble_evt->evt.gattc_evt.params.hvx.len);
+				NRF_LOG_DEBUG("packet num: %d", p_ble_evt->evt.gattc_evt.params.hvx.data[2]);
 			}
 		}
 		
