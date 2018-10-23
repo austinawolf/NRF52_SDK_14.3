@@ -78,6 +78,16 @@
 
 uint32_t event_number = 0;
 uint32_t packet_number = 0;
+
+
+uint32_t sample_num = 0;
+int accel_sum[XYZ] = {0, 0, 0};
+int gyro_sum[XYZ] = {0, 0, 0};
+int accel_av[XYZ] = {0, 0, 0};
+int	gyro_av[XYZ] = {0, 0, 0};
+
+
+
 const nrf_drv_timer_t TIMER_LED = NRF_DRV_TIMER_INSTANCE(0);
 
 void timeout_handler(void * p_context);
@@ -118,7 +128,7 @@ void timer_init(void) {
 	}
 
 	void * p_context;
-	uint32_t ticks = APP_TIMER_TICKS(IMU_SAMPLE_PERIOD_MS+10);
+	uint32_t ticks = APP_TIMER_TICKS(IMU_SAMPLE_PERIOD_MS);
 	
 	err_code = app_timer_start(my_timer_id,ticks,p_context);
 	if (err_code) {
@@ -141,7 +151,7 @@ int main(void)
 
 	//TWI INIT
 	twi_interface_init();
-
+	
 	//CLOCKS INIT
 	clocks_start();
 	
@@ -152,19 +162,25 @@ int main(void)
 	NRF_LOG_INFO("Enhanced ShockBurst Transmitter Example running.");
 	
 	//MPU INIT
+	int addr = twi_scan();
+	NRF_LOG_DEBUG("addr: %d", addr);	
+	
 	imu_status = imu_init();			
 	if (imu_status) {
 		NRF_LOG_INFO("IMU init failed. Restarting.");
 		NRF_LOG_FINAL_FLUSH();
+		nrf_delay_ms(1000);
 		NVIC_SystemReset();
 	}
-	imu_self_test();
+	imu_start();
+	//imu_self_test();
 	
 	
 	LOG_PRINT("Esb Logger Running\r\n");
 	LOG_FLUSH();
 	
 	//run
+	nrf_delay_ms(10);
 	timer_init();
 	
 	while (true) 
@@ -175,15 +191,39 @@ int main(void)
 }
 void timeout_handler(void * p_context) {
 	Motion motion;
+	
 
-
+	
 	imu_get_data(&motion);
 	if (motion.status) {
 		return;	
-	}	
+	}
+	
 	imu_get_compass(&motion);
 	imu_send_to_mpl(&motion);
-	imu_log_data(&motion);
+	imu_log_motion_cal(&motion);
 	
-	
+	if (!motion.status) {
+		sample_num++;
+		if (sample_num <= NUM_CAL_SAMPLES) {
+			NRF_LOG_INFO("Event: %d / %d", sample_num, (int) NUM_CAL_SAMPLES);
+			accel_sum[X] += motion.accel[X];
+			accel_sum[Y] += motion.accel[Y];
+			accel_sum[Z] += motion.accel[Z];
+			gyro_sum[X] += motion.gyro[X];
+			gyro_sum[Y] += motion.gyro[Y];
+			gyro_sum[Z] += motion.gyro[Z];
+		}			
+	}
+	if (sample_num == NUM_CAL_SAMPLES) {
+		accel_av[X] = accel_sum[X] / NUM_CAL_SAMPLES;
+		accel_av[Y] = accel_sum[Y] / NUM_CAL_SAMPLES;
+		accel_av[Z] = accel_sum[Z] / NUM_CAL_SAMPLES;
+		gyro_av[X] 	= gyro_sum[X] / NUM_CAL_SAMPLES;
+		gyro_av[Y] 	= gyro_sum[Y] / NUM_CAL_SAMPLES;
+		gyro_av[Z] 	= gyro_sum[Z] / NUM_CAL_SAMPLES;
+		NRF_LOG_INFO("Accel Offsets: x=%d, y=%d, z=%d", accel_av[X], accel_av[Y], accel_av[Z]-RAW_1G_REFERENCE);
+		NRF_LOG_INFO("Gyro Offsets: x=%d, y=%d, z=%d", gyro_av[X], gyro_av[Y], gyro_av[Z]);
+		
+	}
 }
