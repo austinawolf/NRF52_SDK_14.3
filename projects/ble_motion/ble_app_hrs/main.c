@@ -82,7 +82,12 @@
 #include "imu.h"
 #include "config.h"
 
-#define DEVICE_NAME                         "Nordic_MOTION"                            /**< Name of device. Will be included in the advertising data. */
+#ifdef DEV_MODE
+#define DEVICE_NAME                         "WOLF_MOTION"                            /**< Name of device. Will be included in the advertising data. */
+#else
+#define DEVICE_NAME                         "SDSU_MOTION"                            /**< Name of device. Will be included in the advertising data. */
+#endif
+
 #define MANUFACTURER_NAME                   "NordicSemiconductor"                   /**< Manufacturer. Will be passed to Device Information Service. */
 #define APP_ADV_INTERVAL                    300                                     /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
 #define APP_ADV_TIMEOUT_IN_SECONDS          180                                     /**< The advertising timeout in units of seconds. */
@@ -359,14 +364,22 @@ static void orientation_meas_timeout_handler(void * p_context)
     cnt++;
 	
 	Motion motion_data;
+	
+	#ifdef IMU_ENABLED
 	imu_get_data(&motion_data);
 	if (motion_data.status) {
 		return;	
 	}	
 	imu_get_compass(&motion_data);
 	imu_send_to_mpl(&motion_data);
+	#else
+	motion_data.quat[0] = 0xa;
+	motion_data.quat[1] = 0xb;
+	motion_data.quat[2] = 0xc;
+	motion_data.quat[3] = 0xd;
+	#endif
 	
-	NRF_LOG_INFO("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", motion_data.quat[0], motion_data.quat[1], motion_data.quat[2], motion_data.quat[3]);
+	NRF_LOG_DEBUG("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", motion_data.quat[0], motion_data.quat[1], motion_data.quat[2], motion_data.quat[3]);
 
 	
     err_code = ble_motion_quaternion_send(&m_motion, &motion_data);
@@ -511,8 +524,8 @@ static void services_init(void)
 
     // Here the sec level for the Heart Rate Service can be changed/increased.
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&motion_init.motion_motionm_attr_md.cccd_write_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&motion_init.motion_motionm_attr_md.read_perm);
-    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&motion_init.motion_motionm_attr_md.write_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&motion_init.motion_motionm_attr_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&motion_init.motion_motionm_attr_md.write_perm);
 
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&motion_init.motion_bsl_attr_md.read_perm);
     BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&motion_init.motion_bsl_attr_md.write_perm);
@@ -699,6 +712,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 {
     ret_code_t err_code;
 
+	NRF_LOG_DEBUG("ble evt handler");
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
@@ -706,12 +720,19 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+		
+			#ifdef IMU_ENABLED
 			imu_start();
+			#endif
+		
 		    application_timers_start();
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
+			#ifdef IMU_ENABLED
 			imu_stop();
+			#endif
+		
 			application_timers_stop();
             NRF_LOG_INFO("Disconnected, reason %d.",
                           p_ble_evt->evt.gap_evt.params.disconnected.reason);
@@ -782,9 +803,14 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             }
         } break;
 
-
+		case BLE_GATTS_EVT_WRITE:
+		{
+			
+			NRF_LOG_DEBUG("Gatts Write Event");
+			
+		}
         default:
-            // No implementation needed.
+
             break;
     }
 }
@@ -982,10 +1008,12 @@ int main(void)
     conn_params_init();
     peer_manager_init();
 	
+	#ifdef IMU_ENABLED
 	err_code = imu_init();	
 	if (err_code) {
 		NRF_LOG_ERROR("imu_init() %d", err_code);
 	}
+	#endif
 	
     // Start execution.
     NRF_LOG_INFO("Orientation Sensor example started.");

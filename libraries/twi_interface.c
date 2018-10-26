@@ -27,6 +27,7 @@ void twi_interface_init (void)
 {
     ret_code_t err_code;
 
+	
     const nrf_drv_twi_config_t twi_config = {
        .scl                = MPU9150_TWI_SCL,
        .sda                = MPU9150_TWI_SDA,

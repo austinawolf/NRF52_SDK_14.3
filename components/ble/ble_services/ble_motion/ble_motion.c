@@ -107,7 +107,6 @@ static void on_disconnect(ble_motion_t * p_motion, ble_evt_t const * p_ble_evt)
  */
 static void on_motionm_cccd_write(ble_motion_t * p_motion, ble_gatts_evt_write_t const * p_evt_write)
 {
-	NRF_LOG_INFO("on_motionm_cccd_write");
     if (p_evt_write->len == 2)
     {
         // CCCD written, update notification state
@@ -130,6 +129,31 @@ static void on_motionm_cccd_write(ble_motion_t * p_motion, ble_gatts_evt_write_t
 }
 
 
+/**@brief Function for handling write events to the Quaternion Orientation Measurement characteristic.
+ *
+ * @param[in]   p_motion         Quaternion Orientation Service structure.
+ * @param[in]   p_evt_write   Write event received from the BLE stack.
+ */
+static uint32_t on_motion_custom_char_write(ble_motion_t * p_motion, ble_gatts_evt_write_t const * p_evt_write)
+{
+    uint8_t read_value, write_value;
+	ble_gatts_value_t gatts_value;
+
+	read_value = p_evt_write->data[0];
+	NRF_LOG_DEBUG("Custom Characterstic Value Read: %x", read_value);
+	
+	write_value = ~read_value;
+	NRF_LOG_DEBUG("Custom Characterstic Value Write: %x", write_value);
+
+	gatts_value.p_value = &write_value;
+	gatts_value.offset = 0;
+	gatts_value.len = 1;
+	
+
+	return sd_ble_gatts_value_set(p_motion->conn_handle, p_motion->custom_handles.value_handle, &gatts_value);
+	
+}
+
 /**@brief Function for handling the Write event.
  *
  * @param[in]   p_motion       Quaternion Orientation Service structure.
@@ -137,12 +161,20 @@ static void on_motionm_cccd_write(ble_motion_t * p_motion, ble_gatts_evt_write_t
  */
 static void on_write(ble_motion_t * p_motion, ble_evt_t const * p_ble_evt)
 {
+	uint32_t err_code;
     ble_gatts_evt_write_t const * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
-
-    if (p_evt_write->handle == p_motion->motionm_handles.cccd_handle)
+	if (p_evt_write->handle == p_motion->motionm_handles.cccd_handle)
     {
         on_motionm_cccd_write(p_motion, p_evt_write);
     }
+    else if (p_evt_write->handle == p_motion->custom_handles.value_handle)
+    {
+		err_code = on_motion_custom_char_write(p_motion, p_evt_write);
+        if (err_code) {
+			NRF_LOG_ERROR("on_motion_custom_char_write: %d", err_code);
+		}
+    }	
+	
 }
 
 
@@ -177,8 +209,7 @@ void ble_motion_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context)
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-static uint32_t quaternion_meas_char_add(ble_motion_t            * p_motion,
-                                                const ble_motion_init_t * p_motion_init)
+static uint32_t quaternion_meas_char_add(ble_motion_t * p_motion, const ble_motion_init_t * p_motion_init)
 {
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_md_t cccd_md;
@@ -186,7 +217,8 @@ static uint32_t quaternion_meas_char_add(ble_motion_t            * p_motion,
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
     uint8_t             encoded_initial_motionm[MAX_MOTIONM_LEN];
-
+	uint32_t			err_code;
+	
     memset(&cccd_md, 0, sizeof(cccd_md));
 
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
@@ -197,14 +229,20 @@ static uint32_t quaternion_meas_char_add(ble_motion_t            * p_motion,
 
     char_md.char_props.notify = 1;
     char_md.char_props.read   = 1;
-    char_md.char_props.write  = 1;	
+    char_md.char_props.write  = 0;	
     char_md.p_char_user_desc  = NULL;
     char_md.p_char_pf         = NULL;
     char_md.p_user_desc_md    = NULL;
     char_md.p_cccd_md         = &cccd_md;
     char_md.p_sccd_md         = NULL;
 
-    BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_QUATERNION_MEASUREMENT_CHAR);
+    // Add Custom Char UUID
+    ble_uuid128_t base_uuid = {BLE_UUID_ORIENTATION_CHAR_BASE};
+    err_code =  sd_ble_uuid_vs_add(&base_uuid, &p_motion->uuid_type);
+    VERIFY_SUCCESS(err_code);
+	
+    ble_uuid.type = p_motion->uuid_type;
+    ble_uuid.uuid = BLE_UUID_ORIENTATION_CHAR;
 
     memset(&attr_md, 0, sizeof(attr_md));
 
@@ -228,6 +266,66 @@ static uint32_t quaternion_meas_char_add(ble_motion_t            * p_motion,
                                            &char_md,
                                            &attr_char_value,
                                            &p_motion->motionm_handles);
+}
+
+
+/**@brief Function for adding the Quaternion Measurement characteristic.
+ *
+ * @param[in]   p_motion        Heart Rate Service structure.
+ * @param[in]   p_motion_init   Information needed to initialize the service.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+static uint32_t custom_meas_char_add(ble_motion_t * p_motion, const ble_motion_init_t * p_motion_init)
+{
+    ble_gatts_char_md_t char_md;
+    ble_gatts_attr_t    attr_char_value;
+    ble_uuid_t          ble_uuid;
+    ble_gatts_attr_md_t attr_md;
+    uint8_t             encoded_initial_motionm = 0xaa;
+	uint32_t			err_code;
+	
+    memset(&char_md, 0, sizeof(char_md));
+
+    char_md.char_props.read   = 1;
+    char_md.char_props.write  = 1;	
+	char_md.char_props.notify = 0;
+    char_md.p_char_user_desc  = NULL;
+    char_md.p_char_pf         = NULL;
+    char_md.p_user_desc_md    = NULL;
+    char_md.p_cccd_md         = NULL;
+    char_md.p_sccd_md         = NULL;
+
+    memset(&attr_md, 0, sizeof(attr_md));
+
+    attr_md.read_perm  = p_motion_init->motion_motionm_attr_md.read_perm;
+    attr_md.write_perm = p_motion_init->motion_motionm_attr_md.write_perm;
+    attr_md.vloc       = BLE_GATTS_VLOC_STACK;
+    attr_md.rd_auth    = 0;
+    attr_md.wr_auth    = 0;
+    attr_md.vlen       = 0;
+
+    // Add Custom Service UUID
+    ble_uuid128_t base_uuid = {BLE_UUID_COMMAND_CHAR_BASE};
+    err_code =  sd_ble_uuid_vs_add(&base_uuid, &p_motion->uuid_type);
+    VERIFY_SUCCESS(err_code);
+	
+    ble_uuid.type = p_motion->uuid_type;
+    ble_uuid.uuid = BLE_UUID_COMMAND_CHAR;
+
+    memset(&attr_char_value, 0, sizeof(attr_char_value));
+
+    attr_char_value.p_uuid    = &ble_uuid;
+    attr_char_value.p_attr_md = &attr_md;
+    attr_char_value.init_len  = 1;
+    attr_char_value.init_offs = 0;
+    attr_char_value.max_len   = 1;
+    attr_char_value.p_value   = &encoded_initial_motionm;
+
+    return sd_ble_gatts_characteristic_add(p_motion->service_handle,
+                                           &char_md,
+                                           &attr_char_value,
+                                           &p_motion->custom_handles);
 }
 
 
@@ -300,13 +398,14 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_mo
     p_motion->max_motionm_len             = MAX_MOTIONM_LEN;
 
     // Add service
+	/*
     BLE_UUID_BLE_ASSIGN(ble_uuid, BLE_UUID_MOTION_SERVICE);
 
     err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
                                         &ble_uuid,
                                         &p_motion->service_handle);
-
-	/*
+	*/
+	
 	
     // Add Custom Service UUID
     ble_uuid128_t base_uuid = {BLE_UUID_MOTION_SERVICE_BASE};
@@ -319,7 +418,7 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_mo
     err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
                                         &ble_uuid,
                                         &p_motion->service_handle);	
-	*/
+	
 	
 	
     if (err_code != NRF_SUCCESS)
@@ -333,6 +432,13 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_mo
     {
         return err_code;
     }
+
+    err_code = custom_meas_char_add(p_motion, p_motion_init);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }	
+	
 	
     if (p_motion_init->p_body_sensor_location != NULL)
     {
@@ -362,6 +468,24 @@ static void motion_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, uint
 uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion)
 {
     uint32_t err_code;
+
+	/*
+	ble_gatts_value_t gatts_value;
+	static uint8_t custom_data = 0;
+	custom_data++;
+	gatts_value.len = 1;
+	gatts_value.p_value = &custom_data;
+	gatts_value.offset = 0;
+	err_code = sd_ble_gatts_value_set(p_motion->conn_handle,
+									  p_motion->custom_handles.value_handle,
+									  &gatts_value);
+	if (err_code) {
+		NRF_LOG_DEBUG("sd_ble_gatts_value_set: %d", err_code);
+		APP_ERROR_CHECK(err_code);
+	}
+	*/
+	
+
 
     // Send value if connected and notifying
     if (p_motion->conn_handle != BLE_CONN_HANDLE_INVALID)

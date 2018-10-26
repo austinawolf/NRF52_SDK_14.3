@@ -67,11 +67,11 @@ void set_baud(uint32_t baud_rate) {
 	};
 	
 	APP_UART_FIFO_INIT(&comm_params,
-											UART_RX_BUF_SIZE,
-											UART_TX_BUF_SIZE,
-											uart_event_handle,
-											APP_IRQ_PRIORITY_LOWEST,
-											err_code);
+						UART_RX_BUF_SIZE,
+						UART_TX_BUF_SIZE,
+						uart_event_handle,
+						APP_IRQ_PRIORITY_LOWEST,
+						err_code);
 	
 }
 	

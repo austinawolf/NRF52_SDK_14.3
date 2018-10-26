@@ -148,13 +148,12 @@ struct ble_motion_s
     bool                         is_expended_energy_supported;                         /**< TRUE if Expended Energy measurement is supported. */
     bool                         is_sensor_contact_supported;                          /**< TRUE if sensor contact detection is supported. */
     uint16_t                     service_handle;                                       /**< Handle of Heart Rate Service (as provided by the BLE stack). */
-    ble_gatts_char_handles_t     motionm_handles;                                          /**< Handles related to the Heart Rate Measurement characteristic. */
+    ble_gatts_char_handles_t     motionm_handles;                                      /**< Handles related to the Heart Rate Measurement characteristic. */
+	ble_gatts_char_handles_t	 custom_handles;
     ble_gatts_char_handles_t     bsl_handles;                                          /**< Handles related to the Body Sensor Location characteristic. */
     ble_gatts_char_handles_t     hrcp_handles;                                         /**< Handles related to the Heart Rate Control Point characteristic. */
     uint16_t                     conn_handle;                                          /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
     bool                         is_sensor_contact_detected;                           /**< TRUE if sensor contact has been detected. */
-    uint16_t                     rr_interval[BLE_MOTION_MAX_BUFFERED_RR_INTERVALS];       /**< Set of RR Interval measurements since the last Heart Rate Measurement transmission. */
-    uint16_t                     rr_interval_count;                                    /**< Number of RR Interval measurements since the last Heart Rate Measurement transmission. */
     uint8_t                      max_motionm_len;
 	uint8_t						 uuid_type;
 	/**< Current maximum HR measurement length, adjusted according to the current ATT MTU. */

@@ -87,6 +87,9 @@ extern "C" {
 #define RTS_PIN_NUMBER 5
 #define HWFC           true
 
+#define MPU9150_TWI_SCL 5 //undefined
+#define MPU9150_TWI_SDA 7 //undefined
+
 #define BSP_QSPI_SCK_PIN   19
 #define BSP_QSPI_CSN_PIN   17
 #define BSP_QSPI_IO0_PIN   20

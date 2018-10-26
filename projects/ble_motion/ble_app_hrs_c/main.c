@@ -996,7 +996,7 @@ static void scan_start(void)
     #endif
 
     // Reload the whitelist and whitelist all peers.
-    whitelist_load();
+    //whitelist_load();
 
     ret_code_t ret;
 

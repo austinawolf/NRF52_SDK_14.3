@@ -60,6 +60,30 @@
 extern "C" {
 #endif
 
+#define IGNORED 0x00
+	
+	
+	
+/** @defgroup UUID_SERVICES Custom Service UUID definitions
+ * @{ */
+	
+//{924418ff-c32c-40ca-b9a9-d9024bf8b001}	
+#define BLE_UUID_MOTION_SERVICE_BASE {0x01,0xb0,0xf8,0x4b,0x02,0xd9,0xa9,0xb9,0xca,0x40,0x2c,0xc3,IGNORED,IGNORED,0x44,0x92}
+#define BLE_UUID_MOTION_SERVICE 	  0x18FF     /**< Quaternion Orientation service UUID. */
+
+/** @defgroup UUID_CHARACTERISTICS Custom Characteristic UUID definitions
+ * @{ */
+
+//{43192aff-8264-41bb-b660-678c8ec9128c}
+#define BLE_UUID_ORIENTATION_CHAR_BASE {0x8c,0x12,0xc9,0x8e,0x8c,0x67,0x60,0xb6,0xbb,0x41,0x64,0x82,IGNORED,IGNORED,0x19,0x43}
+#define BLE_UUID_ORIENTATION_CHAR       0x2AFF     /**< Quaternion Orientation characteristic UUID. */
+
+//{d9541770-a7c0-4a17-a548-1e0fa159ad75}
+#define BLE_UUID_COMMAND_CHAR_BASE {0x75,0xad,0x59,0xa1,0x0f,0x1e,0x48,0xa5,0x17,0x4a,0xc0,0xa7,IGNORED,IGNORED,0x54,0xd9}
+#define BLE_UUID_COMMAND_CHAR       0x1770     /**< Quaternion Orientation characteristic UUID. */
+
+
+
 /** @defgroup UUID_SERVICES Service UUID definitions
  * @{ */
 #define BLE_UUID_ALERT_NOTIFICATION_SERVICE                      0x1811     /**< Alert Notification service UUID. */
@@ -87,9 +111,7 @@ extern "C" {
 #define BLE_UUID_PLX_SERVICE                                     0x1822     /**< Pulse Oximeter Service UUID*/
 #define BLE_UUID_OTS_SERVICE                                     0x1825     /**< Object Transfer Service UUID*/
 
-#define BLE_UUID_MOTION_SERVICE_BASE {0xBC, 0x8A, 0xBF, 0x45, 0xCA, 0x05, 0x50, 0xBA, 0x40, 0x42, 0xB0, 0x00, 0xC9, 0xAD, 0x64, 0xF3}
-#define BLE_UUID_MOTION_SERVICE                  			     0x18FF     /**< Quaternion Orientation service UUID. */
-		
+
 /** @} */
 
 /** @defgroup UUID_CHARACTERISTICS Characteristic UUID definitions
@@ -192,12 +214,7 @@ extern "C" {
 #define BLE_UUID_OTS_OLCP                                        0x2AC6     /**< OTS Service, Object List Control Point characteristic UUID*/
 #define BLE_UUID_OTS_LF                                          0x2AC7     /**< OTS Service, Object List Filter characteristic UUID*/
 #define BLE_UUID_OTS_OBJECT_CHANGED                              0x2AC8     /**< OTS Service, Object Changed characteristic UUID*/
-#define BLE_UUID_QUATERNION_CONTROL_POINT_CHAR       0x2AFE     /**< Quaternion Orientation Control Point characteristic UUID. */
-#define BLE_UUID_QUATERNION_MEASUREMENT_CHAR         0x2AFF     /**< Quaternion Orientation characteristic UUID. */
-#define BLE_UUID_IMU_CONTROL_POINT_CHAR       0x2AFC     /**< Quaternion Orientation Control Point characteristic UUID. */
-#define BLE_UUID_IMU_MEASUREMENT_CHAR         0x2AFD     /**< Quaternion Orientation characteristic UUID. */
-#define BLE_UUID_COMPASS_CONTROL_POINT_CHAR       0x2AFA	   /**< Quaternion Orientation Control Point characteristic UUID. */
-#define BLE_UUID_COMPASS_MEASUREMENT_CHAR         0x2AFB   	  /**< Quaternion Orientation characteristic UUID. */
+
 
 
 

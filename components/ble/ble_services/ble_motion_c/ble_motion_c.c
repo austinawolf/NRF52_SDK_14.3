@@ -160,8 +160,8 @@ static void on_hvx(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_ble_evt)
 	// Check if the event is on the link for this instance
     if (p_ble_motion_c->conn_handle != p_ble_evt->evt.gattc_evt.conn_handle)
     {
-        NRF_LOG_DEBUG("Received HVX on link 0x%x, not associated to this instance, ignore",
-                      p_ble_evt->evt.gattc_evt.conn_handle);
+        NRF_LOG_DEBUG("Received HVX on link 0x%x, not associated to instance 0x%x, ignore",
+                      p_ble_evt->evt.gattc_evt.conn_handle, p_ble_motion_c->conn_handle);
         return;
     }
 	
@@ -218,10 +218,13 @@ static void on_disconnected(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p
 
 void ble_motion_on_db_disc_evt(ble_motion_c_t * p_ble_motion_c, const ble_db_discovery_evt_t * p_evt)
 {
+	NRF_LOG_DEBUG("evt_type: %d", p_evt->evt_type);
+	NRF_LOG_DEBUG("uuid: 0x%x", p_evt->params.discovered_db.srv_uuid.uuid);
+	NRF_LOG_DEBUG("type: %d", p_evt->params.discovered_db.srv_uuid.type);
+	
     // Check if the Quaternion Orientation Service was discovered.
     if (p_evt->evt_type == BLE_DB_DISCOVERY_COMPLETE &&
-        p_evt->params.discovered_db.srv_uuid.uuid == BLE_UUID_MOTION_SERVICE &&
-        p_evt->params.discovered_db.srv_uuid.type == BLE_UUID_TYPE_BLE)
+        p_evt->params.discovered_db.srv_uuid.uuid == BLE_UUID_MOTION_SERVICE)
     {
         // Find the CCCD Handle of the Quaternion Orientation Measurement characteristic.
         uint32_t i;
@@ -231,10 +234,12 @@ void ble_motion_on_db_disc_evt(ble_motion_c_t * p_ble_motion_c, const ble_db_dis
         evt.evt_type    = BLE_MOTION_C_EVT_DISCOVERY_COMPLETE;
         evt.conn_handle = p_evt->conn_handle;
 
+		NRF_LOG_DEBUG("Chars found: %d", p_evt->params.discovered_db.char_count);
         for (i = 0; i < p_evt->params.discovered_db.char_count; i++)
         {
+			NRF_LOG_DEBUG("Char discovery: 0x%x, %d", p_evt->params.discovered_db.charateristics[i].characteristic.uuid.uuid, p_evt->params.discovered_db.charateristics[i].characteristic.uuid.type)
             if (p_evt->params.discovered_db.charateristics[i].characteristic.uuid.uuid ==
-                BLE_UUID_QUATERNION_MEASUREMENT_CHAR)
+                BLE_UUID_ORIENTATION_CHAR)
             {
                 // Found Quaternion Orientation characteristic. Store CCCD handle and break.
                 evt.params.peer_db.motionm_cccd_handle =
@@ -242,7 +247,6 @@ void ble_motion_on_db_disc_evt(ble_motion_c_t * p_ble_motion_c, const ble_db_dis
                 evt.params.peer_db.motionm_handle =
                     p_evt->params.discovered_db.charateristics[i].characteristic.handle_value;
                 
-				NRF_LOG_DEBUG("Found Quaternion char");
 				break;
 				
             }
@@ -267,15 +271,30 @@ void ble_motion_on_db_disc_evt(ble_motion_c_t * p_ble_motion_c, const ble_db_dis
 
 uint32_t ble_motion_c_init(ble_motion_c_t * p_ble_motion_c, ble_motion_c_init_t * p_ble_motion_c_init)
 {
+	uint32_t err_code;
+	
     VERIFY_PARAM_NOT_NULL(p_ble_motion_c);
     VERIFY_PARAM_NOT_NULL(p_ble_motion_c_init);
 
-    ble_uuid_t motion_uuid;
+	
+	
+    // Add Custom Service UUID
+    ble_uuid_t motion_uuid;	
+    ble_uuid128_t base_uuid = {BLE_UUID_MOTION_SERVICE_BASE};
+    err_code =  sd_ble_uuid_vs_add(&base_uuid, &motion_uuid.type);
+	motion_uuid.uuid = BLE_UUID_MOTION_SERVICE;
+    VERIFY_SUCCESS(err_code);
+	
+    // Add Custom Service UUID
+    ble_uuid_t orientation_uuid;	
+    ble_uuid128_t orientation_base_uuid = {BLE_UUID_ORIENTATION_CHAR_BASE};
+    err_code =  sd_ble_uuid_vs_add(&orientation_base_uuid, &orientation_uuid.type);
 
-    motion_uuid.type = BLE_UUID_TYPE_BLE;
-    motion_uuid.uuid = BLE_UUID_MOTION_SERVICE;
-
-
+    // Add Custom Service UUID
+    ble_uuid_t command_uuid;	
+    ble_uuid128_t command_base_uuid = {BLE_UUID_COMMAND_CHAR_BASE};
+    err_code =  sd_ble_uuid_vs_add(&command_base_uuid, &command_uuid.type);	
+	
     p_ble_motion_c->evt_handler                 = p_ble_motion_c_init->evt_handler;
     p_ble_motion_c->conn_handle                 = BLE_CONN_HANDLE_INVALID;
     p_ble_motion_c->peer_motion_db.motionm_cccd_handle = BLE_GATT_HANDLE_INVALID;
@@ -286,7 +305,7 @@ uint32_t ble_motion_c_init(ble_motion_c_t * p_ble_motion_c, ble_motion_c_init_t 
 
 void ble_motion_c_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context)
 {
-    ble_motion_c_t * p_ble_motion_c = (ble_motion_c_t *)p_context;
+     ble_motion_c_t * p_ble_motion_c = (ble_motion_c_t *)p_context;
 
     if ((p_ble_motion_c == NULL) || (p_ble_evt == NULL))
     {

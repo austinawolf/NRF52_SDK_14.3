@@ -175,7 +175,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>Segger\JL2CM3.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -334,8 +334,8 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20002a58</StartAddress>
-                <Size>0xd5a8</Size>
+                <StartAddress>0x20002b48</StartAddress>
+                <Size>0x3d4b8</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
