@@ -39,26 +39,26 @@
  */
 /** @file
  *
- * @defgroup ble_motion Heart Rate Service
+ * @defgroup ble_motion Motion Service
  * @{
  * @ingroup ble_sdk_srv
- * @brief Heart Rate Service module.
+ * @brief Motion Service module.
  *
- * @details This module implements the Heart Rate Service with the Heart Rate Measurement,
- *          Body Sensor Location and Heart Rate Control Point characteristics.
- *          During initialization it adds the Heart Rate Service and Heart Rate Measurement
+ * @details This module implements the Motion Service with the Motion Measurement,
+ *          Body Sensor Location and Motion Control Point characteristics.
+ *          During initialization it adds the Motion Service and Motion Measurement
  *          characteristic to the BLE stack database. Optionally it also adds the
- *          Body Sensor Location and Heart Rate Control Point characteristics.
+ *          Body Sensor Location and Motion Control Point characteristics.
  *
- *          If enabled, notification of the Heart Rate Measurement characteristic is performed
+ *          If enabled, notification of the Motion Measurement characteristic is performed
  *          when the application calls ble_motion_heart_rate_measurement_send().
  *
- *          The Heart Rate Service also provides a set of functions for manipulating the
- *          various fields in the Heart Rate Measurement characteristic, as well as setting
+ *          The Motion Service also provides a set of functions for manipulating the
+ *          various fields in the Motion Measurement characteristic, as well as setting
  *          the Body Sensor Location characteristic value.
  *
- *          If an event handler is supplied by the application, the Heart Rate Service will
- *          generate Heart Rate Service events to the application.
+ *          If an event handler is supplied by the application, the Motion Service will
+ *          generate Motion Service events to the application.
  *
  * @note    The application must register this module as BLE event observer using the
  *          NRF_SDH_BLE_OBSERVER macro. Example:
@@ -108,17 +108,15 @@ NRF_SDH_BLE_OBSERVER(_name ## _obs,                                             
 #define BLE_MOTION_BODY_SENSOR_LOCATION_EAR_LOBE   5
 #define BLE_MOTION_BODY_SENSOR_LOCATION_FOOT       6
 
-#define BLE_MOTION_MAX_BUFFERED_RR_INTERVALS       20      /**< Size of RR Interval buffer inside service. */
 
-
-/**@brief Heart Rate Service event type. */
+/**@brief Motion Service event type. */
 typedef enum
 {
-    BLE_MOTION_EVT_NOTIFICATION_ENABLED,   /**< Heart Rate value notification enabled event. */
-    BLE_MOTION_EVT_NOTIFICATION_DISABLED   /**< Heart Rate value notification disabled event. */
+    BLE_MOTION_EVT_NOTIFICATION_ENABLED,   /**< Motion value notification enabled event. */
+    BLE_MOTION_EVT_NOTIFICATION_DISABLED   /**< Motion value notification disabled event. */
 } ble_motion_evt_type_t;
 
-/**@brief Heart Rate Service event. */
+/**@brief Motion Service event. */
 typedef struct
 {
     ble_motion_evt_type_t evt_type;    /**< Type of event. */
@@ -127,31 +125,31 @@ typedef struct
 // Forward declaration of the ble_motion_t type.
 typedef struct ble_motion_s ble_motion_t;
 
-/**@brief Heart Rate Service event handler type. */
+/**@brief Motion Service event handler type. */
 typedef void (*ble_motion_evt_handler_t) (ble_motion_t * p_motion, ble_motion_evt_t * p_evt);
 
-/**@brief Heart Rate Service init structure. This contains all options and data needed for
+/**@brief Motion Service init structure. This contains all options and data needed for
  *        initialization of the service. */
 typedef struct
 {
-    ble_motion_evt_handler_t        evt_handler;                                          /**< Event handler to be called for handling events in the Heart Rate Service. */
+    ble_motion_evt_handler_t        evt_handler;                                          /**< Event handler to be called for handling events in the Motion Service. */
     bool                         is_sensor_contact_supported;                          /**< Determines if sensor contact detection is to be supported. */
     uint8_t *                    p_body_sensor_location;                               /**< If not NULL, initial value of the Body Sensor Location characteristic. */
-    ble_srv_cccd_security_mode_t motion_motionm_attr_md;                                      /**< Initial security level for heart rate service measurement attribute */
+    ble_srv_cccd_security_mode_t motion_motionm_attr_md;                                      /**< Initial security level for Motion service measurement attribute */
     ble_srv_security_mode_t      motion_bsl_attr_md;                                      /**< Initial security level for body sensor location attribute */
 } ble_motion_init_t;
 
-/**@brief Heart Rate Service structure. This contains various status information for the service. */
+/**@brief Motion Service structure. This contains various status information for the service. */
 struct ble_motion_s
 {
-    ble_motion_evt_handler_t        evt_handler;                                          /**< Event handler to be called for handling events in the Heart Rate Service. */
+    ble_motion_evt_handler_t        evt_handler;                                          /**< Event handler to be called for handling events in the Motion Service. */
     bool                         is_expended_energy_supported;                         /**< TRUE if Expended Energy measurement is supported. */
     bool                         is_sensor_contact_supported;                          /**< TRUE if sensor contact detection is supported. */
-    uint16_t                     service_handle;                                       /**< Handle of Heart Rate Service (as provided by the BLE stack). */
-    ble_gatts_char_handles_t     motionm_handles;                                      /**< Handles related to the Heart Rate Measurement characteristic. */
-	ble_gatts_char_handles_t	 custom_handles;
+    uint16_t                     service_handle;                                       /**< Handle of Motion Service (as provided by the BLE stack). */
+    ble_gatts_char_handles_t     motionm_handles;                                      /**< Handles related to the Motion Measurement characteristic. */
+	ble_gatts_char_handles_t	 command_handles;
     ble_gatts_char_handles_t     bsl_handles;                                          /**< Handles related to the Body Sensor Location characteristic. */
-    ble_gatts_char_handles_t     hrcp_handles;                                         /**< Handles related to the Heart Rate Control Point characteristic. */
+    ble_gatts_char_handles_t     hrcp_handles;                                         /**< Handles related to the Motion Control Point characteristic. */
     uint16_t                     conn_handle;                                          /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
     bool                         is_sensor_contact_detected;                           /**< TRUE if sensor contact has been detected. */
     uint8_t                      max_motionm_len;
@@ -160,9 +158,9 @@ struct ble_motion_s
 };
 
 
-/**@brief Function for initializing the Heart Rate Service.
+/**@brief Function for initializing the Motion Service.
  *
- * @param[out]  p_motion       Heart Rate Service structure. This structure will have to be supplied by
+ * @param[out]  p_motion       Motion Service structure. This structure will have to be supplied by
  *                          the application. It will be initialized by this function, and will later
  *                          be used to identify this particular service instance.
  * @param[in]   p_motion_init  Information needed to initialize the service.
@@ -174,9 +172,9 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, ble_motion_init_t const * p_mo
 
 /**@brief Function for handling the GATT module's events.
  *
- * @details Handles all events from the GATT module of interest to the Heart Rate Service.
+ * @details Handles all events from the GATT module of interest to the Motion Service.
  *
- * @param[in]   p_motion      Heart Rate Service structure.
+ * @param[in]   p_motion      Motion Service structure.
  * @param[in]   p_gatt_evt  Event received from the GATT module.
  */
 void ble_motion_on_gatt_evt(ble_motion_t * p_motion, nrf_ble_gatt_evt_t const * p_gatt_evt);
@@ -184,53 +182,30 @@ void ble_motion_on_gatt_evt(ble_motion_t * p_motion, nrf_ble_gatt_evt_t const * 
 
 /**@brief Function for handling the Application's BLE Stack events.
  *
- * @details Handles all events from the BLE stack of interest to the Heart Rate Service.
+ * @details Handles all events from the BLE stack of interest to the Motion Service.
  *
  * @param[in]   p_ble_evt   Event received from the BLE stack.
- * @param[in]   p_context   Heart Rate Service structure.
+ * @param[in]   p_context   Motion Service structure.
  */
 void ble_motion_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context);
 
 
-/**@brief Function for sending heart rate measurement if notification has been enabled.
+/**@brief Function for sending Motion measurement if notification has been enabled.
  *
- * @details The application calls this function after having performed a heart rate measurement.
- *          If notification has been enabled, the heart rate measurement data is encoded and sent to
+ * @details The application calls this function after having performed a Motion measurement.
+ *          If notification has been enabled, the Motion measurement data is encoded and sent to
  *          the client.
  *
- * @param[in]   p_motion                    Heart Rate Service structure.
- * @param[in]   heart_rate               New heart rate measurement.
+ * @param[in]   p_motion                 Motion Service structure.
+ * @param[in]   motion               	 New Motion measurement.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion);
-
-
-/**@brief Function for adding a RR Interval measurement to the RR Interval buffer.
- *
- * @details All buffered RR Interval measurements will be included in the next heart rate
- *          measurement message, up to the maximum number of measurements that will fit into the
- *          message. If the buffer is full, the oldest measurement in the buffer will be deleted.
- *
- * @param[in]   p_motion        Heart Rate Service structure.
- * @param[in]   rr_interval  New RR Interval measurement (will be buffered until the next
- *                           transmission of Heart Rate Measurement).
- */
-void ble_motion_rr_interval_add(ble_motion_t * p_motion, uint16_t rr_interval);
-
-
-/**@brief Function for checking if RR Interval buffer is full.
- *
- * @param[in]   p_motion        Heart Rate Service structure.
- *
- * @return      true if RR Interval buffer is full, false otherwise.
- */
-bool ble_motion_rr_interval_buffer_is_full(ble_motion_t * p_motion);
-
+uint32_t ble_motion_orientation_send(ble_motion_t * p_motion, Motion * motion);
 
 /**@brief Function for setting the state of the Sensor Contact Supported bit.
  *
- * @param[in]   p_motion                        Heart Rate Service structure.
+ * @param[in]   p_motion                        Motion Service structure.
  * @param[in]   is_sensor_contact_supported  New state of the Sensor Contact Supported bit.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
@@ -240,7 +215,7 @@ uint32_t ble_motion_sensor_contact_supported_set(ble_motion_t * p_motion, bool i
 
 /**@brief Function for setting the state of the Sensor Contact Detected bit.
  *
- * @param[in]   p_motion                        Heart Rate Service structure.
+ * @param[in]   p_motion                        Motion Service structure.
  * @param[in]   is_sensor_contact_detected   TRUE if sensor contact is detected, FALSE otherwise.
  */
 void ble_motion_sensor_contact_detected_update(ble_motion_t * p_motion, bool is_sensor_contact_detected);
@@ -251,7 +226,7 @@ void ble_motion_sensor_contact_detected_update(ble_motion_t * p_motion, bool is_
  * @details Sets a new value of the Body Sensor Location characteristic. The new value will be sent
  *          to the client the next time the client reads the Body Sensor Location characteristic.
  *
- * @param[in]   p_motion                 Heart Rate Service structure.
+ * @param[in]   p_motion                 Motion Service structure.
  * @param[in]   body_sensor_location  New Body Sensor Location.
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.

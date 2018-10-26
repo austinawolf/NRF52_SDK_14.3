@@ -37,9 +37,9 @@
 	#define GYRO_BIAS 	{	  -24		*	SCALE_GYRO_OFFSET, \
 							    0		*	SCALE_GYRO_OFFSET, \
 							    1		*	SCALE_GYRO_OFFSET}
-	#define ACCEL_BIAS 	{	 -196		*	SCALE_ACC_OFFSET, \
-							  210		*	SCALE_ACC_OFFSET, \
-							-1794		*	SCALE_ACC_OFFSET}	
+	#define ACCEL_BIAS 	{	 -248		*	SCALE_ACC_OFFSET, \
+							  419		*	SCALE_ACC_OFFSET, \
+							-1825		*	SCALE_ACC_OFFSET}	
 	#define MAG_SOFTIRON_MATRIX		{ { 0.934, 0.005, 0.013 },	\
 									{ 0.005, 0.948, 0.012 },	\
 									{ 0.013, 0.012, 1.129 }}

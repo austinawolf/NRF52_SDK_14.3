@@ -55,6 +55,7 @@
 #include "ble.h"
 #include "ble_gap.h"
 #include "ble_gatt.h"
+#include "config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,24 +63,28 @@ extern "C" {
 
 #define IGNORED 0x00
 	
-	
+#ifdef DEV_MODE
+#define UUID_TOGGLE 0x00
+#else
+#define UUID_TOGGLE 0x01
+#endif
 	
 /** @defgroup UUID_SERVICES Custom Service UUID definitions
  * @{ */
 	
 //{924418ff-c32c-40ca-b9a9-d9024bf8b001}	
-#define BLE_UUID_MOTION_SERVICE_BASE {0x01,0xb0,0xf8,0x4b,0x02,0xd9,0xa9,0xb9,0xca,0x40,0x2c,0xc3,IGNORED,IGNORED,0x44,0x92}
+#define BLE_UUID_MOTION_SERVICE_BASE {UUID_TOGGLE,0xb0,0xf8,0x4b,0x02,0xd9,0xa9,0xb9,0xca,0x40,0x2c,0xc3,IGNORED,IGNORED,0x44,0x92}
 #define BLE_UUID_MOTION_SERVICE 	  0x18FF     /**< Quaternion Orientation service UUID. */
 
 /** @defgroup UUID_CHARACTERISTICS Custom Characteristic UUID definitions
  * @{ */
 
-//{43192aff-8264-41bb-b660-678c8ec9128c}
-#define BLE_UUID_ORIENTATION_CHAR_BASE {0x8c,0x12,0xc9,0x8e,0x8c,0x67,0x60,0xb6,0xbb,0x41,0x64,0x82,IGNORED,IGNORED,0x19,0x43}
+//{43192aff-8264-41bb-b660-678c8ec91201}
+#define BLE_UUID_ORIENTATION_CHAR_BASE {UUID_TOGGLE,0x12,0xc9,0x8e,0x8c,0x67,0x60,0xb6,0xbb,0x41,0x64,0x82,IGNORED,IGNORED,0x19,0x43}
 #define BLE_UUID_ORIENTATION_CHAR       0x2AFF     /**< Quaternion Orientation characteristic UUID. */
 
-//{d9541770-a7c0-4a17-a548-1e0fa159ad75}
-#define BLE_UUID_COMMAND_CHAR_BASE {0x75,0xad,0x59,0xa1,0x0f,0x1e,0x48,0xa5,0x17,0x4a,0xc0,0xa7,IGNORED,IGNORED,0x54,0xd9}
+//{d9541770-a7c0-4a17-a548-1e0fa159ad01}
+#define BLE_UUID_COMMAND_CHAR_BASE {UUID_TOGGLE,0xad,0x59,0xa1,0x0f,0x1e,0x48,0xa5,0x17,0x4a,0xc0,0xa7,IGNORED,IGNORED,0x54,0xd9}
 #define BLE_UUID_COMMAND_CHAR       0x1770     /**< Quaternion Orientation characteristic UUID. */
 
 

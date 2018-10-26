@@ -90,12 +90,17 @@
 #define SCAN_INTERVAL               0x00A0                              /**< Determines scan interval in units of 0.625 millisecond. */
 #define SCAN_WINDOW                 0x0050                              /**< Determines scan window in units of 0.625 millisecond. */
 
-#define MIN_CONNECTION_INTERVAL     MSEC_TO_UNITS(7.5, UNIT_1_25_MS)    /**< Determines minimum connection interval in millisecond. */
-#define MAX_CONNECTION_INTERVAL     MSEC_TO_UNITS(30, UNIT_1_25_MS)     /**< Determines maximum connection interval in millisecond. */
+#define MIN_CONNECTION_INTERVAL     MSEC_TO_UNITS(10, UNIT_1_25_MS)    /**< Determines minimum connection interval in millisecond. */
+#define MAX_CONNECTION_INTERVAL     MSEC_TO_UNITS(20, UNIT_1_25_MS)     /**< Determines maximum connection interval in millisecond. */
 #define SLAVE_LATENCY               0                                   /**< Determines slave latency in counts of connection events. */
 #define SUPERVISION_TIMEOUT         MSEC_TO_UNITS(4000, UNIT_10_MS)     /**< Determines supervision time-out in units of 10 millisecond. */
 
 #define TARGET_UUID                 BLE_UUID_MOTION_SERVICE         /**< Target device name that application is looking for. */
+
+#define UART_OUTPUT_INTERVAL		APP_TIMER_TICKS(100)
+APP_TIMER_DEF(m_output_timer_id);                                  /**< Battery timer. */
+
+long quat[4] = {0,0,0,0};
 
 /**@brief Macro to unpack 16bit unsigned UUID from octet stream. */
 #define UUID16_EXTRACT(DST, SRC) \
@@ -155,6 +160,9 @@ static ble_gap_addr_t const m_target_periph_addr =
 
 static void scan_start(void);
 
+static void uart_output_handler(void * p_context) {
+	printf("%ld,%ld,%ld,%ld,\n\r",quat[0],quat[1],quat[2],quat[3]);
+}
 
 /**@brief Function for asserts in the SoftDevice.
  *
@@ -187,6 +195,48 @@ static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
     ble_bas_on_db_disc_evt(&m_bas_c, p_evt);
 }
 
+/**@brief Function for the Timer initialization.
+ *
+ * @details Initializes the timer module. This creates and starts application timers.
+ */
+static void timers_init(void)
+{
+    ret_code_t err_code;
+
+    // Initialize timer module.
+    err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
+
+    // Create timers.
+    err_code = app_timer_create(&m_output_timer_id,
+                                APP_TIMER_MODE_REPEATED,
+                                uart_output_handler);
+    APP_ERROR_CHECK(err_code);
+}
+
+
+/**@brief Function for starting application timers.
+ */
+static void application_timers_start(void)
+{
+    ret_code_t err_code;
+
+    // Start application timers.
+    err_code = app_timer_start(m_output_timer_id, UART_OUTPUT_INTERVAL, NULL);
+    APP_ERROR_CHECK(err_code);
+}
+
+/**@brief Function for starting application timers.
+ */
+static void application_timers_stop(void)
+{
+    ret_code_t err_code;
+
+    // Start application timers.
+    err_code = app_timer_stop(m_output_timer_id);
+    APP_ERROR_CHECK(err_code);
+
+}
 
 /**@brief Function for handling Peer Manager events.
  *
@@ -504,6 +554,9 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             {
                 scan_start();
             }
+			
+			application_timers_start();
+			
         } break;
 
         case BLE_GAP_EVT_ADV_REPORT:
@@ -573,6 +626,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             {
                 scan_start();
             }
+			application_timers_stop();
         } break;
 
         case BLE_GAP_EVT_TIMEOUT:
@@ -810,8 +864,13 @@ static void motion_c_evt_handler(ble_motion_c_t * p_motion_c, ble_motion_c_evt_t
 
         case BLE_MOTION_C_EVT_MOTIONM_NOTIFICATION:
         {
-            NRF_LOG_INFO("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", p_motion_c_evt->params.motionm.q0, p_motion_c_evt->params.motionm.q1, p_motion_c_evt->params.motionm.q2, p_motion_c_evt->params.motionm.q3);
-			printf("%d,%d,%d,%d,\n\r",p_motion_c_evt->params.motionm.q0, p_motion_c_evt->params.motionm.q1, p_motion_c_evt->params.motionm.q2, p_motion_c_evt->params.motionm.q3);
+			quat[0] = p_motion_c_evt->params.motionm.q0;
+			quat[1] = p_motion_c_evt->params.motionm.q1;
+			quat[2] = p_motion_c_evt->params.motionm.q2;
+			quat[3] = p_motion_c_evt->params.motionm.q3;
+            NRF_LOG_INFO("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", quat[0], quat[1],quat[2], quat[3]);
+			 
+			
         } break;
 
         default:
@@ -1146,11 +1205,13 @@ int main(void)
     motion_c_init();
     bas_c_init();
 	uart_helper_init();
-	printf("Uart Start\n\r");
+	timers_init();
+	
     // Start scanning for peripherals and initiate connection
     // with devices that advertise Heart Rate UUID.
     NRF_LOG_INFO("Quaternion Orientation collector example started.");
-	
+	printf("Quaternion Orientation collector example started.\n\r");
+
     if (erase_bonds == true)
     {
         delete_bonds();
