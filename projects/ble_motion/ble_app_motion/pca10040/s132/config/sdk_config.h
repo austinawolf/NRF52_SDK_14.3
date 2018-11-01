@@ -2885,7 +2885,7 @@
 // <i> Module will trace percentage of CPU usage in one second intervals.
 
 #ifndef NRF_PWR_MGMT_CONFIG_CPU_USAGE_MONITOR_ENABLED
-#define NRF_PWR_MGMT_CONFIG_CPU_USAGE_MONITOR_ENABLED 0
+#define NRF_PWR_MGMT_CONFIG_CPU_USAGE_MONITOR_ENABLED 1
 #endif
 
 // <e> NRF_PWR_MGMT_CONFIG_STANDBY_TIMEOUT_ENABLED - Enable standby timeout.
@@ -4638,6 +4638,57 @@
 // <h> nrf_log in nRF_Libraries 
 
 //==========================================================
+// <e> CMD_CONFIG_LOG_ENABLED - Enables logging in the module.
+//==========================================================
+#ifndef CMD_CONFIG_LOG_ENABLED
+#define CMD_CONFIG_LOG_ENABLED 1
+#endif
+// <o> CMD_CONFIG_LOG_LEVEL  - Default Severity level
+ 
+// <0=> Off 
+// <1=> Error 
+// <2=> Warning 
+// <3=> Info 
+// <4=> Debug 
+
+#ifndef CMD_CONFIG_LOG_LEVEL
+#define CMD_CONFIG_LOG_LEVEL 4
+#endif
+
+// <o> CMD_CONFIG_INFO_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef CMD_CONFIG_INFO_COLOR
+#define CMD_CONFIG_INFO_COLOR 0
+#endif
+
+// <o> CMD_CONFIG_DEBUG_COLOR  - ANSI escape code prefix.
+ 
+// <0=> Default 
+// <1=> Black 
+// <2=> Red 
+// <3=> Green 
+// <4=> Yellow 
+// <5=> Blue 
+// <6=> Magenta 
+// <7=> Cyan 
+// <8=> White 
+
+#ifndef CMD_DEBUG_COLOR
+#define CMD_DEBUG_COLOR 0
+#endif
+
+// </e>
+
 // <e> APP_USBD_CDC_ACM_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef APP_USBD_CDC_ACM_CONFIG_LOG_ENABLED
@@ -4947,7 +4998,7 @@
 // <e> NRF_PWR_MGMT_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef NRF_PWR_MGMT_CONFIG_LOG_ENABLED
-#define NRF_PWR_MGMT_CONFIG_LOG_ENABLED 0
+#define NRF_PWR_MGMT_CONFIG_LOG_ENABLED 1
 #endif
 // <o> NRF_PWR_MGMT_CONFIG_LOG_LEVEL  - Default Severity level
  
@@ -4958,7 +5009,7 @@
 // <4=> Debug 
 
 #ifndef NRF_PWR_MGMT_CONFIG_LOG_LEVEL
-#define NRF_PWR_MGMT_CONFIG_LOG_LEVEL 3
+#define NRF_PWR_MGMT_CONFIG_LOG_LEVEL 4
 #endif
 
 // <o> NRF_PWR_MGMT_CONFIG_INFO_COLOR  - ANSI escape code prefix.
@@ -5111,7 +5162,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_BLE_LOG_LEVEL
-#define NRF_SDH_BLE_LOG_LEVEL 4
+#define NRF_SDH_BLE_LOG_LEVEL 3
 #endif
 
 // <o> NRF_SDH_BLE_INFO_COLOR  - ANSI escape code prefix.
@@ -5162,7 +5213,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_LOG_LEVEL
-#define NRF_SDH_LOG_LEVEL 4
+#define NRF_SDH_LOG_LEVEL 3
 #endif
 
 // <o> NRF_SDH_INFO_COLOR  - ANSI escape code prefix.

@@ -86,7 +86,7 @@ extern "C" {
  * @hideinitializer
  */
 #define BLE_BAS_DEF(_name)                                                                          \
-static ble_bas_t _name;                                                                             \
+ble_bas_t _name;                                                                             \
 NRF_SDH_BLE_OBSERVER(_name ## _obs,                                                                 \
                      BLE_BAS_BLE_OBSERVER_PRIO,                                                     \
                      ble_bas_on_ble_evt, &_name)

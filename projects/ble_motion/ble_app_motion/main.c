@@ -45,7 +45,7 @@
  * (and also Battery and Device Information services). This application uses the
  * @ref srvlib_conn_params module.
  */
-
+#include "main.h"
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -66,12 +66,12 @@
 #include "nrf_sdh.h"
 #include "nrf_sdh_ble.h"
 #include "nrf_sdh_soc.h"
-#include "app_timer.h"
 #include "bsp_btn_ble.h"
 #include "peer_manager.h"
 #include "fds.h"
 #include "nrf_ble_gatt.h"
 #include "ble_conn_state.h"
+#include "nrf_pwr_mgmt.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -81,56 +81,14 @@
 #include "twi_interface.h"
 #include "imu.h"
 #include "config.h"
+#include "state.h"
 
-#ifdef DEV_MODE
-#define DEVICE_NAME                         "WOLF_MOTION"                            /**< Name of device. Will be included in the advertising data. */
-#else
-#define DEVICE_NAME                         "SDSU_MOTION"                            /**< Name of device. Will be included in the advertising data. */
-#endif
-
-#define MANUFACTURER_NAME                   "NordicSemiconductor"                   /**< Manufacturer. Will be passed to Device Information Service. */
-#define APP_ADV_INTERVAL                    300                                     /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS          180                                     /**< The advertising timeout in units of seconds. */
-
-#define APP_BLE_CONN_CFG_TAG                1                                       /**< A tag identifying the SoftDevice BLE configuration. */
-#define APP_BLE_OBSERVER_PRIO               3                                       /**< Application's BLE observer priority. You shouldn't need to modify this value. */
-
-#define BATTERY_LEVEL_MEAS_INTERVAL         APP_TIMER_TICKS(5000)                   /**< Battery level measurement interval (ticks). */                                     /**< Increment between each simulated battery level measurement. */
-
-#define ORIENTATION_MEAS_INTERVAL APP_TIMER_TICKS(1000/IMU_SAMPLE_RATE_HZ)          /**< Heart rate measurement interval (ticks). */
-
-#define SENSOR_CONTACT_DETECTED_INTERVAL    APP_TIMER_TICKS(5000)                   /**< Sensor Contact Detected toggle interval (ticks). */
-
-#define MIN_CONN_INTERVAL                   MSEC_TO_UNITS(10, UNIT_1_25_MS)        /**< Minimum acceptable connection interval (0.4 seconds). */
-#define MAX_CONN_INTERVAL                   MSEC_TO_UNITS(20, UNIT_1_25_MS)        /**< Maximum acceptable connection interval (0.65 second). */
-#define SLAVE_LATENCY                       0                                       /**< Slave latency. */
-#define CONN_SUP_TIMEOUT                    MSEC_TO_UNITS(4000, UNIT_10_MS)         /**< Connection supervisory timeout (4 seconds). */
-
-#define FIRST_CONN_PARAMS_UPDATE_DELAY      APP_TIMER_TICKS(5000)                   /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (5 seconds). */
-#define NEXT_CONN_PARAMS_UPDATE_DELAY       APP_TIMER_TICKS(30000)                  /**< Time between each call to sd_ble_gap_conn_param_update after the first call (30 seconds). */
-#define MAX_CONN_PARAMS_UPDATE_COUNT        3                                       /**< Number of attempts before giving up the connection parameter negotiation. */
-
-#define SEC_PARAM_BOND                      1                                       /**< Perform bonding. */
-#define SEC_PARAM_MITM                      0                                       /**< Man In The Middle protection not required. */
-#define SEC_PARAM_LESC                      0                                       /**< LE Secure Connections not enabled. */
-#define SEC_PARAM_KEYPRESS                  0                                       /**< Keypress notifications not enabled. */
-#define SEC_PARAM_IO_CAPABILITIES           BLE_GAP_IO_CAPS_NONE                    /**< No I/O capabilities. */
-#define SEC_PARAM_OOB                       0                                       /**< Out Of Band data not available. */
-#define SEC_PARAM_MIN_KEY_SIZE              7                                       /**< Minimum encryption key size. */
-#define SEC_PARAM_MAX_KEY_SIZE              16                                      /**< Maximum encryption key size. */
-
-#define DEAD_BEEF                           0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
-
-#define APP_FEATURE_NOT_SUPPORTED           BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2    /**< Reply when unsupported features are requested. */
-
-
-BLE_MOTION_DEF(m_motion);                                                 /**< Heart rate service instance. */
+BLE_MOTION_DEF(m_motion);                                           /**< Motion service instance. */
 BLE_BAS_DEF(m_bas);                                                 /**< Structure used to identify the battery service. */
 NRF_BLE_GATT_DEF(m_gatt);                                           /**< GATT module instance. */
 BLE_ADVERTISING_DEF(m_advertising);                                 /**< Advertising module instance. */
-APP_TIMER_DEF(m_battery_timer_id);                                  /**< Battery timer. */
-APP_TIMER_DEF(m_orientation_timer_id);                         /**< Quaternion Orientation timer. */
-APP_TIMER_DEF(m_sensor_contact_timer_id);                           /**< Sensor contact detected timer. */
+
+
 
 static uint16_t m_conn_handle         = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
 
@@ -307,140 +265,6 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 }
 
 
-/**@brief Function for performing battery measurement and updating the Battery Level characteristic
- *        in Battery Service.
- */
-static void battery_level_update(void)
-{
-    ret_code_t err_code;
-    uint8_t  battery_level;
-
-    battery_level = 97;
-
-    err_code = ble_bas_battery_level_update(&m_bas, battery_level);
-    if ((err_code != NRF_SUCCESS) &&
-        (err_code != NRF_ERROR_INVALID_STATE) &&
-        (err_code != NRF_ERROR_RESOURCES) &&
-        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
-       )
-    {
-        APP_ERROR_HANDLER(err_code);
-    }
-}
-
-
-/**@brief Function for handling the Battery measurement timer timeout.
- *
- * @details This function will be called each time the battery level measurement timer expires.
- *
- * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
- *                       app_start_timer() call to the timeout handler.
- */
-static void battery_level_meas_timeout_handler(void * p_context)
-{
-    UNUSED_PARAMETER(p_context);
-    battery_level_update();
-}
-
-
-/**@brief Function for handling the Heart rate measurement timer timeout.
- *
- * @details This function will be called each time the heart rate measurement timer expires.
- *          It will exclude RR Interval data from every third measurement.
- *
- * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
- *                       app_start_timer() call to the timeout handler.
- */
-static void orientation_meas_timeout_handler(void * p_context)
-{
-    static uint32_t cnt = 0;
-    ret_code_t      err_code;
-
-    UNUSED_PARAMETER(p_context);
-
-    cnt++;
-	
-	Motion motion_data;
-	
-	#ifdef IMU_ENABLED
-	imu_get_data(&motion_data);
-	if (motion_data.status) {
-		return;	
-	}	
-	imu_get_compass(&motion_data);
-	imu_send_to_mpl(&motion_data);
-	#else
-	motion_data.quat[0] = 0xa;
-	motion_data.quat[1] = 0xb;
-	motion_data.quat[2] = 0xc;
-	motion_data.quat[3] = 0xd;
-	#endif
-	
-	NRF_LOG_DEBUG("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", motion_data.quat[0], motion_data.quat[1], motion_data.quat[2], motion_data.quat[3]);
-
-	
-    err_code = ble_motion_orientation_send(&m_motion, &motion_data);
-    if ((err_code != NRF_SUCCESS) &&
-        (err_code != NRF_ERROR_INVALID_STATE) &&
-        (err_code != NRF_ERROR_RESOURCES) &&
-        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
-       )
-    {
-        APP_ERROR_HANDLER(err_code);
-    }
-
-}
-
-
-
-/**@brief Function for handling the Sensor Contact Detected timer timeout.
- *
- * @details This function will be called each time the Sensor Contact Detected timer expires.
- *
- * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
- *                       app_start_timer() call to the timeout handler.
- */
-static void sensor_contact_detected_timeout_handler(void * p_context)
-{
-    static bool sensor_contact_detected = false;
-
-    UNUSED_PARAMETER(p_context);
-
-    sensor_contact_detected = !sensor_contact_detected;
-    ble_motion_sensor_contact_detected_update(&m_motion, sensor_contact_detected);
-}
-
-
-/**@brief Function for the Timer initialization.
- *
- * @details Initializes the timer module. This creates and starts application timers.
- */
-static void timers_init(void)
-{
-    ret_code_t err_code;
-
-    // Initialize timer module.
-    err_code = app_timer_init();
-    APP_ERROR_CHECK(err_code);
-
-    // Create timers.
-    err_code = app_timer_create(&m_battery_timer_id,
-                                APP_TIMER_MODE_REPEATED,
-                                battery_level_meas_timeout_handler);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_create(&m_orientation_timer_id,
-                                APP_TIMER_MODE_REPEATED,
-                                orientation_meas_timeout_handler);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_create(&m_sensor_contact_timer_id,
-                                APP_TIMER_MODE_REPEATED,
-                                sensor_contact_detected_timeout_handler);
-    APP_ERROR_CHECK(err_code);
-}
-
-
 /**@brief Function for the GAP initialization.
  *
  * @details This function sets up all the necessary GAP (Generic Access Profile) parameters of the
@@ -561,39 +385,8 @@ static void services_init(void)
 }
 
 
-/**@brief Function for starting application timers.
- */
-static void application_timers_start(void)
-{
-    ret_code_t err_code;
 
-    // Start application timers.
-    err_code = app_timer_start(m_battery_timer_id, BATTERY_LEVEL_MEAS_INTERVAL, NULL);
-    APP_ERROR_CHECK(err_code);
 
-    err_code = app_timer_start(m_orientation_timer_id, ORIENTATION_MEAS_INTERVAL, NULL);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_start(m_sensor_contact_timer_id, SENSOR_CONTACT_DETECTED_INTERVAL, NULL);
-    APP_ERROR_CHECK(err_code);
-}
-
-/**@brief Function for starting application timers.
- */
-static void application_timers_stop(void)
-{
-    ret_code_t err_code;
-
-    // Start application timers.
-    err_code = app_timer_stop(m_battery_timer_id);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_stop(m_orientation_timer_id);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = app_timer_stop(m_sensor_contact_timer_id);
-    APP_ERROR_CHECK(err_code);
-}
 
 
 /**@brief Function for handling the Connection Parameters Module.
@@ -709,30 +502,18 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 {
     ret_code_t err_code;
 
-	NRF_LOG_DEBUG("ble evt handler");
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
-            NRF_LOG_INFO("Connected.");
+			system_event_call(ON_CONNECT);
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
-            m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-		
-			#ifdef IMU_ENABLED
-			imu_start();
-			#endif
-		
-		    application_timers_start();
+            m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;		    
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
-			#ifdef IMU_ENABLED
-			imu_stop();
-			#endif
-		
-			application_timers_stop();
-            NRF_LOG_INFO("Disconnected, reason %d.",
-                          p_ble_evt->evt.gap_evt.params.disconnected.reason);
+			system_event_call(ON_DISCONNECT);
+            NRF_LOG_INFO("Disconnected, reason %d.",p_ble_evt->evt.gap_evt.params.disconnected.reason);
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             break;
 
@@ -977,8 +758,9 @@ static void log_init(void)
  */
 static void power_manage(void)
 {
-    ret_code_t err_code = sd_app_evt_wait();
-    APP_ERROR_CHECK(err_code);
+    //ret_code_t err_code = sd_app_evt_wait();
+    //APP_ERROR_CHECK(err_code);
+	nrf_pwr_mgmt_run();
 }
 
 
@@ -991,10 +773,10 @@ int main(void)
 	
     // Initialize.
     log_init();
-    timers_init();
+	system_init();
     buttons_leds_init(&erase_bonds);
 	twi_interface_init();
-	
+	nrf_pwr_mgmt_init();
 	
 	//ble init
     ble_stack_init();

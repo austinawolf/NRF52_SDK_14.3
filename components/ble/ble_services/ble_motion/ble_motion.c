@@ -47,6 +47,7 @@
 #include <string.h>
 #include "ble_srv_common.h"
 #include "sdk_config.h"
+#include "command.h"
 
 #define NRF_LOG_MODULE_NAME motion
 
@@ -60,13 +61,6 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 NRF_LOG_MODULE_REGISTER();
-
-
-#define OPCODE_LENGTH 1                                                              /**< Length of opcode inside Quaternion Orientation packet. */
-#define HANDLE_LENGTH 2                                                              /**< Length of handle inside Quaternion Orientation packet. */
-#define MAX_MOTIONM_LEN      (NRF_SDH_BLE_GATT_MAX_MTU_SIZE - OPCODE_LENGTH - HANDLE_LENGTH) /**< Maxmotionm size of a transmitted Quaternion Orientation. */
-
-#define INITIAL_VALUE_MOTIONM                       0                                    /**< Initial Quaternion Orientation value. */
 
 // Heart Rate Measurement flag bits
 #define MOTIONM_FLAG_MASK_HR_VALUE_16BIT            (0x01 << 0)                           /**< Quaternion Orientation Value Format bit. */
@@ -128,6 +122,41 @@ static void on_motionm_cccd_write(ble_motion_t * p_motion, ble_gatts_evt_write_t
     }
 }
 
+static SdsReturnType encode_response(Response * p_response, ble_gatts_value_t * p_gatts_value) {
+	static uint8_t response_value[20];
+	uint16_t len;
+	
+	if (p_response -> err_code) {
+		//load error packet
+		len = MIN_RESPONSE_LEN;	
+		response_value[0] = p_response -> preamble;
+		response_value[1] = p_response -> opcode;
+		response_value[2] = p_response -> err_code;
+		response_value[3] = 0; //arglen
+	}
+	else {
+		//load response packet 
+		len = MIN_RESPONSE_LEN + p_response->arg_len;
+		response_value[0] = p_response -> preamble;
+		response_value[1] = p_response -> opcode;
+		response_value[2] = p_response -> err_code;
+		response_value[3] = p_response -> arg_len;
+		
+		if (p_response -> arg_len) {
+			memcpy(&response_value[4], p_response->p_args, p_response->arg_len);
+		}
+	}	
+	
+	//load gatts struct
+	p_gatts_value->p_value = response_value;
+	p_gatts_value->offset = 0;
+	p_gatts_value->len = len;
+	
+	NRF_LOG_HEXDUMP_DEBUG(p_gatts_value->p_value, p_gatts_value->len);
+	
+	return p_response -> err_code;
+	
+}
 
 /**@brief Function for handling write events to the Quaternion Orientation Measurement characteristic.
  *
@@ -136,21 +165,59 @@ static void on_motionm_cccd_write(ble_motion_t * p_motion, ble_gatts_evt_write_t
  */
 static uint32_t on_motion_command_char_write(ble_motion_t * p_motion, ble_gatts_evt_write_t const * p_evt_write)
 {
-    uint8_t read_value, write_value;
 	ble_gatts_value_t gatts_value;
+	SdsReturnType err_code;
 
-	read_value = p_evt_write->data[0];
-	NRF_LOG_DEBUG("Command Characterstic Value Read: %x", read_value);
+	NRF_LOG_DEBUG("Command Char Write Call");
+	NRF_LOG_FINAL_FLUSH();	
 	
-	write_value = ~read_value;
-	NRF_LOG_DEBUG("Command Characterstic Value Write: %x", write_value);
-
-	gatts_value.p_value = &write_value;
-	gatts_value.offset = 0;
-	gatts_value.len = 1;
+	//check for valid event data length
+	if (p_evt_write->len < MIN_COMMAND_LEN) {
+		return SDS_SHORT_COMMAND;
+	}
 	
+	//build command structure from event strcture
+	Command command = {
+		.preamble 	= p_evt_write->data[0],
+		.opcode 	= (OPCODE) p_evt_write->data[1], 
+		.arg_len 	= p_evt_write->data[2],
+		.p_args 	= p_evt_write->data[2] ? &p_evt_write->data[3]: NULL,
+	};
+	NRF_LOG_DEBUG("Preamble: 0x%x", command.preamble);
+	NRF_LOG_DEBUG("Opcode: 0x%x", command.opcode);
+	NRF_LOG_DEBUG("Length: %d", command.arg_len);
+	
+	//check for valid command
+	if (command.preamble != COMMAND_PREAMBLE) {
+		NRF_LOG_ERROR("SDS_INVALID_PREAMBLE");
+		return SDS_INVALID_PREAMBLE;
+	}
+	else if (command.opcode < MIN_OPCODE_VAL || command.opcode > MAX_OPCODE_VAL) {
+		NRF_LOG_ERROR("SDS_INVALID_OPCODE");		
+		return SDS_INVALID_OPCODE;
+	}
+	else if (command.arg_len > 16) {
+		NRF_LOG_ERROR("SDS_INVALID_ARG_LEN");
+		return SDS_INVALID_ARG_LEN;
+	}
+	
+	//call command and get resposne
+	Response response;
+	command_call(&command, &response);
 
+	
+	
+	NRF_LOG_DEBUG("Preamble: 0x%x", response.preamble);
+	NRF_LOG_DEBUG("Command: 0x%x", response.opcode);
+	NRF_LOG_DEBUG("Err Code: 0x%x", response.err_code);
+	NRF_LOG_DEBUG("Length: %d",response.arg_len);
+	//NRF_LOG_HEXDUMP_DEBUG(response.args, response.arg_len);
+	
+	err_code = encode_response(&response, &gatts_value);
+	
+	//send value
 	return sd_ble_gatts_value_set(p_motion->conn_handle, p_motion->command_handles.value_handle, &gatts_value);
+	//return NRF_SUCCESS;
 	
 }
 
@@ -216,7 +283,7 @@ static uint32_t quaternion_meas_char_add(ble_motion_t * p_motion, const ble_moti
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
-    uint8_t             encoded_initial_motionm[MAX_MOTIONM_LEN];
+    uint8_t             encoded_initial_motionm[20];
 	uint32_t			err_code;
 	
     memset(&cccd_md, 0, sizeof(cccd_md));
@@ -278,6 +345,7 @@ static uint32_t quaternion_meas_char_add(ble_motion_t * p_motion, const ble_moti
  */
 static uint32_t command_char_add(ble_motion_t * p_motion, const ble_motion_init_t * p_motion_init)
 {
+
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
@@ -303,7 +371,7 @@ static uint32_t command_char_add(ble_motion_t * p_motion, const ble_motion_init_
     attr_md.vloc       = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth    = 0;
     attr_md.wr_auth    = 0;
-    attr_md.vlen       = 0;
+    attr_md.vlen       = 1;
 
     // Add Custom Service UUID
     ble_uuid128_t base_uuid = {BLE_UUID_COMMAND_CHAR_BASE};
@@ -317,9 +385,9 @@ static uint32_t command_char_add(ble_motion_t * p_motion, const ble_motion_init_
 
     attr_char_value.p_uuid    = &ble_uuid;
     attr_char_value.p_attr_md = &attr_md;
-    attr_char_value.init_len  = 1;
+    attr_char_value.init_len  = 2;
     attr_char_value.init_offs = 0;
-    attr_char_value.max_len   = 1;
+    attr_char_value.max_len   = 20;
     attr_char_value.p_value   = &encoded_initial_motionm;
 
     return sd_ble_gatts_characteristic_add(p_motion->service_handle,
@@ -381,7 +449,8 @@ static uint32_t body_sensor_location_char_add(ble_motion_t * p_motion, const ble
 
 uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_motion_init)
 {
-    
+
+	
     if (p_motion == NULL || p_motion_init == NULL)
     {
         return NRF_ERROR_NULL;
@@ -395,7 +464,7 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_mo
     p_motion->evt_handler                 = p_motion_init->evt_handler;
     p_motion->is_sensor_contact_supported = p_motion_init->is_sensor_contact_supported;
     p_motion->is_sensor_contact_detected  = false;
-    p_motion->max_motionm_len             = MAX_MOTIONM_LEN;
+    p_motion->max_motionm_len             = 20;
 
 	
     // Add Custom Service UUID
@@ -540,7 +609,7 @@ void ble_motion_on_gatt_evt(ble_motion_t * p_motion, nrf_ble_gatt_evt_t const * 
     if (    (p_motion->conn_handle == p_gatt_evt->conn_handle)
         &&  (p_gatt_evt->evt_id == NRF_BLE_GATT_EVT_ATT_MTU_UPDATED))
     {
-        p_motion->max_motionm_len = p_gatt_evt->params.att_mtu_effective - OPCODE_LENGTH - HANDLE_LENGTH;
+        p_motion->max_motionm_len = 20;
     }
 }
 #endif // NRF_MODULE_ENABLED(BLE_MOTION)

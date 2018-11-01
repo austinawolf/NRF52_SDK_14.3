@@ -118,10 +118,8 @@ int imu_init(void) {
 
 	NRF_LOG_DEBUG("IMU INIT SUCCESS",ret);
 
-
 	return 0;
 }
-
 
 int	mpu_helper_inv_setup(void) {
 	inv_error_t result; 
@@ -158,7 +156,7 @@ int	mpu_helper_inv_setup(void) {
 		return result;		
     }
     
-	//result = inv_enable_vector_compass_cal();
+	result = inv_enable_vector_compass_cal();
 	if (result) {
 		NRF_LOG_ERROR("inv_enable_vector_compass_cal ret:%d",result);
 		return result;		
@@ -186,7 +184,6 @@ int	mpu_helper_inv_setup(void) {
 		NRF_LOG_ERROR("inv_start_mpl ret:%d",result);
 		return result;		
     }
-	
 	
 	return 0;
 }
@@ -243,7 +240,6 @@ int mpu_helper_init(void) {
 				(long)compass_fsr<<15);
 	
 	
-
 		mpu_set_accel_bias_6500_reg(accel_bias);
 		mpu_set_gyro_bias_reg(gyro_bias);
 
@@ -276,7 +272,6 @@ int mpu_helper_dmp_setup(void) {
 		return ret;		
 	}	
 	
-
 	ret = dmp_set_fifo_rate(IMU_SAMPLE_RATE_HZ);
 	if (ret != 0) {
 		NRF_LOG_ERROR("dmp_set_fifo_rate ret:%d",ret);		
@@ -284,7 +279,6 @@ int mpu_helper_dmp_setup(void) {
 	}	
 	
 	inv_set_quat_sample_rate(INV_QUAT_SAMPLE_RATE);
-	
 	
 	return 0;
 	

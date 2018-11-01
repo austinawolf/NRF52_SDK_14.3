@@ -94,7 +94,7 @@ extern "C" {
  * @hideinitializer
  */
 #define BLE_MOTION_DEF(_name)                                                                          \
-static ble_motion_t _name;                                                                             \
+ble_motion_t _name;                                                                             \
 NRF_SDH_BLE_OBSERVER(_name ## _obs,                                                                 \
                      BLE_MOTION_BLE_OBSERVER_PRIO,                                                     \
                      ble_motion_on_ble_evt, &_name)
