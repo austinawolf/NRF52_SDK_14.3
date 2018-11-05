@@ -4,17 +4,9 @@
 #include "imu.h"
 #include "app_timer.h"
 
-#define BATTERY_LEVEL_MEAS_INTERVAL         APP_TIMER_TICKS(5000)                   /**< Battery level measurement interval (ticks). */
-#define ORIENTATION_MEAS_INTERVAL APP_TIMER_TICKS(1000/IMU_SAMPLE_RATE_HZ)          /**< Heart rate measurement interval (ticks). */
-#define SENSOR_CONTACT_DETECTED_INTERVAL    APP_TIMER_TICKS(5000)                   /**< Sensor Contact Detected toggle interval (ticks). */
-
 
 #define DEFAULT_SAMPLE_RATE 			_1_HZ
 #define DEFAULT_SAMPLE_DESTINATION		SEND_TO_CENTRAL
-#define DEFAULT_IMU_CONFIG				   (ON<<SAMPLE_QUATERNION)\
-										|| (OFF<<SAMPLE_ACCEL)\
-										|| (OFF<<SAMPLE_GYRO)\
-										|| (OFF<<SAMPLE_COMPASS)
 
 
 typedef enum {
@@ -52,7 +44,6 @@ typedef struct state {
 	SYSTEM_STATE (*event_call)(SYSTEM_EVENT event); 
 	SAMPLE_RATE sample_rate;
 	SAMPLE_DESTINATION sample_destination;
-	SensorConfigReg sensor_config_reg;	
 } State;
 
 extern State state;

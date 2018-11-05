@@ -18,63 +18,52 @@
 #define RAW_ACCEL_TO_GS (float) 2.0f * 2.0f/0xFFFFf
 #define RAW_MAG_TO_uT (float) 4800.0f*2.0f/(0x4000f)
 
-
-typedef uint8_t SensorConfigReg;
-
-typedef enum 
-{
-	SAMPLE_QUATERNION,
-	SAMPLE_ACCEL,
-	SAMPLE_GYRO,
-	SAMPLE_COMPASS,
-	
-} SENSOR_CONFIG_BIT_DEF;
-#define ON 1
-#define OFF 0
-	
-typedef struct {
-	long q0;
-	long q1;
-	long q2;
-	long q3;	
-} Quaternion;
-
-typedef struct {
-	short x;
-	short y;
-	short z;
-} Accel;
-
-typedef struct {
-	short x;
-	short y;
-	short z;
-} Gyro;
-
-typedef struct {
-	float x;
-	float y;
-	float z;
-} Compass;
-
 #define X 0
 #define Y 1
 #define Z 2
 #define XYZ 3
 
+#define ON 1
+#define OFF 0
+
+// Sensor Config bit masks
+#define SENSOR_SAMPLE_QUATERNION    (1<<0)
+#define SENSOR_SAMPLE_RAW_IMU  		(1<<1)
+#define SENSOR_COMPASS         		(1<<2)
+#define SENSOR_USE_GYRO_CAL      	(1<<3)
+//#define UNUSED					(1<<4)
+//#define UNUSED					(1<<5)
+//#define UNUSED					(1<<6)
+//#define UNUSED					(1<<7)
+
+typedef uint8_t SensorConfig;
+
 typedef struct {
-	uint8_t sensor_num;
+	SensorConfig sensor_config;
+	void (*motion_cb[4]) (void * p_context);
+	void (*compass_cb[4]) (void * p_context);
+} MotionConfig;
+
+
+typedef struct {
 	uint32_t event;	
 	short gyro[XYZ], accel[XYZ], sensors;
-	float compass[XYZ];
 	unsigned char more;
 	long quat[4];
-	unsigned long sensor_timestamp;
-	unsigned long compass_timestamp;
-	int8_t cstatus;
+	unsigned long timestamp;
 	int8_t status;
 } Motion;
-	
+
+typedef union {
+	short s;
+	float f;
+} Compass;
+
+typedef struct {
+	Compass compass[XYZ];
+	unsigned long timestamp;
+	unsigned char status;
+} CompassSample;
 
 struct platform_data_s {
     signed char orientation[9];
@@ -95,14 +84,22 @@ extern const long accel_bias[3];
 extern long gyro_bias[3];
 
 
-int imu_init(void);
-void imu_self_test(void);
-int imu_init_madgwick(void);
+int imu_init(MotionConfig * motion_config);
+
+void imu_get_data(Motion *motion);
+void imu_get_compass(CompassSample *compass_sample);
+
+void imu_motion_to_mpl(Motion *motion);
+void imu_compass_to_mpl(CompassSample * compass_sample);
+
 int imu_start(void);
 int imu_stop(void);
-void imu_get_data(Motion *motion);
-void imu_get_compass(Motion *motion);
-void imu_send_to_mpl(Motion *motion);
+
+void imu_self_test(void);
+int imu_init_madgwick(void);
+
+
+
 void imu_log_data(Motion *motion);
 void imu_log_motion_cal(Motion *motion);
 

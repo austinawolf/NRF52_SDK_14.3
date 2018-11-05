@@ -206,7 +206,6 @@ static uint32_t on_motion_command_char_write(ble_motion_t * p_motion, ble_gatts_
 	command_call(&command, &response);
 
 	
-	
 	NRF_LOG_DEBUG("Preamble: 0x%x", response.preamble);
 	NRF_LOG_DEBUG("Command: 0x%x", response.opcode);
 	NRF_LOG_DEBUG("Err Code: 0x%x", response.err_code);
@@ -214,7 +213,8 @@ static uint32_t on_motion_command_char_write(ble_motion_t * p_motion, ble_gatts_
 	//NRF_LOG_HEXDUMP_DEBUG(response.args, response.arg_len);
 	
 	err_code = encode_response(&response, &gatts_value);
-	
+	NRF_LOG_ERROR("encode_response: %d",err_code);
+
 	//send value
 	return sd_ble_gatts_value_set(p_motion->conn_handle, p_motion->command_handles.value_handle, &gatts_value);
 	//return NRF_SUCCESS;
@@ -318,7 +318,7 @@ static uint32_t quaternion_meas_char_add(ble_motion_t * p_motion, const ble_moti
     attr_md.vloc       = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth    = 0;
     attr_md.wr_auth    = 0;
-    attr_md.vlen       = 0;
+    attr_md.vlen       = 1;
 
     memset(&attr_char_value, 0, sizeof(attr_char_value));
 
@@ -513,19 +513,50 @@ uint32_t ble_motion_init(ble_motion_t * p_motion, const ble_motion_init_t * p_mo
     return NRF_SUCCESS;
 }
 
-static void motion_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, uint8_t packet_number, Motion * motion) {
+static void quaternion_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, uint8_t packet_number, Motion * motion) {
 	//byte 0: 0xaa (preamble)
 	//byte 1: flags
 	//byte 2: packet number
-	//byte 3-17: quaternion
-	//byte 18-19: empty
+	//byte 3-18: quaternion
+	//byte 19: empty
+	//length = 19
 	memcpy(&data[0], &preamble, 1);
 	memcpy(&data[1], &flags,    1);
 	memcpy(&data[2], &packet_number, 1);
 	memcpy(&data[3], &motion->quat, 16);
 }
 
-uint32_t ble_motion_orientation_send(ble_motion_t * p_motion, Motion * motion)
+static void imu_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, uint8_t packet_number, Motion * motion) {
+	//byte 0: 0xaa (preamble)
+	//byte 1: flags
+	//byte 2: packet number
+	//byte 3-8: gyro
+	//byte 9-14: accel
+	//byte 15-19: empty
+	//length = 15
+	memcpy(&data[0], &preamble, 1);
+	memcpy(&data[1], &flags,    1);
+	memcpy(&data[2], &packet_number, 1);
+	memcpy(&data[3], motion->gyro, 6);
+	memcpy(&data[9], motion->accel, 6);
+	
+}
+
+static void compass_encode(uint8_t * data,  uint8_t preamble, uint8_t flags, uint8_t packet_number, CompassSample * compass) {
+	//byte 0: 0xaa (preamble)
+	//byte 1: flags
+	//byte 2: packet number
+	//byte 3-17: quaternion
+	//byte 18-19: empty
+	//length = 15
+	memcpy(&data[0], &preamble, 1);
+	memcpy(&data[1], &flags,    1);
+	memcpy(&data[2], &packet_number, 1);
+	memcpy(&data[3], &compass->compass[0].s, 12);
+}
+
+
+uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion)
 {
     uint32_t err_code;
 
@@ -543,9 +574,9 @@ uint32_t ble_motion_orientation_send(ble_motion_t * p_motion, Motion * motion)
         ble_gatts_hvx_params_t hvx_params;	
 		
 		preamble = 0xaa;
-		flags = 0;
-		motion_encode(encoded_data, preamble, flags, packet_num++, motion);
-		hvx_len = 20;
+		flags = 1;
+		quaternion_encode(encoded_data, preamble, flags, packet_num++, motion);
+		hvx_len = 19;
 
         memset(&hvx_params, 0, sizeof(hvx_params));
 
@@ -567,6 +598,89 @@ uint32_t ble_motion_orientation_send(ble_motion_t * p_motion, Motion * motion)
     return err_code;
 }
 
+uint32_t ble_motion_imu_send(ble_motion_t * p_motion, Motion * motion)
+{
+    uint32_t err_code;
+
+	
+    // Send value if connected and notifying
+    if (p_motion->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+        uint8_t				   preamble;
+		uint8_t				   flags;
+		uint8_t                encoded_data[20];   
+        uint16_t               hvx_len;
+		
+		memset(encoded_data, 0, 20);
+		
+        ble_gatts_hvx_params_t hvx_params;	
+		
+		preamble = 0xaa;
+		flags = 2;
+		imu_encode(encoded_data, preamble, flags, packet_num++, motion);
+		hvx_len = 15;
+
+        memset(&hvx_params, 0, sizeof(hvx_params));
+
+        hvx_params.handle = p_motion->motionm_handles.value_handle;
+        hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+        hvx_params.offset = 0;
+        hvx_params.p_len  = &hvx_len;
+        hvx_params.p_data = encoded_data;
+
+        err_code = sd_ble_gatts_hvx(p_motion->conn_handle, &hvx_params);
+
+    }
+    else
+    {
+		NRF_LOG_ERROR("NRF_ERROR_INVALID_STATE");
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+uint32_t ble_motion_compass_send(ble_motion_t * p_motion, CompassSample * compass)
+{
+    uint32_t err_code;
+
+	
+    // Send value if connected and notifying
+    if (p_motion->conn_handle != BLE_CONN_HANDLE_INVALID)
+    {
+        uint8_t				   preamble;
+		uint8_t				   flags;
+		uint8_t                encoded_data[20];   
+        uint16_t               hvx_len;
+		
+		memset(encoded_data, 0, 20);
+		
+        ble_gatts_hvx_params_t hvx_params;	
+		
+		preamble = 0xaa;
+		flags = 3;
+		compass_encode(encoded_data, preamble, flags, packet_num++, compass);
+		hvx_len = 15;
+
+        memset(&hvx_params, 0, sizeof(hvx_params));
+
+        hvx_params.handle = p_motion->motionm_handles.value_handle;
+        hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+        hvx_params.offset = 0;
+        hvx_params.p_len  = &hvx_len;
+        hvx_params.p_data = encoded_data;
+
+        err_code = sd_ble_gatts_hvx(p_motion->conn_handle, &hvx_params);
+
+    }
+    else
+    {
+		NRF_LOG_ERROR("NRF_ERROR_INVALID_STATE");
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
 
 uint32_t ble_motion_sensor_contact_supported_set(ble_motion_t * p_motion, bool is_sensor_contact_supported)
 {

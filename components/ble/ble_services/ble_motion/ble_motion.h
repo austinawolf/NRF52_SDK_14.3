@@ -201,7 +201,33 @@ void ble_motion_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context);
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-uint32_t ble_motion_orientation_send(ble_motion_t * p_motion, Motion * motion);
+uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion);
+
+/**@brief Function for sending Motion measurement if notification has been enabled.
+ *
+ * @details The application calls this function after having performed a Motion measurement.
+ *          If notification has been enabled, the Motion measurement data is encoded and sent to
+ *          the client.
+ *
+ * @param[in]   p_motion                 Motion Service structure.
+ * @param[in]   motion               	 New Motion measurement.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+uint32_t ble_motion_imu_send(ble_motion_t * p_motion, Motion * motion);
+
+/**@brief Function for sending Motion measurement if notification has been enabled.
+ *
+ * @details The application calls this function after having performed a Motion measurement.
+ *          If notification has been enabled, the Motion measurement data is encoded and sent to
+ *          the client.
+ *
+ * @param[in]   p_motion                 Motion Service structure.
+ * @param[in]   motion               	 New Motion measurement.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+uint32_t ble_motion_compass_send(ble_motion_t * p_motion, CompassSample * compass);
 
 /**@brief Function for setting the state of the Sensor Contact Supported bit.
  *

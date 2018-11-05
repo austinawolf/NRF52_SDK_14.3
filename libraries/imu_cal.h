@@ -41,9 +41,9 @@
 
 	//mpu calibration data	
 	#define GYRO_BIAS 	{	  -24		*	SCALE_GYRO_OFFSET, \
-							   9		*	SCALE_GYRO_OFFSET, \
+							    9		*	SCALE_GYRO_OFFSET, \
 							  -17		*	SCALE_GYRO_OFFSET}
-	#define ACCEL_BIAS 	{	   257		*	SCALE_ACC_OFFSET, \
+	#define ACCEL_BIAS 	{	  257		*	SCALE_ACC_OFFSET, \
 							  213		*	SCALE_ACC_OFFSET, \
 							-1631		*	SCALE_ACC_OFFSET}	
 	#define MAG_SOFTIRON_MATRIX		{ { 0.934, 0.005, 0.013 },	\

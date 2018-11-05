@@ -72,22 +72,31 @@ const float mag_softiron_matrix[3][3] = MAG_SOFTIRON_MATRIX;
 
 uint32_t fifo_num = 0;
 
-int mpu_helper_init(void);
-int mpu_helper_dmp_setup(void);
-int	mpu_helper_inv_setup(void);
-
-
-
-int imu_init(void) {
+int imu_init(MotionConfig * motion_config) {
 	
 	int ret;
-
-	struct int_param_s int_param;
-	int_param.cb = NULL;
-	int_param.pin = 0;
-	int_param.lp_exit = 0;
-	int_param.active_low = 1;
-
+	inv_error_t result; 	
+	unsigned short gyro_rate, gyro_fsr, compass_fsr;
+	unsigned char accel_fsr;
+	struct int_param_s int_param =
+	{
+		.cb = NULL,
+		.pin = 0,
+		.lp_exit = 0,
+		.active_low = 1,
+	};
+	
+	unsigned char fifo_sensors = INV_XYZ_GYRO | INV_XYZ_ACCEL;
+	unsigned short dmp_features = DMP_FEATURE_6X_LP_QUAT;
+	
+	if (motion_config->sensor_config & SENSOR_SAMPLE_RAW_IMU) {
+		dmp_features |= DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO;		
+	}
+	
+	if (motion_config->sensor_config & SENSOR_USE_GYRO_CAL) {
+		dmp_features |= DMP_FEATURE_GYRO_CAL;		
+	}	
+	
 	//mpu init
 	ret = mpu_init(&int_param);
 	if (ret != 0) {
@@ -96,34 +105,6 @@ int imu_init(void) {
 	}
 	
 	//inv setup
-	ret = mpu_helper_inv_setup();
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_helper_inv_setup ret:%d",ret);
-		return ret;
-	}
-	
-	//config
-	ret = mpu_helper_init();
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_helper_init ret:%d",ret);
-		return ret;
-	}	
-	
-	//dmp
-	ret = mpu_helper_dmp_setup();
-	if (ret != 0) {
-		NRF_LOG_ERROR("mpu_helper_dmp_setup ret:%d",ret);		
-		return ret;
-	}
-
-	NRF_LOG_DEBUG("IMU INIT SUCCESS",ret);
-
-	return 0;
-}
-
-int	mpu_helper_inv_setup(void) {
-	inv_error_t result; 
-
 	result = inv_init_mpl();
 	if (result) {
 		NRF_LOG_ERROR("inv_init_mpl ret:%d",result);
@@ -185,71 +166,55 @@ int	mpu_helper_inv_setup(void) {
 		return result;		
     }
 	
-	return 0;
-}
-
-
-int mpu_helper_init(void) {
+	//config
+	ret = mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
+		return ret;		
+	}	
 	
-		int ret;
-		unsigned short gyro_rate, gyro_fsr, compass_fsr;
-		unsigned char accel_fsr;
+	ret = mpu_configure_fifo(fifo_sensors);
+	if (ret != 0) {
+		NRF_LOG_ERROR("mpu_configure_fifo ret:%d",ret);		
+		return ret;		
+	}			
 
-		ret = mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
-		if (ret != 0) {
-			NRF_LOG_ERROR("mpu_set_sensors ret:%d",ret);		
-			return ret;		
-		}	
-		
-		ret = mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-		if (ret != 0) {
-			NRF_LOG_ERROR("mpu_configure_fifo ret:%d",ret);		
-			return ret;		
-		}			
+	mpu_set_sample_rate(MPU_INTERAL_RATE);
 
-		mpu_set_sample_rate(IMU_SAMPLE_RATE_HZ);
-
-		#define COMPASS_READ_MS 100
-		mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
-		
-		mpu_get_sample_rate(&gyro_rate);
-		mpu_get_gyro_fsr(&gyro_fsr);
-		mpu_get_accel_fsr(&accel_fsr);
-		mpu_get_compass_fsr(&compass_fsr);
-
-		NRF_LOG_DEBUG("Gyro Rate: %d",gyro_rate);
-		NRF_LOG_DEBUG("Gyro FSR: %d",gyro_fsr);
-		NRF_LOG_DEBUG("Accel FSR: %d",accel_fsr);
-		NRF_LOG_DEBUG("Compass FSR: %d",compass_fsr);
-
-		inv_set_gyro_sample_rate(1000000L / gyro_rate);				
-		inv_set_accel_sample_rate(1000000L / gyro_rate);					
-		inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);		
-
-		
-		inv_set_gyro_orientation_and_scale(
-				inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
-				(long)gyro_fsr<<15);	
+	mpu_set_compass_sample_rate(COMPASS_SAMPLE_RATE_HZ);
 	
-		inv_set_accel_orientation_and_scale(
-				inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
-				(long)accel_fsr<<15);
-		
-		inv_set_compass_orientation_and_scale(
-				inv_orientation_matrix_to_scalar(compass_pdata.orientation),
-				(long)compass_fsr<<15);
+	mpu_get_sample_rate(&gyro_rate);
+	mpu_get_gyro_fsr(&gyro_fsr);
+	mpu_get_accel_fsr(&accel_fsr);
+	mpu_get_compass_fsr(&compass_fsr);
+
+	NRF_LOG_DEBUG("Gyro Rate: %d",gyro_rate);
+	NRF_LOG_DEBUG("Gyro FSR: %d",gyro_fsr);
+	NRF_LOG_DEBUG("Accel FSR: %d",accel_fsr);
+	NRF_LOG_DEBUG("Compass FSR: %d",compass_fsr);
+
+	inv_set_gyro_sample_rate(1000000L / gyro_rate);				
+	inv_set_accel_sample_rate(1000000L / gyro_rate);					
+	inv_set_compass_sample_rate(1000000L / COMPASS_SAMPLE_RATE_HZ);		
+
 	
+	inv_set_gyro_orientation_and_scale(
+			inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
+			(long)gyro_fsr<<15);	
+
+	inv_set_accel_orientation_and_scale(
+			inv_orientation_matrix_to_scalar(gyro_pdata.orientation),
+			(long)accel_fsr<<15);
 	
-		mpu_set_accel_bias_6500_reg(accel_bias);
-		mpu_set_gyro_bias_reg(gyro_bias);
+	inv_set_compass_orientation_and_scale(
+			inv_orientation_matrix_to_scalar(compass_pdata.orientation),
+			(long)compass_fsr<<15);
 
-		return 0;
 
-}
-
-int mpu_helper_dmp_setup(void) {
-    int ret;
-
+	mpu_set_accel_bias_6500_reg(accel_bias);
+	mpu_set_gyro_bias_reg(gyro_bias);
+	
+	//dmp
 	ret = dmp_load_motion_driver_firmware();
 	if (ret != 0) {
 		NRF_LOG_ERROR("dmp_load_motion_driver_firmware ret:%d",ret);		
@@ -262,10 +227,7 @@ int mpu_helper_dmp_setup(void) {
     dmp_register_tap_cb(NULL);
 	dmp_register_android_orient_cb(NULL);
 
-	ret = dmp_enable_feature(	DMP_FEATURE_6X_LP_QUAT |
-								DMP_FEATURE_SEND_RAW_ACCEL | 
-								DMP_FEATURE_SEND_CAL_GYRO |
-								DMP_FEATURE_GYRO_CAL);
+	ret = dmp_enable_feature(dmp_features);
 	
 	if (ret != 0) {
 		NRF_LOG_ERROR("dmp_enable_feature ret:%d",ret);		
@@ -280,9 +242,13 @@ int mpu_helper_dmp_setup(void) {
 	
 	inv_set_quat_sample_rate(INV_QUAT_SAMPLE_RATE);
 	
+
+	NRF_LOG_DEBUG("IMU INIT SUCCESS",ret);
+
 	return 0;
-	
 }
+
+
 
 int imu_start(void) {
 	int ret;
@@ -441,13 +407,12 @@ void imu_self_test(void) {
 
 }
 
-void imu_send_to_mpl(Motion *motion) {
+void imu_motion_to_mpl(Motion *motion) {
 
 	unsigned long timestamp;
 	long temperature;
 	inv_error_t result;
 	long accel[3];
-	long compass[3];	
     long data[9];
     int8_t accuracy;
 	
@@ -455,17 +420,17 @@ void imu_send_to_mpl(Motion *motion) {
 	accel[1] = (long) motion->accel[1];
 	accel[2] = (long) motion->accel[2];
 	
-	result = inv_build_accel(accel, 0, motion->sensor_timestamp);	
+	result = inv_build_accel(accel, 0, motion->timestamp);	
 	if (result) {
 		NRF_LOG_ERROR("inv_build_accel ret:%d",result);		
     }	
 	
-	result = inv_build_quat(motion->quat, 0, motion->sensor_timestamp);
+	result = inv_build_quat(motion->quat, 0, motion->timestamp);
 	if (result) {
 		NRF_LOG_ERROR("inv_build_quat ret:%d",result);		
     }		
 	
-	result = inv_build_gyro(motion->gyro, motion->sensor_timestamp);
+	result = inv_build_gyro(motion->gyro, motion->timestamp);
 	if (result) {
 		NRF_LOG_ERROR("inv_build_gyro ret:%d",result);		
     }	
@@ -475,15 +440,6 @@ void imu_send_to_mpl(Motion *motion) {
 	if (result) {
 		NRF_LOG_ERROR("inv_build_temp ret:%d",result);		
     }
-
-	compass[0] = (long)motion->compass[0];
-	compass[1] = (long)motion->compass[1];
-	compass[2] = (long)motion->compass[2];
-	
-	result = inv_build_compass(compass, 0, motion->compass_timestamp);
-	if (result) {
-		NRF_LOG_ERROR("inv_build_compass ret:%d",result);		
-    }	
 	
 	result = inv_execute_on_data();
 	if (result) {
@@ -511,6 +467,23 @@ void imu_send_to_mpl(Motion *motion) {
 
 	//NRF_LOG_DEBUG("Mag State: %d", inv_get_magnetic_disturbance_state());
 }
+
+void imu_compass_to_mpl(CompassSample * compass_sample) {
+
+	inv_error_t result;
+	long compass[3];
+	
+	compass[0] = compass_sample->compass[X].s;
+	compass[1] = compass_sample->compass[Y].s;
+	compass[2] = compass_sample->compass[Z].s;
+	
+	result = inv_build_compass(compass, 0, compass_sample->timestamp);
+	if (result) {
+		NRF_LOG_ERROR("inv_build_compass ret:%d",result);		
+    }			
+}
+
+
 
 #ifdef LOG_PRINT
 #ifdef LOG_FLUSH
@@ -548,9 +521,8 @@ void imu_log_motion_cal(Motion *motion) {
 
 void imu_get_data(Motion *motion) {
 	
-	motion->sensor_num = SENSOR_NUM;
 	motion->event = fifo_num++;
-	motion->status = dmp_read_fifo(motion->gyro, motion->accel, motion->quat, &motion->sensor_timestamp, &motion->sensors, &motion->more);
+	motion->status = dmp_read_fifo(motion->gyro, motion->accel, motion->quat, &motion->timestamp, &motion->sensors, &motion->more);
 	if (motion->status) {
 		NRF_LOG_ERROR("dmp_read_fifo ret: %d",motion->status);
 		return;
@@ -560,39 +532,33 @@ void imu_get_data(Motion *motion) {
 	return;
 }
 
-void imu_get_compass(Motion *motion) {
+
+void imu_get_compass(CompassSample *compass_sample) {
 	
 	float x, y, z;
-	short compass[3];
 	
-	motion->cstatus = mpu_get_compass_reg( compass, &motion->compass_timestamp);
-	if (motion->cstatus) {
-		NRF_LOG_DEBUG("mpu_get_compass_reg ret: ",motion->status);		
+	compass_sample->status = mpu_get_compass_reg( &compass_sample->compass[X].s, &compass_sample->timestamp);
+	if (compass_sample->status) {
+		NRF_LOG_DEBUG("mpu_get_compass_reg ret: ",compass_sample->status);		
 	}
-	//NRF_LOG_DEBUG("Compass Sample @ %d ms",motion->compass_timestamp);
-	//NRF_LOG_DEBUG("RAW COMPASS x: %x, y: %x, z: %x", compass[0], compass[1], compass[2]);
+
 	
-	
-	/* PROCESS COMPASS DATA */
 	#ifdef MAG_USE_CAL
 	// Apply mag offset compensation (base values in uTesla)
-	x = (float) compass[0] - mag_offsets[0];
-	y = (float) compass[1] - mag_offsets[1];
-	z = (float) compass[2] - mag_offsets[2];
+	x = (float) compass_sample->compass[X].s - mag_offsets[X];
+	y = (float) compass_sample->compass[Y].s - mag_offsets[Y];
+	z = (float) compass_sample->compass[Z].s - mag_offsets[Z];
 	
 	// Apply mag soft iron error compensation
-	motion->compass[0] = x * mag_softiron_matrix[0][0] + y * mag_softiron_matrix[0][1] + z * mag_softiron_matrix[0][2];
-	motion->compass[1] = x * mag_softiron_matrix[1][0] + y * mag_softiron_matrix[1][1] + z * mag_softiron_matrix[1][2];
-	motion->compass[2] = x * mag_softiron_matrix[2][0] + y * mag_softiron_matrix[2][1] + z * mag_softiron_matrix[2][2];
-	
-	#else	
-	motion->compass[0] = (float) compass[0];
-	motion->compass[1] = (float) compass[1];
-	motion->compass[2] = (float) compass[2];
-	#endif	
-	
-	
-	
+	compass_sample->compass[X].f = x * mag_softiron_matrix[0][0] + y * mag_softiron_matrix[0][1] + z * mag_softiron_matrix[0][2];
+	compass_sample->compass[Y].f = x * mag_softiron_matrix[1][0] + y * mag_softiron_matrix[1][1] + z * mag_softiron_matrix[1][2];
+	compass_sample->compass[Z].f = x * mag_softiron_matrix[2][0] + y * mag_softiron_matrix[2][1] + z * mag_softiron_matrix[2][2];
+	#else
+	compass_sample->compass[X].f = (float) compass[X];
+	compass_sample->compass[Y].f = (float) compass[Y];
+	compass_sample->compass[Z].f = (float) compass[Z];
+	#endif
+	return;
 }
 
 

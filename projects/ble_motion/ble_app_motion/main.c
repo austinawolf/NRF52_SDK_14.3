@@ -82,6 +82,8 @@
 #include "imu.h"
 #include "config.h"
 #include "state.h"
+#include "motion.h"
+#include "battery_level.h"
 
 BLE_MOTION_DEF(m_motion);                                           /**< Motion service instance. */
 BLE_BAS_DEF(m_bas);                                                 /**< Structure used to identify the battery service. */
@@ -773,11 +775,19 @@ int main(void)
 	
     // Initialize.
     log_init();
-	system_init();
-    buttons_leds_init(&erase_bonds);
+	//system_init();
 	twi_interface_init();
 	nrf_pwr_mgmt_init();
 	
+    // Initialize timer module.
+    err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
+
+	battery_level_timers_init();
+	motion_timers_init();
+	
+	buttons_leds_init(&erase_bonds);
+
 	//ble init
     ble_stack_init();
     gap_params_init();
@@ -788,7 +798,13 @@ int main(void)
     peer_manager_init();
 	
 	#ifdef IMU_ENABLED
-	err_code = imu_init();	
+	MotionConfig motion_config = {
+		.sensor_config = DEFAULT_SENSOR_CONFIG,
+		.motion_cb = NULL,
+		.compass_cb = NULL,
+	};
+	
+	err_code = imu_init(&motion_config);	
 	if (err_code) {
 		NRF_LOG_ERROR("imu_init() %d", err_code);
 	}
