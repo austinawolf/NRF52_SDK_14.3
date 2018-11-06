@@ -3567,11 +3567,6 @@
           <GroupName>wolf</GroupName>
           <Files>
             <File>
-              <FileName>imu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\libraries\imu.c</FilePath>
-            </File>
-            <File>
               <FileName>twi_interface.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\libraries\twi_interface.c</FilePath>
@@ -3586,6 +3581,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\libraries\battery_level.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>motion</GroupName>
+          <Files>
             <File>
               <FileName>motion.c</FileName>
               <FileType>1</FileType>
@@ -7162,11 +7162,6 @@
           <GroupName>wolf</GroupName>
           <Files>
             <File>
-              <FileName>imu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\libraries\imu.c</FilePath>
-            </File>
-            <File>
               <FileName>twi_interface.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\libraries\twi_interface.c</FilePath>
@@ -7181,6 +7176,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\libraries\battery_level.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>motion</GroupName>
+          <Files>
             <File>
               <FileName>motion.c</FileName>
               <FileType>1</FileType>

@@ -41,14 +41,7 @@
 #include "twi_interface.h"
 #include "nrf_delay.h"
 #include "clock_interface.h"
-#define NRF_LOG_MODULE_NAME mpu
-#if MPU_CONFIG_LOG_ENABLED
-#define NRF_LOG_LEVEL MPU_CONFIG_LOG_LEVEL
-#define NRF_LOG_INFO_COLOR MPU_CONFIG_INFO_COLOR
-#define NRF_LOG_DEBUG_COLOR MPU_CONFIG_DEBUG_COLOR
-#else //SPI_CONFIG_LOG_ENABLED
-#define NRF_LOG_LEVEL 0
-#endif //SPI_CONFIG_LOG_ENABLED
+#define NRF_LOG_MODULE_NAME motion
 #include "nrf_log.h"
 
 

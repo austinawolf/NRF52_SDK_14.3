@@ -1,7 +1,7 @@
 
 #ifndef SDS_COMMAND_H_
 #define SDS_COMMAND_H_
-#include "imu.h"
+#include "motion.h"
 #include "app_timer.h"
 
 

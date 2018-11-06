@@ -79,11 +79,10 @@
 
 //local libraries
 #include "twi_interface.h"
-#include "imu.h"
+#include "motion.h"
 #include "config.h"
 #include "state.h"
-#include "motion.h"
-#include "battery_level.h"
+//#include "battery_level.h"
 
 BLE_MOTION_DEF(m_motion);                                           /**< Motion service instance. */
 BLE_BAS_DEF(m_bas);                                                 /**< Structure used to identify the battery service. */
@@ -765,6 +764,74 @@ static void power_manage(void)
 	nrf_pwr_mgmt_run();
 }
 
+/**@brief Function for handling the Heart rate measurement timer timeout.
+ *
+ * @details This function will be called each time the heart rate measurement timer expires.
+ *          It will exclude RR Interval data from every third measurement.
+ *
+ * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
+ *                       app_start_timer() call to the timeout handler.
+ */
+
+static void motion_sample_handler(void * p_context)
+{	
+    ret_code_t      err_code;
+    UNUSED_PARAMETER(p_context);
+
+	MotionSample * motion_sample;
+	motion_sample = p_context;
+	NRF_LOG_DEBUG("Motion Handler Call Event: %d", motion_sample->event);
+	
+
+	
+	if (motion_sample->data_flags & QUATERNION_DATA) {
+		NRF_LOG_DEBUG("Quat: q0=%d, q0=%d, q0=%d, q0=%d,", motion_sample->quat[0], motion_sample->quat[1], motion_sample->quat[2], motion_sample->quat[3]);
+		err_code = ble_motion_quaternion_send(&m_motion, motion_sample->quat);
+		if ((err_code != NRF_SUCCESS) &&
+			(err_code != NRF_ERROR_INVALID_STATE) &&
+			(err_code != NRF_ERROR_RESOURCES) &&
+			(err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+		   )
+		{
+			APP_ERROR_HANDLER(err_code);
+		}
+		
+	}
+
+	if (motion_sample->data_flags & IMU_DATA) {	
+
+		NRF_LOG_DEBUG("Gyro: x=%d, y=%d, z=%d,", motion_sample->gyro[X], motion_sample->gyro[Y], motion_sample->gyro[Z]);
+		NRF_LOG_DEBUG("Accel: x=%d, y=%d, z=%d,", motion_sample->accel[X], motion_sample->accel[Y], motion_sample->accel[Z]);
+		
+		err_code = ble_motion_imu_send(&m_motion, motion_sample->gyro, motion_sample->accel);
+		if ((err_code != NRF_SUCCESS) &&
+			(err_code != NRF_ERROR_INVALID_STATE) &&
+			(err_code != NRF_ERROR_RESOURCES) &&
+			(err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+		   )
+		{
+			APP_ERROR_HANDLER(err_code);
+		}
+	
+	}
+	
+	if (motion_sample->data_flags & COMPASS_DATA) {	
+
+		NRF_LOG_DEBUG("Compass: x=%d, y=%d, z=%d,", motion_sample->compass[X], motion_sample->compass[Y], motion_sample->compass[Z]);		
+		err_code = ble_motion_compass_send(&m_motion, motion_sample->compass);
+		if ((err_code != NRF_SUCCESS) &&
+			(err_code != NRF_ERROR_INVALID_STATE) &&
+			(err_code != NRF_ERROR_RESOURCES) &&
+			(err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+		   )
+		{
+			APP_ERROR_HANDLER(err_code);
+		}
+	
+	}	
+	
+}
+
 
 /**@brief Function for application main entry.
  */
@@ -783,8 +850,7 @@ int main(void)
     err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
 
-	battery_level_timers_init();
-	motion_timers_init();
+	//battery_level_timers_init();
 	
 	buttons_leds_init(&erase_bonds);
 
@@ -798,13 +864,12 @@ int main(void)
     peer_manager_init();
 	
 	#ifdef IMU_ENABLED
-	MotionConfig motion_config = {
+	MotionInit motion_init = {
 		.sensor_config = DEFAULT_SENSOR_CONFIG,
-		.motion_cb = NULL,
-		.compass_cb = NULL,
+		.event_cb = motion_sample_handler,
 	};
 	
-	err_code = imu_init(&motion_config);	
+	err_code = imu_init(&motion_init);	
 	if (err_code) {
 		NRF_LOG_ERROR("imu_init() %d", err_code);
 	}

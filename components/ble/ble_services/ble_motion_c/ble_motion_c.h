@@ -117,13 +117,44 @@ typedef enum
  * @{
  */
 
-/**@brief Structure containing the heart rate measurement received from the peer. */
+// Motion Packet Flags
+#define QUAT_PACKET_FLAG    	(1<<0)
+#define IMU_PACKET_FLAG			(1<<1)
+#define COMPASS_PACKET_FLAG		(1<<2)
+#define TIMESTAMP_PACKET_FLAG   (1<<3)
+//#define UNUSED				(1<<4)
+//#define UNUSED				(1<<5)
+//#define UNUSED				(1<<6)
+//#define UNUSED				(1<<7)
+
 typedef struct
 {
-    int32_t q0;                                        /**< Heart Rate Value. */
-    int32_t q1;
-    int32_t q2;
-    int32_t q3;
+    int32_t q[4];                                        /**< Heart Rate Value. */
+} Quaternion;
+
+typedef struct
+{
+    int16_t gyro[3];                                        /**< Heart Rate Value. */
+    int16_t accel[3];                                        /**< Heart Rate Value. */
+} Imu;
+
+typedef struct
+{
+	int16_t compass[3];
+} Compass;
+
+/**@brief Structure containing motion measurement received from the peer. */
+typedef union
+{
+    Quaternion quat;                                        /**< Heart Rate Value. */
+    Imu imu;
+    Compass compass;
+} MotionData;
+
+typedef struct {
+	uint8_t event_num;
+	MotionData motion_data;
+    uint8_t data_flags;
 } ble_motionm_t;
 
 /**@brief Structure containing the handles related to the Heart Rate Service found on the peer. */

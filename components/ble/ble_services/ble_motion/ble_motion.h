@@ -82,7 +82,6 @@
 #include "ble_srv_common.h"
 #include "nrf_sdh_ble.h"
 #include "nrf_ble_gatt.h"
-#include "imu.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -107,6 +106,18 @@ NRF_SDH_BLE_OBSERVER(_name ## _obs,                                             
 #define BLE_MOTION_BODY_SENSOR_LOCATION_HAND       4
 #define BLE_MOTION_BODY_SENSOR_LOCATION_EAR_LOBE   5
 #define BLE_MOTION_BODY_SENSOR_LOCATION_FOOT       6
+
+#define MOTION_PREAMBLE 0xaa
+
+// Motion Packet Flags
+#define QUAT_PACKET_FLAG    	(1<<0)
+#define IMU_PACKET_FLAG			(1<<1)
+#define COMPASS_PACKET_FLAG		(1<<2)
+#define TIMESTAMP_PACKET_FLAG   (1<<3)
+//#define UNUSED				(1<<4)
+//#define UNUSED				(1<<5)
+//#define UNUSED				(1<<6)
+//#define UNUSED				(1<<7)
 
 
 /**@brief Motion Service event type. */
@@ -201,7 +212,7 @@ void ble_motion_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context);
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion);
+uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, int32_t * quat);
 
 /**@brief Function for sending Motion measurement if notification has been enabled.
  *
@@ -214,7 +225,7 @@ uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, Motion * motion);
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-uint32_t ble_motion_imu_send(ble_motion_t * p_motion, Motion * motion);
+uint32_t ble_motion_imu_send(ble_motion_t * p_motion, int16_t * gyro, int16_t * accel);
 
 /**@brief Function for sending Motion measurement if notification has been enabled.
  *
@@ -227,7 +238,7 @@ uint32_t ble_motion_imu_send(ble_motion_t * p_motion, Motion * motion);
  *
  * @return      NRF_SUCCESS on success, otherwise an error code.
  */
-uint32_t ble_motion_compass_send(ble_motion_t * p_motion, CompassSample * compass);
+uint32_t ble_motion_compass_send(ble_motion_t * p_motion, int16_t * compass);
 
 /**@brief Function for setting the state of the Sensor Contact Supported bit.
  *

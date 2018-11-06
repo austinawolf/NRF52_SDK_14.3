@@ -100,7 +100,10 @@
 #define UART_OUTPUT_INTERVAL		APP_TIMER_TICKS(100)
 APP_TIMER_DEF(m_output_timer_id);                                  /**< Battery timer. */
 
-long quat[4] = {0,0,0,0};
+int32_t quat[4] = {0,0,0,0};
+int16_t gyro[3] = {0,0,0};
+int16_t accel[3] = {0,0,0};
+int16_t compass[3] = {0,0,0};
 
 /**@brief Macro to unpack 16bit unsigned UUID from octet stream. */
 #define UUID16_EXTRACT(DST, SRC) \
@@ -161,7 +164,10 @@ static ble_gap_addr_t const m_target_periph_addr =
 static void scan_start(void);
 
 static void uart_output_handler(void * p_context) {
-	printf("%ld,%ld,%ld,%ld,\n\r",quat[0],quat[1],quat[2],quat[3]);
+	//printf("%ld,%ld,%ld,%ld,\n\r",quat[0],quat[1],quat[2],quat[3]);
+	//printf("%d,%d,%d,\n\r",accel[0],accel[1],accel[2]);
+	//printf("%d,%d,%d,\n\r",gyro[0],gyro[1],gyro[2]);
+	//printf("%7.2f,%7.2f,%7.2f,\n\r",compass[0],compass[1],compass[2]);
 }
 
 /**@brief Function for asserts in the SoftDevice.
@@ -864,11 +870,33 @@ static void motion_c_evt_handler(ble_motion_c_t * p_motion_c, ble_motion_c_evt_t
 
         case BLE_MOTION_C_EVT_MOTIONM_NOTIFICATION:
         {
-			quat[0] = p_motion_c_evt->params.motionm.q0;
-			quat[1] = p_motion_c_evt->params.motionm.q1;
-			quat[2] = p_motion_c_evt->params.motionm.q2;
-			quat[3] = p_motion_c_evt->params.motionm.q3;
-            NRF_LOG_INFO("Orientation: q0 = %d, q1 = %d, q2 = %d, q3 = %d", quat[0], quat[1],quat[2], quat[3]);
+
+			
+			switch (p_motion_c_evt->params.motionm.data_flags) {
+
+				case (QUAT_PACKET_FLAG):
+					quat[0] = p_motion_c_evt->params.motionm.motion_data.quat.q[0];
+					quat[1] = p_motion_c_evt->params.motionm.motion_data.quat.q[1];
+					quat[2] = p_motion_c_evt->params.motionm.motion_data.quat.q[2];
+					quat[3] = p_motion_c_evt->params.motionm.motion_data.quat.q[3];		
+					printf("%ld,%ld,%ld,%ld,\n\r",quat[0],quat[1],quat[2],quat[3]);
+				
+				case (IMU_PACKET_FLAG):
+					accel[0] = p_motion_c_evt->params.motionm.motion_data.imu.accel[0];
+					accel[1] = p_motion_c_evt->params.motionm.motion_data.imu.accel[1];
+					accel[2] = p_motion_c_evt->params.motionm.motion_data.imu.accel[2];
+					gyro[0] = p_motion_c_evt->params.motionm.motion_data.imu.gyro[0];
+					gyro[1] = p_motion_c_evt->params.motionm.motion_data.imu.gyro[1];
+					gyro[2] = p_motion_c_evt->params.motionm.motion_data.imu.gyro[2];
+					//printf("Accel: %d,%d,%d,\n\r",accel[0],accel[1],accel[2]);
+					//printf("Gyro: %d,%d,%d,\n\r",gyro[0],gyro[1],gyro[2]);				
+				
+				case (COMPASS_PACKET_FLAG):
+					compass[0] = p_motion_c_evt->params.motionm.motion_data.compass.compass[0];
+					compass[1] = p_motion_c_evt->params.motionm.motion_data.compass.compass[1];
+					compass[2] = p_motion_c_evt->params.motionm.motion_data.compass.compass[2];
+					//printf("Compass: %d,%d,%d,\n\r",compass[0],compass[1],compass[2]);
+			}
 			 
 			
         } break;

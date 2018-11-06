@@ -144,6 +144,22 @@ static void on_write_rsp(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_bl
     tx_buffer_process();
 }
 
+
+static int motion_decode(const ble_gattc_evt_hvx_t * hvx,  uint8_t length, ble_motion_c_evt_t * ble_motion_c_evt) {
+	
+	if (hvx->data[0] != 0xaa) {
+		return -1;
+	}
+	
+	ble_motion_c_evt->params.motionm.data_flags = hvx->data[1];
+	ble_motion_c_evt->params.motionm.event_num = hvx->data[2];
+	memcpy(&ble_motion_c_evt->params.motionm.motion_data.quat.q[0], &hvx->data[3], length - 3);
+	return 0;
+}
+
+
+
+
 /**@brief     Function for handling Handle Value Notification received from the SoftDevice.
  *
  * @details   This function will uses the Handle Value Notification received from the SoftDevice
@@ -156,18 +172,21 @@ static void on_write_rsp(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_bl
  */
 static void on_hvx(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_ble_evt)
 {
-
+	int err_code;
+	
 	// Check if the event is on the link for this instance
     if (p_ble_motion_c->conn_handle != p_ble_evt->evt.gattc_evt.conn_handle)
     {
         NRF_LOG_DEBUG("Received HVX on link 0x%x, not associated to instance 0x%x, ignore",
                       p_ble_evt->evt.gattc_evt.conn_handle, p_ble_motion_c->conn_handle);
-        return;
+        
+		return;
     }
 	
     NRF_LOG_DEBUG("Received HVX on link 0x%x, motionm_handle 0x%x",
     p_ble_evt->evt.gattc_evt.params.hvx.handle,
     p_ble_motion_c->peer_motion_db.motionm_handle);
+	NRF_LOG_DEBUG("packet num: %d, flag: %d", p_ble_evt->evt.gattc_evt.params.hvx.data[2], p_ble_evt->evt.gattc_evt.params.hvx.data[1]);
 
     // Check if this is a quaternion orientation notification.
     if (p_ble_evt->evt.gattc_evt.params.hvx.handle == p_ble_motion_c->peer_motion_db.motionm_handle)
@@ -176,21 +195,13 @@ static void on_hvx(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_ble_evt)
 
         ble_motion_c_evt.evt_type                    = BLE_MOTION_C_EVT_MOTIONM_NOTIFICATION;
         ble_motion_c_evt.conn_handle                 = p_ble_motion_c->conn_handle;
+					
+		err_code = motion_decode(&p_ble_evt->evt.gattc_evt.params.hvx, p_ble_evt->evt.gattc_evt.params.hvx.len, &ble_motion_c_evt);
+					
 		
-		//NRF_LOG_HEXDUMP_DEBUG(p_ble_evt->evt.gattc_evt.params.hvx.data, p_ble_evt->evt.gattc_evt.params.hvx.len);
-		if (p_ble_evt->evt.gattc_evt.params.hvx.len == 20) {
-			
-			if (p_ble_evt->evt.gattc_evt.params.hvx.data[0] != 0xaa) {
-				NRF_LOG_ERROR("Invalid HVX Preamble.");
-				return;
-			}
-			else {
-				memcpy(&ble_motion_c_evt.params.motionm.q0, &p_ble_evt->evt.gattc_evt.params.hvx.data[3], p_ble_evt->evt.gattc_evt.params.hvx.len);
-				NRF_LOG_DEBUG("packet num: %d", p_ble_evt->evt.gattc_evt.params.hvx.data[2]);
-			}
+		if (!err_code) {
+			p_ble_motion_c->evt_handler(p_ble_motion_c, &ble_motion_c_evt);
 		}
-		
-        p_ble_motion_c->evt_handler(p_ble_motion_c, &ble_motion_c_evt);
     }
 }
 

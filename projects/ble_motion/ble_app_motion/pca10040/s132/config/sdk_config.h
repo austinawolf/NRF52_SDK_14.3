@@ -1815,7 +1815,7 @@
 // <7=> 7 
 
 #ifndef TWI_DEFAULT_CONFIG_IRQ_PRIORITY
-#define TWI_DEFAULT_CONFIG_IRQ_PRIORITY 7
+#define TWI_DEFAULT_CONFIG_IRQ_PRIORITY 6
 #endif
 
 // <e> TWI0_ENABLED - Enable TWI0 instance
@@ -3221,7 +3221,7 @@
 // <16384=> 16384 
 
 #ifndef NRF_LOG_BUFSIZE
-#define NRF_LOG_BUFSIZE 512
+#define NRF_LOG_BUFSIZE 1024
 #endif
 
 // <q> NRF_LOG_ALLOW_OVERFLOW  - Configures behavior when circular buffer is full.
@@ -5375,7 +5375,7 @@
 // <i> or this value is actually used. It depends on which one is bigger.
 
 #ifndef SEGGER_RTT_CONFIG_BUFFER_SIZE_UP
-#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 512
+#define SEGGER_RTT_CONFIG_BUFFER_SIZE_UP 1024
 #endif
 
 // <o> SEGGER_RTT_CONFIG_MAX_NUM_UP_BUFFERS - Size of upstream buffer. 
@@ -5405,7 +5405,7 @@
 // <2=> BLOCK_IF_FIFO_FULL 
 
 #ifndef SEGGER_RTT_CONFIG_DEFAULT_MODE
-#define SEGGER_RTT_CONFIG_DEFAULT_MODE 0
+#define SEGGER_RTT_CONFIG_DEFAULT_MODE 2
 #endif
 
 // </h> 
