@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include "motion.h"
 
 #define NRF_LOG_MODULE_NAME cmd
 #define NRF_LOG_LEVEL       3
@@ -28,7 +29,8 @@ static SdsReturnType (*CommandSet[4]) (Command * command, Response * response) =
 
 SdsReturnType command_call(Command * p_command, Response * p_response) {
 	SdsReturnType ret = SDS_SUCCESS;
-
+	
+	
 
 	ret = CommandSet[p_command->opcode - BASE_OFFSET](p_command, p_response);
 
@@ -38,7 +40,7 @@ SdsReturnType command_call(Command * p_command, Response * p_response) {
 
 
 static SdsReturnType get_fw_version(Command * p_command, Response * p_response) {
-	NRF_LOG_INFO("get_fw_version");
+	NRF_LOG_INFO("Command: get_fw_version");
 
 	//load response arguments
 	const uint8_t resp_arg_len = 4;
@@ -62,11 +64,39 @@ static SdsReturnType get_sensor_location(Command * p_command, Response * p_respo
 static SdsReturnType get_sample_rate(Command * p_command, Response * p_response) {
 	NRF_LOG_INFO("get_sample_rate");
 	
+	//load response arguments
+	static uint8_t sample_rate;
+	sample_rate = motion_get_sample_rate();
+
+	p_response->preamble = RESPONSE_PREAMBLE;
+	p_response->opcode = p_command->opcode;
+	p_response->arg_len = 1;
+	p_response->p_args = &sample_rate;
+	p_response->err_code = SDS_SUCCESS;
+
 	return SDS_SUCCESS;
 }
 
 static SdsReturnType set_sample_rate(Command * p_command, Response * p_response) {
-	NRF_LOG_INFO("set_sample_rate");
+	NRF_LOG_INFO("Command: set_sample_rate");
+	
+	if (p_command -> arg_len != 1) {
+		return SDS_INVALID_ARG_LEN;
+	}
+	
+	SAMPLE_RATE sample_rate = (SAMPLE_RATE) p_command -> p_args[0];
+	
+	if ( sample_rate > MAX_SAMPLE_RATE ) {
+		return SDS_INVALID_ARG;
+	}
+	
+	motion_set_sample_rate(sample_rate);
+	
+	p_response->preamble = RESPONSE_PREAMBLE;
+	p_response->opcode = p_command->opcode;
+	p_response->arg_len = 0;
+	p_response->p_args = NULL;
+	p_response->err_code = SDS_SUCCESS;
 	
 	return SDS_SUCCESS;
 }

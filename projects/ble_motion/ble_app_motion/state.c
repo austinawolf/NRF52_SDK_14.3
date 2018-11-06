@@ -40,7 +40,7 @@ static SYSTEM_STATE event_from_init(SYSTEM_EVENT event) {
 		case ON_CONNECT:
 			NRF_LOG_INFO("State Transition: Init -> Connected");
 		
-			imu_start();
+			motion_start();
 		
 			state.event_call = event_from_connected;
 			return CONNECTED;
@@ -48,7 +48,7 @@ static SYSTEM_STATE event_from_init(SYSTEM_EVENT event) {
 		case ON_DISCONNECT:
 			NRF_LOG_INFO("State Transition: Init -> Disconnected");
 		
-			imu_stop();
+			motion_stop();
 		
 			state.event_call = event_from_disconnected;
 			return DISCONNECTED;
@@ -56,7 +56,7 @@ static SYSTEM_STATE event_from_init(SYSTEM_EVENT event) {
 		case ON_SLEEP:
 			NRF_LOG_INFO("State Transition: Init -> Sleep");
 
-			imu_stop();
+			motion_stop();
 		
 			state.event_call = event_from_sleep;
 			return SLEEP;
@@ -76,7 +76,7 @@ static SYSTEM_STATE event_from_connected(SYSTEM_EVENT event){
 		case ON_DISCONNECT:
 			NRF_LOG_INFO("State Transition: Connected -> Disconnected");
 			
-			imu_stop();
+			motion_stop();
 		
 			state.event_call = event_from_disconnected;
 			return DISCONNECTED;
@@ -84,7 +84,7 @@ static SYSTEM_STATE event_from_connected(SYSTEM_EVENT event){
 		case ON_SLEEP:
 			NRF_LOG_INFO("State Transition: Connected -> Sleep");
 
-			imu_stop();
+			motion_stop();
 		
 			state.event_call = event_from_sleep;
 			return SLEEP;
@@ -104,7 +104,7 @@ static SYSTEM_STATE event_from_disconnected(SYSTEM_EVENT event){
 		case ON_CONNECT:
 			NRF_LOG_INFO("State Transition: Disconnected -> Connected");
 		
-			imu_start();
+			motion_start();
 		
 			state.event_call = event_from_connected;
 			return CONNECTED;
@@ -112,7 +112,7 @@ static SYSTEM_STATE event_from_disconnected(SYSTEM_EVENT event){
 		case ON_DISCONNECT:
 			NRF_LOG_INFO("State Transition: Disconnected -> Disconnected");
 
-			imu_stop();
+			motion_stop();
 		
 			state.event_call = event_from_disconnected;
 			return DISCONNECTED;
@@ -120,7 +120,7 @@ static SYSTEM_STATE event_from_disconnected(SYSTEM_EVENT event){
 		case ON_SLEEP:
 			NRF_LOG_INFO("State Transition: Disconnected -> Sleep");
 
-			imu_stop();
+			motion_stop();
 		
 			state.event_call = event_from_sleep;
 			return SLEEP;
@@ -139,7 +139,7 @@ static SYSTEM_STATE event_from_sleep(SYSTEM_EVENT event) {
 		case ON_CONNECT:
 			NRF_LOG_INFO("State Transition: Sleep -> Connected");
 
-			imu_start();
+			motion_start();
 		
 			state.event_call = event_from_connected;
 			return CONNECTED;

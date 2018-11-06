@@ -9,12 +9,9 @@
 #include "imu_cal.h"
 
 
-#define ORIENTATION_MEAS_INTERVAL_MS			1000/IMU_SAMPLE_RATE_HZ         /**< Heart rate measurement interval (ticks). */
-#define COMPASS_MEAS_INTERVAL_MS 				1000/COMPASS_SAMPLE_RATE_HZ        /**< Heart rate measurement interval (ticks). */
-
-
 /* MOTION CONFIG */
-#define MOTION_SAMPLE_PERIOD_MS (uint32_t) 1000/MOTION_SAMPLE_RATE_HZ
+#define MOTION_SAMPLE_INTERVAL_MS					1000/MOTION_SAMPLE_RATE_HZ
+#define COMPASS_SAMPLE_INTERVAL_MS 				1000/COMPASS_SAMPLE_RATE_HZ
 #define INV_QUAT_SAMPLE_RATE 10000
 
 /* IMU CONVERSIONS */
@@ -49,6 +46,17 @@
 //#define UNUSED					(1<<6)
 #define ERROR						(1<<7)
 
+typedef enum {
+	MIN_SAMPLE_RATE = 0x00,
+	_1_HZ = MIN_SAMPLE_RATE,
+	_2_HZ,
+	_5_HZ,
+	_10_HZ,
+	_20_HZ,
+	_50_HZ,
+	_100_HZ,
+	MAX_SAMPLE_RATE = _100_HZ,
+} SAMPLE_RATE;
 
 typedef uint8_t SensorConfig;
 
@@ -61,8 +69,8 @@ typedef struct {
 typedef struct {
 	void (*motion_event_cb) (void * p_context);
 	uint8_t compass_ready;	
-	uint32_t motion_sample_interval;
-	uint32_t compass_sample_interval;	
+	SAMPLE_RATE motion_sample_rate;
+	SAMPLE_RATE compass_sample_rate;
 } Motion;
 
 typedef struct {
@@ -93,13 +101,18 @@ extern const long accel_bias[3];
 extern long gyro_bias[3];
 
 
-int imu_init(MotionInit * motion_init);
+int motion_init(MotionInit * motion_init_s);
 
+int motion_start(void);
+int motion_stop(void);
 
-int imu_start(void);
-int imu_stop(void);
+void motion_set_sample_rate(SAMPLE_RATE sample_rate);
+SAMPLE_RATE motion_get_sample_rate(void);
 
-void imu_self_test(void);
+void compass_set_sample_rate(SAMPLE_RATE sample_rate);
+SAMPLE_RATE compass_get_sample_rate(void);
+	
+void mpu_self_test(void);
 
 
 

@@ -863,17 +863,15 @@ int main(void)
     conn_params_init();
     peer_manager_init();
 	
-	#ifdef IMU_ENABLED
-	MotionInit motion_init = {
+	MotionInit motion_init_s = {
 		.sensor_config = DEFAULT_SENSOR_CONFIG,
 		.event_cb = motion_sample_handler,
 	};
 	
-	err_code = imu_init(&motion_init);	
+	err_code = motion_init(&motion_init_s);	
 	if (err_code) {
 		NRF_LOG_ERROR("imu_init() %d", err_code);
 	}
-	#endif
 	
     // Start execution.
     NRF_LOG_INFO("Orientation Sensor example started.");

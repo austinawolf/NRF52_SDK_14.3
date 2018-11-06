@@ -9,17 +9,7 @@
 #define DEFAULT_SAMPLE_DESTINATION		SEND_TO_CENTRAL
 
 
-typedef enum {
-	MIN_VAL = 0x01,
-	_1_HZ = MIN_VAL,
-	_5_HZ,
-	_10_HZ,
-	_20_HZ,
-	_50_HZ,
-	_100_HZ,
-	_500_HZ,
-	MAX_VAL = _500_HZ,
-} SAMPLE_RATE;
+
 
 typedef enum {
 	ON_CONNECT,
