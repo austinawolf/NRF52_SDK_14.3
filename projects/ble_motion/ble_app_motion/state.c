@@ -41,7 +41,6 @@ static SYSTEM_STATE event_from_init(SYSTEM_EVENT event) {
 			NRF_LOG_INFO("State Transition: Init -> Connected");
 		
 			motion_start();
-		
 			state.event_call = event_from_connected;
 			return CONNECTED;
 		

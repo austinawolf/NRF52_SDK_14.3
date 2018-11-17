@@ -12,17 +12,17 @@
 #endif
 
 #define MANUFACTURER_NAME                   "NordicSemiconductor"                   /**< Manufacturer. Will be passed to Device Information Service. */
-#define APP_ADV_INTERVAL                    300                                     /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
+#define APP_ADV_INTERVAL                    1000                                     /**< The advertising interval (in units of 0.625 ms. This value corresponds to 187.5 ms). */
 #define APP_ADV_TIMEOUT_IN_SECONDS          180                                     /**< The advertising timeout in units of seconds. */
 
 #define APP_BLE_CONN_CFG_TAG                1                                       /**< A tag identifying the SoftDevice BLE configuration. */
 #define APP_BLE_OBSERVER_PRIO               3                                       /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 
 
-#define MIN_CONN_INTERVAL                   MSEC_TO_UNITS(10, UNIT_1_25_MS)        /**< Minimum acceptable connection interval (0.4 seconds). */
-#define MAX_CONN_INTERVAL                   MSEC_TO_UNITS(20, UNIT_1_25_MS)        /**< Maximum acceptable connection interval (0.65 second). */
+#define MIN_CONN_INTERVAL                   MSEC_TO_UNITS(3500, UNIT_1_25_MS)        /**< Minimum acceptable connection interval (0.4 seconds). */
+#define MAX_CONN_INTERVAL                   MSEC_TO_UNITS(4000, UNIT_1_25_MS)        /**< Maximum acceptable connection interval (0.65 second). */
 #define SLAVE_LATENCY                       0                                       /**< Slave latency. */
-#define CONN_SUP_TIMEOUT                    MSEC_TO_UNITS(4000, UNIT_10_MS)         /**< Connection supervisory timeout (4 seconds). */
+#define CONN_SUP_TIMEOUT                    BLE_GAP_CP_CONN_SUP_TIMEOUT_MAX//MSEC_TO_UNITS(3999, UNIT_10_MS)         /**< Connection supervisory timeout (4 seconds). */
 
 #define FIRST_CONN_PARAMS_UPDATE_DELAY      APP_TIMER_TICKS(5000)                   /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (5 seconds). */
 #define NEXT_CONN_PARAMS_UPDATE_DELAY       APP_TIMER_TICKS(30000)                  /**< Time between each call to sd_ble_gap_conn_param_update after the first call (30 seconds). */

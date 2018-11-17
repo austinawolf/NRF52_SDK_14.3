@@ -7,8 +7,10 @@
 
 /* IMU CAL */
 
-#if RUN_CAL == 1
 
+#if RUN_CAL == 1
+	#warning RUN_CAL enabled
+	
 	//mpu calibration data	
 	#define GYRO_BIAS 	{	  0		*	SCALE_GYRO_OFFSET, \
 							  0		*	SCALE_GYRO_OFFSET, \
@@ -28,9 +30,9 @@
 	#define GYRO_BIAS 	{	  -24		*	SCALE_GYRO_OFFSET, \
 							    0		*	SCALE_GYRO_OFFSET, \
 							    1		*	SCALE_GYRO_OFFSET}
-	#define ACCEL_BIAS 	{	 -248		*	SCALE_ACC_OFFSET, \
-							  419		*	SCALE_ACC_OFFSET, \
-							-1825		*	SCALE_ACC_OFFSET}	
+	#define ACCEL_BIAS 	{	 -109		*	SCALE_ACC_OFFSET, \
+							  485		*	SCALE_ACC_OFFSET, \
+							-1799		*	SCALE_ACC_OFFSET}	
 	#define MAG_SOFTIRON_MATRIX		{ { 0.934, 0.005, 0.013 },	\
 									{ 0.005, 0.948, 0.012 },	\
 									{ 0.013, 0.012, 1.129 }}

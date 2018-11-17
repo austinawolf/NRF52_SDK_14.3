@@ -20,6 +20,9 @@
 #include "inv_mpu_dmp_motion_driver.h"
 #include "dmpKey.h"
 #include "dmpmap.h"
+#ifdef MOTION_SIM_MODE
+#include "clock_interface.h"
+#endif
 
 //mpl
 #include "invensense.h"
@@ -30,7 +33,7 @@
 #define WHO_AM_I 0x75
 
 #define NRF_LOG_MODULE_NAME motion
-#define NRF_LOG_LEVEL 4
+#define NRF_LOG_LEVEL 3
 #define NRF_LOG_INFO_COLOR 0
 #define NRF_LOG_DEBUG_COLOR 0
 #include "nrf_log.h"
@@ -38,6 +41,7 @@
 NRF_LOG_MODULE_REGISTER();
 
 Motion motion_s;
+ImuCal imu_cal_s;
 
 static struct platform_data_s gyro_pdata = {
     .orientation = { 1, 0, 0,
@@ -72,8 +76,7 @@ const long accel_bias[3] = ACCEL_BIAS;
 
 uint32_t fifo_num = 0;
 
-static void motion_timeout_handler(void * p_context);
-static void compass_timeout_handler(void * p_context);
+static void compass_sample(void * p_context);
 static void motion_timers_init(void);
 static void motion_timers_start(void);
 static void motion_timers_stop(void);
@@ -81,6 +84,7 @@ static uint8_t motion_get_sample(MotionSample *motion_sample);
 
 int motion_init(MotionInit * motion_init_s) {
 	
+	#ifndef MOTION_SIM_MODE
 	int ret;
 	inv_error_t result; 	
 	unsigned short gyro_rate, gyro_fsr, compass_fsr;
@@ -252,45 +256,66 @@ int motion_init(MotionInit * motion_init_s) {
 		return ret;		
 	}	
 	
-	inv_set_quat_sample_rate(INV_QUAT_SAMPLE_RATE);
+	//inv_set_quat_sample_rate(INV_QUAT_SAMPLE_RATE_uS);
 	
+	NRF_LOG_INFO("Motion Init Success.",ret);
 
-	NRF_LOG_DEBUG("IMU INIT SUCCESS",ret);
-
+	#else
+	motion_s.motion_event_cb = motion_init_s->event_cb;
+	motion_s.motion_sample_rate = MOTION_SAMPLE_RATE_HZ;
+	motion_s.compass_sample_rate = COMPASS_SAMPLE_RATE_HZ;
+	motion_timers_init();	
+	
+	NRF_LOG_INFO("Motion Sim Enabled.");
+	#endif
+	
 	return 0;
 }
 
 
 
 int motion_start(void) {
-	int ret;
+	int ret = 0;
+	
+	#ifndef MOTION_SIM_MODE
 	ret = mpu_set_dmp_state(1);
 	if (ret != 0) {
 		NRF_LOG_ERROR("mpu_set_dmp_state ret:%d",ret);		
 		return ret;		
 	}
+	#endif
+	
 	motion_timers_start();
 
 	return ret;
+
 }
 
 int motion_stop(void) {
-	int ret;
+	int ret = 0;
+	
+	motion_timers_stop();
+	
+	#ifndef MOTION_SIM_MODE
 	ret = mpu_set_dmp_state(0);
 	if (ret != 0) {
 		NRF_LOG_ERROR("mpu_set_dmp_state ret:%d",ret);		
 		return ret;		
 	}
-	motion_timers_stop();
-
+	#endif
+	
+	
 	return ret;
 }
 
 void motion_set_sample_rate(SAMPLE_RATE sample_rate_enum) {
-	
 	motion_stop();
 	motion_s.motion_sample_rate = sample_rate_enum;
+
+	#ifndef MOTION_SIM_MODE	
 	dmp_set_fifo_rate(sample_rate_lookup[sample_rate_enum]);
+	#endif	
+	
 	NRF_LOG_INFO("Sample Rate Changed to %d Hz.", sample_rate_lookup[sample_rate_enum]);
 	motion_start();
 }
@@ -320,12 +345,12 @@ void motion_timers_init(void)
 
     err_code = app_timer_create(&m_motion_timer_id,
                                 APP_TIMER_MODE_REPEATED,
-                                motion_timeout_handler);
+                                motion_sample);
     APP_ERROR_CHECK(err_code);
 	
     err_code = app_timer_create(&m_compass_timer_id,
                                 APP_TIMER_MODE_REPEATED,
-                                compass_timeout_handler);
+                                compass_sample);
     APP_ERROR_CHECK(err_code);	
 }
 
@@ -334,10 +359,11 @@ void motion_timers_init(void)
  */
 void motion_timers_start(void)
 {
+	NRF_LOG_INFO("Motion Timers Start");
     ret_code_t err_code;
 
-    err_code = app_timer_start(m_motion_timer_id, APP_TIMER_TICKS(1000/sample_rate_lookup[motion_s.motion_sample_rate]), NULL);
-    APP_ERROR_CHECK(err_code);
+    //err_code = app_timer_start(m_motion_timer_id, APP_TIMER_TICKS(1000/sample_rate_lookup[motion_s.motion_sample_rate]), NULL);
+    //APP_ERROR_CHECK(err_code);
 	
     err_code = app_timer_start(m_compass_timer_id, APP_TIMER_TICKS(1000/sample_rate_lookup[motion_s.compass_sample_rate]), NULL);
     APP_ERROR_CHECK(err_code);	
@@ -347,6 +373,8 @@ void motion_timers_start(void)
  */
 void motion_timers_stop(void)
 {
+	NRF_LOG_INFO("Motion Timers Stop");
+
     ret_code_t err_code;
 
     err_code = app_timer_stop(m_motion_timer_id);
@@ -407,6 +435,91 @@ void mpu_self_test(void) {
 
 }
 
+
+
+static void motion_imu_cal_cb(void * p_context) {
+	
+	
+	MotionSample * motion_sample;
+	motion_sample = p_context;
+	
+	if (!motion_sample->status) {
+		motion_s.p_imu_cal->sample_num++;
+		NRF_LOG_DEBUG("Event: %d / %d", motion_s.p_imu_cal->sample_num, (int) motion_s.p_imu_cal->num_of_samples);
+		motion_s.p_imu_cal->accel_sum[X] += motion_sample->accel[X];
+		motion_s.p_imu_cal->accel_sum[Y] += motion_sample->accel[Y];
+		motion_s.p_imu_cal->accel_sum[Z] += motion_sample->accel[Z];
+		motion_s.p_imu_cal->gyro_sum[X] += motion_sample->gyro[X];
+		motion_s.p_imu_cal->gyro_sum[Y] += motion_sample->gyro[Y];
+		motion_s.p_imu_cal->gyro_sum[Z] += motion_sample->gyro[Z];
+					
+	}
+	else {
+		NRF_LOG_DEBUG("motion_sample->status = %d", motion_sample->status);
+
+	}
+}
+
+void motion_run_imu_cal(uint16_t num_of_samples) {
+	
+	//stop motion
+	motion_stop();
+
+	NRF_LOG_INFO("Motion Cal Running...");
+	
+	//initialize cal variables
+	int accel_av[XYZ] = {0, 0, 0};
+	int	gyro_av[XYZ] = {0, 0, 0};
+
+	ImuCal imu_cal_s = {
+		.num_of_samples = 100,
+		.sample_num = 0,
+		.accel_sum = {0, 0, 0}, 
+		.gyro_sum = {0, 0, 0},
+	};	
+	motion_s.p_imu_cal = &imu_cal_s;
+	
+	//reset sensor offsets
+	//long zero_gyro_bias[3] = {0,0,0};
+	//const long zero_accel_bias[3] = {0,0,0};		
+	//mpu_set_gyro_bias_reg(zero_gyro_bias);	
+	//mpu_set_accel_bias_6500_reg(zero_accel_bias);
+		
+	//store sampling rate, cb, sensor sampling
+	SAMPLE_RATE sample_rate = motion_s.motion_sample_rate;	
+	void (*cb) (void * p_context) = motion_s.motion_event_cb;
+	
+	//load cal sampling rate, cb and turn on gyro/accel
+	motion_s.motion_event_cb = motion_imu_cal_cb;
+	motion_set_sample_rate(_50_HZ);
+	
+	//wait for cal to finish
+	while(motion_s.p_imu_cal->sample_num < motion_s.p_imu_cal->num_of_samples) {
+
+	}
+	//stop motion
+	motion_stop();
+	
+	//calc data
+	accel_av[X] = motion_s.p_imu_cal->accel_sum[X] / motion_s.p_imu_cal->num_of_samples;
+	accel_av[Y] = motion_s.p_imu_cal->accel_sum[Y] / motion_s.p_imu_cal->num_of_samples;
+	accel_av[Z] = motion_s.p_imu_cal->accel_sum[Z] / motion_s.p_imu_cal->num_of_samples;
+	gyro_av[X] 	= motion_s.p_imu_cal->gyro_sum[X] / motion_s.p_imu_cal->num_of_samples;
+	gyro_av[Y] 	= motion_s.p_imu_cal->gyro_sum[Y] / motion_s.p_imu_cal->num_of_samples;
+	gyro_av[Z] 	= motion_s.p_imu_cal->gyro_sum[Z] / motion_s.p_imu_cal->num_of_samples;
+	NRF_LOG_INFO("Accel Offsets: x=%d, y=%d, z=%d", accel_av[X], accel_av[Y], accel_av[Z]-RAW_1G_REFERENCE);
+	NRF_LOG_INFO("Gyro Offsets: x=%d, y=%d, z=%d", gyro_av[X], gyro_av[Y], gyro_av[Z]);
+			
+	//restore cal sampling rate and cb
+	motion_s.motion_event_cb = cb;
+	motion_set_sample_rate(sample_rate);
+		
+	//stop motion to enable viewing data
+	motion_stop();
+	
+}
+
+#ifndef MOTION_SIM_MODE
 static uint8_t motion_get_sample(MotionSample * motion_sample) {
 
 	short sensors;
@@ -445,9 +558,46 @@ static uint8_t motion_get_sample(MotionSample * motion_sample) {
 	
 	return more;
 }
+#else
+static uint8_t motion_get_sample(MotionSample * motion_sample) {
 
+	unsigned long compass_timestamp;
+	
+	motion_sample->event = fifo_num++;	
+	motion_sample->gyro[X] = 0;
+	motion_sample->gyro[Y] = 0;
+	motion_sample->gyro[Z] = 0;
+	motion_sample->accel[X] = 0;
+	motion_sample->accel[Y] = 0;
+	motion_sample->accel[Z] = 0;
+	motion_sample->quat[0] = 0;
+	motion_sample->quat[1] = 0;
+	motion_sample->quat[2] = 0;
+	motion_sample->quat[3] = 0;
+	motion_sample->timestamp = 0;
+	nrf_get_ms( (unsigned long *) &motion_sample->timestamp);
+	NRF_LOG_DEBUG("Motion Sample @ %d ms",motion_sample->timestamp);	
 
-static void motion_timeout_handler(void * p_context) {
+	motion_sample->data_flags |= QUATERNION_DATA;
+	motion_sample->data_flags |= IMU_DATA;
+
+	//if compass ready, sample compass
+	if (motion_s.compass_ready) {
+		motion_sample->compass[X] = 0;
+		motion_sample->compass[Y] = 0;
+		motion_sample->compass[Z] = 0;
+		
+		nrf_get_ms(&compass_timestamp);		
+		NRF_LOG_DEBUG("Compass Sample @ %d ms",compass_timestamp);
+		motion_sample->data_flags |= COMPASS_DATA;
+		motion_s.compass_ready = 0;
+	}
+	
+	return 0;
+}
+#endif
+
+void motion_sample(void * p_context) {
 	NRF_LOG_DEBUG("Motion Timeout Handler");
 	
 	static MotionSample motion_sample;
@@ -459,10 +609,23 @@ static void motion_timeout_handler(void * p_context) {
 		motion_s.motion_event_cb(&motion_sample);
 	} while (samples_ready);
 		
-
 }
 
-static void compass_timeout_handler(void * p_context) {
-	NRF_LOG_DEBUG("Compass Timeout Handler");
+void motion_sample_schedule_cb(void * p_context, uint16_t len) {
+	NRF_LOG_DEBUG("Motion Schedule Handler");
+	
+	static MotionSample motion_sample;
+	memset(&motion_sample,0,sizeof(MotionSample));
+	
+	uint8_t samples_ready;
+	do {
+		samples_ready = motion_get_sample(&motion_sample);
+		motion_s.motion_event_cb(&motion_sample);
+	} while (samples_ready);
+		
+}
+
+static void compass_sample(void * p_context) {
+	NRF_LOG_INFO("Compass Timeout Handler");
 	motion_s.compass_ready = 1;
 }

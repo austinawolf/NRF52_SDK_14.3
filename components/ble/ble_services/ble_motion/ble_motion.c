@@ -126,27 +126,16 @@ static SdsReturnType encode_response(Response * p_response, ble_gatts_value_t * 
 	static uint8_t response_value[20];
 	uint16_t len;
 	
-	if (p_response -> err_code) {
-		//load error packet
-		len = MIN_RESPONSE_LEN;	
-		response_value[0] = p_response -> preamble;
-		response_value[1] = p_response -> opcode;
-		response_value[2] = p_response -> err_code;
-		response_value[3] = 0; //arglen
-	}
-	else {
-		//load response packet 
-		len = MIN_RESPONSE_LEN + p_response->arg_len;
-		response_value[0] = p_response -> preamble;
-		response_value[1] = p_response -> opcode;
-		response_value[2] = p_response -> err_code;
-		response_value[3] = p_response -> arg_len;
-		
-		if (p_response -> arg_len) {
-			memcpy(&response_value[4], p_response->p_args, p_response->arg_len);
-		}
-	}	
+	len = MIN_RESPONSE_LEN + p_response->arg_len;
+	response_value[0] = p_response -> preamble;
+	response_value[1] = p_response -> opcode;
+	response_value[2] = p_response -> err_code;
+	response_value[3] = p_response -> arg_len;
 	
+	if ( p_response -> arg_len && p_response->p_args != NULL ) {
+		memcpy(&response_value[4], p_response->p_args, p_response->arg_len);
+	}
+		
 	//load gatts struct
 	p_gatts_value->p_value = response_value;
 	p_gatts_value->offset = 0;
@@ -167,57 +156,62 @@ static uint32_t on_motion_command_char_write(ble_motion_t * p_motion, ble_gatts_
 {
 	ble_gatts_value_t gatts_value;
 	SdsReturnType err_code;
+	Response response;	
 
 	NRF_LOG_DEBUG("Command Char Write Call");
-	NRF_LOG_FINAL_FLUSH();	
 	
 	//check for valid event data length
 	if (p_evt_write->len < MIN_COMMAND_LEN) {
-		return SDS_SHORT_COMMAND;
+		err_code = SDS_SHORT_COMMAND;
 	}
-	
-	//build command structure from event strcture
-	Command command = {
-		.preamble 	= p_evt_write->data[0],
-		.opcode 	= (OPCODE) p_evt_write->data[1], 
-		.arg_len 	= p_evt_write->data[2],
-		.p_args 	= p_evt_write->data[2] ? &p_evt_write->data[3]: NULL,
-	};
-	NRF_LOG_DEBUG("Preamble: 0x%x", command.preamble);
-	NRF_LOG_DEBUG("Opcode: 0x%x", command.opcode);
-	NRF_LOG_DEBUG("Length: %d", command.arg_len);
-	
-	//check for valid command
-	if (command.preamble != COMMAND_PREAMBLE) {
+	else if (p_evt_write->data[0] != COMMAND_PREAMBLE) {
 		NRF_LOG_ERROR("SDS_INVALID_PREAMBLE");
-		return SDS_INVALID_PREAMBLE;
+		err_code = SDS_INVALID_PREAMBLE;
 	}
-	else if (command.opcode < MIN_OPCODE_VAL || command.opcode > MAX_OPCODE_VAL) {
+	else if (p_evt_write->data[1] < MIN_OPCODE_VAL || p_evt_write->data[1] > MAX_OPCODE_VAL) {
 		NRF_LOG_ERROR("SDS_INVALID_OPCODE");		
-		return SDS_INVALID_OPCODE;
+		err_code = SDS_INVALID_OPCODE;
 	}
-	else if (command.arg_len > 16) {
+	else if (p_evt_write->data[2] > 16) {
 		NRF_LOG_ERROR("SDS_INVALID_ARG_LEN");
-		return SDS_INVALID_ARG_LEN;
+		err_code = SDS_INVALID_ARG_LEN;
+	}
+	if (err_code == SDS_SUCCESS) {
+		//build command structure from event strcture
+		Command command = {
+			.preamble 	= p_evt_write->data[0],
+			.opcode 	= (OPCODE) p_evt_write->data[1], 
+			.arg_len 	= p_evt_write->data[2],
+			.p_args 	= p_evt_write->data[2] ? &p_evt_write->data[3]: NULL,
+		};
+		NRF_LOG_DEBUG("Preamble: 0x%x", command.preamble);
+		NRF_LOG_DEBUG("Opcode: 0x%x", command.opcode);
+		NRF_LOG_DEBUG("Length: %d", command.arg_len);
+
+		//call command and get resposne
+		err_code = command_call(&command, &response);		
 	}
 	
-	//call command and get resposne
-	Response response;
-	command_call(&command, &response);
-
+	if (err_code) {
+		response.preamble 	= RESPONSE_PREAMBLE;
+		response.opcode 	= (OPCODE) p_evt_write->data[1];
+		response.arg_len 	= 0;
+		response.p_args 	= NULL;
+		response.err_code 	= err_code;
+	}
 	
 	NRF_LOG_DEBUG("Preamble: 0x%x", response.preamble);
 	NRF_LOG_DEBUG("Command: 0x%x", response.opcode);
 	NRF_LOG_DEBUG("Err Code: 0x%x", response.err_code);
 	NRF_LOG_DEBUG("Length: %d",response.arg_len);
-	//NRF_LOG_HEXDUMP_DEBUG(response.args, response.arg_len);
 	
 	err_code = encode_response(&response, &gatts_value);
-	NRF_LOG_ERROR("encode_response: %d",err_code);
-
+	if (err_code) {
+		NRF_LOG_ERROR("encode_response: %d",err_code);
+	}
+	
 	//send value
 	return sd_ble_gatts_value_set(p_motion->conn_handle, p_motion->command_handles.value_handle, &gatts_value);
-	//return NRF_SUCCESS;
 	
 }
 

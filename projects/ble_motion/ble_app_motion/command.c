@@ -17,13 +17,15 @@ static SdsReturnType get_fw_version(Command * p_command, Response * p_response);
 static SdsReturnType get_sensor_location(Command * p_command, Response * p_response);
 static SdsReturnType get_sample_rate(Command * p_command, Response * p_response);
 static SdsReturnType set_sample_rate(Command * p_command, Response * p_response);
-	
-static SdsReturnType (*CommandSet[4]) (Command * command, Response * response) =
+static SdsReturnType run_motion_cal(Command * p_command, Response * p_response);
+
+static SdsReturnType (*CommandSet[5]) (Command * command, Response * response) =
 {
 	get_fw_version,
 	get_sensor_location,
 	get_sample_rate,
 	set_sample_rate,
+	run_motion_cal,
 };
 
 
@@ -91,6 +93,25 @@ static SdsReturnType set_sample_rate(Command * p_command, Response * p_response)
 	}
 	
 	motion_set_sample_rate(sample_rate);
+	
+	p_response->preamble = RESPONSE_PREAMBLE;
+	p_response->opcode = p_command->opcode;
+	p_response->arg_len = 0;
+	p_response->p_args = NULL;
+	p_response->err_code = SDS_SUCCESS;
+	
+	return SDS_SUCCESS;
+}
+
+static SdsReturnType run_motion_cal(Command * p_command, Response * p_response) {
+
+	NRF_LOG_INFO("Command: run_motion_cal");
+	
+	if (p_command -> arg_len != 0) {
+		return SDS_INVALID_ARG_LEN;
+	}
+	
+	motion_run_imu_cal(10);
 	
 	p_response->preamble = RESPONSE_PREAMBLE;
 	p_response->opcode = p_command->opcode;

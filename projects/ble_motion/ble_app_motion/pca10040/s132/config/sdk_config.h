@@ -53,7 +53,7 @@
  
 
 #ifndef BSP_BTN_BLE_ENABLED
-#define BSP_BTN_BLE_ENABLED 1
+#define BSP_BTN_BLE_ENABLED 0
 #endif
 
 // </h> 
@@ -2102,7 +2102,7 @@
 // <7=> 7 
 
 #ifndef APP_TIMER_CONFIG_IRQ_PRIORITY
-#define APP_TIMER_CONFIG_IRQ_PRIORITY 7
+#define APP_TIMER_CONFIG_IRQ_PRIORITY 6
 #endif
 
 // <o> APP_TIMER_CONFIG_OP_QUEUE_SIZE - Capacity of timer requests queue. 
@@ -3203,7 +3203,7 @@
 // <i> Log data is buffered and can be processed in idle.
 
 #ifndef NRF_LOG_DEFERRED
-#define NRF_LOG_DEFERRED 1
+#define NRF_LOG_DEFERRED 0
 #endif
 
 // <o> NRF_LOG_BUFSIZE  - Size of the buffer for storing logs (in bytes).
@@ -5162,7 +5162,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_BLE_LOG_LEVEL
-#define NRF_SDH_BLE_LOG_LEVEL 3
+#define NRF_SDH_BLE_LOG_LEVEL 4
 #endif
 
 // <o> NRF_SDH_BLE_INFO_COLOR  - ANSI escape code prefix.
@@ -5213,7 +5213,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_LOG_LEVEL
-#define NRF_SDH_LOG_LEVEL 3
+#define NRF_SDH_LOG_LEVEL 4
 #endif
 
 // <o> NRF_SDH_INFO_COLOR  - ANSI escape code prefix.
@@ -5264,7 +5264,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_SOC_LOG_LEVEL
-#define NRF_SDH_SOC_LOG_LEVEL 3
+#define NRF_SDH_SOC_LOG_LEVEL 4
 #endif
 
 // <o> NRF_SDH_SOC_INFO_COLOR  - ANSI escape code prefix.

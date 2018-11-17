@@ -12,7 +12,6 @@
 /* MOTION CONFIG */
 #define MOTION_SAMPLE_INTERVAL_MS					1000/MOTION_SAMPLE_RATE_HZ
 #define COMPASS_SAMPLE_INTERVAL_MS 				1000/COMPASS_SAMPLE_RATE_HZ
-#define INV_QUAT_SAMPLE_RATE 10000
 
 /* IMU CONVERSIONS */
 #define RAW_GYRO_TO_RADS (float) 2000.0f*2.0f/0xFFFFf * 3.14f/180.0f
@@ -67,11 +66,21 @@ typedef struct {
 } MotionInit;
 
 typedef struct {
+	uint16_t num_of_samples;
+	volatile uint32_t sample_num;
+	int accel_sum[XYZ];
+	int gyro_sum[XYZ];
+} ImuCal;
+
+typedef struct {
 	void (*motion_event_cb) (void * p_context);
 	uint8_t compass_ready;	
 	SAMPLE_RATE motion_sample_rate;
 	SAMPLE_RATE compass_sample_rate;
+	ImuCal * p_imu_cal;
 } Motion;
+
+
 
 typedef struct {
 	uint32_t event;	
@@ -106,12 +115,17 @@ int motion_init(MotionInit * motion_init_s);
 int motion_start(void);
 int motion_stop(void);
 
+void motion_sample(void * p_context);
+void motion_sample_schedule_cb(void * p_context, uint16_t len);
+	
 void motion_set_sample_rate(SAMPLE_RATE sample_rate);
 SAMPLE_RATE motion_get_sample_rate(void);
 
 void compass_set_sample_rate(SAMPLE_RATE sample_rate);
 SAMPLE_RATE compass_get_sample_rate(void);
-	
+
+void motion_run_imu_cal(uint16_t num_of_samples);
+
 void mpu_self_test(void);
 
 

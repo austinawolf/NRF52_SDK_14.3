@@ -72,23 +72,32 @@
 #include "nrf_ble_gatt.h"
 #include "ble_conn_state.h"
 #include "nrf_pwr_mgmt.h"
-
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "nrf_nvic.h"
+#include "app_scheduler.h"
 
 //local libraries
 #include "twi_interface.h"
 #include "motion.h"
 #include "config.h"
 #include "state.h"
+#include "clock_interface.h"
 //#include "battery_level.h"
+
+
+// Scheduler settings
+#define SCHED_MAX_EVENT_DATA_SIZE       0
+#define SCHED_QUEUE_SIZE                10
 
 BLE_MOTION_DEF(m_motion);                                           /**< Motion service instance. */
 BLE_BAS_DEF(m_bas);                                                 /**< Structure used to identify the battery service. */
 NRF_BLE_GATT_DEF(m_gatt);                                           /**< GATT module instance. */
 BLE_ADVERTISING_DEF(m_advertising);                                 /**< Advertising module instance. */
 
+static uint32_t enable_conn_inv_notif(void);
+static uint32_t disable_conn_inv_notif(void);
 
 
 static uint16_t m_conn_handle         = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
@@ -509,10 +518,12 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 			system_event_call(ON_CONNECT);
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
-            m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;		    
+            m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;	
+			enable_conn_inv_notif();
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
+			disable_conn_inv_notif();
 			system_event_call(ON_DISCONNECT);
             NRF_LOG_INFO("Disconnected, reason %d.",p_ble_evt->evt.gap_evt.params.disconnected.reason);
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
@@ -734,11 +745,11 @@ static void buttons_leds_init(bool * p_erase_bonds)
     ret_code_t err_code;
     bsp_event_t startup_event;
 
-    err_code = bsp_init(BSP_INIT_LED | BSP_INIT_BUTTONS, bsp_event_handler);
-    APP_ERROR_CHECK(err_code);
+    //err_code = bsp_init(BSP_INIT_LED | BSP_INIT_BUTTONS, bsp_event_handler);
+    //APP_ERROR_CHECK(err_code);
 
-    err_code = bsp_btn_ble_init(NULL, &startup_event);
-    APP_ERROR_CHECK(err_code);
+    //err_code = bsp_btn_ble_init(NULL, &startup_event);
+    //APP_ERROR_CHECK(err_code);
 
     *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
@@ -783,10 +794,10 @@ static void motion_sample_handler(void * p_context)
 	NRF_LOG_DEBUG("Motion Handler Call Event: %d", motion_sample->event);
 	
 
-	
-	if (motion_sample->data_flags & QUATERNION_DATA) {
-		NRF_LOG_DEBUG("Quat: q0=%d, q0=%d, q0=%d, q0=%d,", motion_sample->quat[0], motion_sample->quat[1], motion_sample->quat[2], motion_sample->quat[3]);
-		err_code = ble_motion_quaternion_send(&m_motion, motion_sample->quat);
+	if (motion_sample->data_flags & COMPASS_DATA) {	
+
+		NRF_LOG_DEBUG("Compass: x=%d, y=%d, z=%d,", motion_sample->compass[X], motion_sample->compass[Y], motion_sample->compass[Z]);		
+		err_code = ble_motion_compass_send(&m_motion, motion_sample->compass);
 		if ((err_code != NRF_SUCCESS) &&
 			(err_code != NRF_ERROR_INVALID_STATE) &&
 			(err_code != NRF_ERROR_RESOURCES) &&
@@ -795,7 +806,7 @@ static void motion_sample_handler(void * p_context)
 		{
 			APP_ERROR_HANDLER(err_code);
 		}
-		
+	
 	}
 
 	if (motion_sample->data_flags & IMU_DATA) {	
@@ -815,10 +826,9 @@ static void motion_sample_handler(void * p_context)
 	
 	}
 	
-	if (motion_sample->data_flags & COMPASS_DATA) {	
-
-		NRF_LOG_DEBUG("Compass: x=%d, y=%d, z=%d,", motion_sample->compass[X], motion_sample->compass[Y], motion_sample->compass[Z]);		
-		err_code = ble_motion_compass_send(&m_motion, motion_sample->compass);
+	if (motion_sample->data_flags & QUATERNION_DATA) {
+		NRF_LOG_DEBUG("Quat: q0=%d, q0=%d, q0=%d, q0=%d,", motion_sample->quat[0], motion_sample->quat[1], motion_sample->quat[2], motion_sample->quat[3]);
+		err_code = ble_motion_quaternion_send(&m_motion, motion_sample->quat);
 		if ((err_code != NRF_SUCCESS) &&
 			(err_code != NRF_ERROR_INVALID_STATE) &&
 			(err_code != NRF_ERROR_RESOURCES) &&
@@ -827,9 +837,81 @@ static void motion_sample_handler(void * p_context)
 		{
 			APP_ERROR_HANDLER(err_code);
 		}
+		
+	}
+
+
 	
-	}	
+
 	
+}
+static void event(void * p_event_data, uint16_t event_size) {
+	static unsigned long timestamp;
+	nrf_get_ms(&timestamp);
+	NRF_LOG_INFO("RADIO EVENT @ %ld ms", timestamp); //Toggle the status of the LED on each radio notification event   	
+}
+
+/**@brief Software interrupt 1 IRQ Handler, handles radio notification interrupts.
+ */
+void SWI1_IRQHandler(bool radio_evt)
+{
+    if (radio_evt)
+    {
+		app_sched_event_put(NULL, 0, event);
+		app_sched_event_put(NULL, 0, motion_sample_schedule_cb);
+	}
+}
+
+/**@brief Function for initializing Radio Notification Software Interrupts.
+ */
+uint32_t radio_notification_init(uint32_t irq_priority, uint8_t notification_type, uint8_t notification_distance)
+{
+    uint32_t err_code;
+
+    err_code = sd_nvic_ClearPendingIRQ(SWI1_IRQn);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    err_code = sd_nvic_SetPriority(SWI1_IRQn, irq_priority);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Configure the event
+    return sd_radio_notification_cfg_set(notification_type, notification_distance);
+}
+
+/**@brief Function for initializing Radio Notification Software Interrupts.
+ */
+static uint32_t enable_conn_inv_notif(void)
+{
+    uint32_t err_code;
+
+    err_code = sd_nvic_EnableIRQ(SWI1_IRQn);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    return err_code;
+}
+
+/**@brief Function for initializing Radio Notification Software Interrupts.
+ */
+static uint32_t disable_conn_inv_notif(void)
+{
+    uint32_t err_code;
+
+    err_code = sd_nvic_DisableIRQ(SWI1_IRQn);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    return err_code;
 }
 
 
@@ -842,6 +924,10 @@ int main(void)
 	
     // Initialize.
     log_init();
+	
+	APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
+
+	
 	//system_init();
 	twi_interface_init();
 	nrf_pwr_mgmt_init();
@@ -858,6 +944,10 @@ int main(void)
     ble_stack_init();
     gap_params_init();
     gatt_init();
+	
+	err_code = radio_notification_init(3, NRF_RADIO_NOTIFICATION_TYPE_INT_ON_INACTIVE, NRF_RADIO_NOTIFICATION_DISTANCE_NONE);
+    APP_ERROR_CHECK(err_code);
+
     advertising_init();
     services_init();
     conn_params_init();
@@ -883,6 +973,7 @@ int main(void)
     {
         if (NRF_LOG_PROCESS() == false)
         {
+			app_sched_execute();
             power_manage();
         }
     }

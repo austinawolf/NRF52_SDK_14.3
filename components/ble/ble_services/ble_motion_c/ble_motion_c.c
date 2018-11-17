@@ -151,9 +151,34 @@ static int motion_decode(const ble_gattc_evt_hvx_t * hvx,  uint8_t length, ble_m
 		return -1;
 	}
 	
-	ble_motion_c_evt->params.motionm.data_flags = hvx->data[1];
-	ble_motion_c_evt->params.motionm.event_num = hvx->data[2];
-	memcpy(&ble_motion_c_evt->params.motionm.motion_data.quat.q[0], &hvx->data[3], length - 3);
+	uint8_t data_flags = hvx->data[1];
+	uint8_t packet_num = hvx->data[2];
+	int32_t quat[4] = {0,0,0,0};
+	int16_t gyro[3] = {0,0,0};
+	int16_t accel[3] = {0,0,0};
+	int16_t compass[3] = {0,0,0};
+	
+	
+	if (data_flags == 0x02) {
+		//imu
+		memcpy(gyro, &hvx->data[3],6);
+		memcpy(accel, &hvx->data[9],6);
+		printf("Packet:%u,%u,%d,%d,%d,%d,%d,%d\n\r",packet_num,data_flags,gyro[0],gyro[1],gyro[2],accel[0],accel[1],accel[2]);
+
+	}
+	if (data_flags == 0x01) {
+		//quat
+		memcpy(quat, &hvx->data[3],16);
+		printf("Packet:%u,%u,%ld,%ld,%ld,%ld\n\r",packet_num,data_flags, (long) quat[0], (long) quat[1], (long) quat[2], (long) quat[3]);
+
+	}
+	if (data_flags == 0x04) {
+		//compass
+		memcpy(compass, &hvx->data[3],6);
+		printf("Packet:%u,%u,%d,%d,%d\n\r",packet_num,data_flags,compass[0],compass[1],compass[2]);
+	}
+	
+	//memcpy(&ble_motion_c_evt->params.motionm.motion_data.quat.q[0], &hvx->data[3], length - 3);
 	return 0;
 }
 

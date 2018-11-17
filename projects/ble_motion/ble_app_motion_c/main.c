@@ -90,10 +90,10 @@
 #define SCAN_INTERVAL               0x00A0                              /**< Determines scan interval in units of 0.625 millisecond. */
 #define SCAN_WINDOW                 0x0050                              /**< Determines scan window in units of 0.625 millisecond. */
 
-#define MIN_CONNECTION_INTERVAL     MSEC_TO_UNITS(10, UNIT_1_25_MS)    /**< Determines minimum connection interval in millisecond. */
-#define MAX_CONNECTION_INTERVAL     MSEC_TO_UNITS(20, UNIT_1_25_MS)     /**< Determines maximum connection interval in millisecond. */
+#define MIN_CONNECTION_INTERVAL     MSEC_TO_UNITS(3500, UNIT_1_25_MS)    /**< Determines minimum connection interval in millisecond. */
+#define MAX_CONNECTION_INTERVAL     MSEC_TO_UNITS(4000, UNIT_1_25_MS)     /**< Determines maximum connection interval in millisecond. */
 #define SLAVE_LATENCY               0                                   /**< Determines slave latency in counts of connection events. */
-#define SUPERVISION_TIMEOUT         MSEC_TO_UNITS(4000, UNIT_10_MS)     /**< Determines supervision time-out in units of 10 millisecond. */
+#define SUPERVISION_TIMEOUT         BLE_GAP_CP_CONN_SUP_TIMEOUT_MAX//MSEC_TO_UNITS(4000, UNIT_10_MS)     /**< Determines supervision time-out in units of 10 millisecond. */
 
 #define TARGET_UUID                 BLE_UUID_MOTION_SERVICE         /**< Target device name that application is looking for. */
 
@@ -871,32 +871,43 @@ static void motion_c_evt_handler(ble_motion_c_t * p_motion_c, ble_motion_c_evt_t
         case BLE_MOTION_C_EVT_MOTIONM_NOTIFICATION:
         {
 
-			
+			/*
 			switch (p_motion_c_evt->params.motionm.data_flags) {
-
-				case (QUAT_PACKET_FLAG):
-					quat[0] = p_motion_c_evt->params.motionm.motion_data.quat.q[0];
-					quat[1] = p_motion_c_evt->params.motionm.motion_data.quat.q[1];
-					quat[2] = p_motion_c_evt->params.motionm.motion_data.quat.q[2];
-					quat[3] = p_motion_c_evt->params.motionm.motion_data.quat.q[3];		
-					printf("%ld,%ld,%ld,%ld,\n\r",quat[0],quat[1],quat[2],quat[3]);
+					
 				
+				case (COMPASS_PACKET_FLAG):
+					printf ("Compass RX\n\r");
+					
+					compass[0] = p_motion_c_evt->params.motionm.motion_data.compass.compass[0];
+					compass[1] = p_motion_c_evt->params.motionm.motion_data.compass.compass[1];
+					compass[2] = p_motion_c_evt->params.motionm.motion_data.compass.compass[2];
+									
 				case (IMU_PACKET_FLAG):
+					printf ("IMU RX\n\r");
 					accel[0] = p_motion_c_evt->params.motionm.motion_data.imu.accel[0];
 					accel[1] = p_motion_c_evt->params.motionm.motion_data.imu.accel[1];
 					accel[2] = p_motion_c_evt->params.motionm.motion_data.imu.accel[2];
 					gyro[0] = p_motion_c_evt->params.motionm.motion_data.imu.gyro[0];
 					gyro[1] = p_motion_c_evt->params.motionm.motion_data.imu.gyro[1];
 					gyro[2] = p_motion_c_evt->params.motionm.motion_data.imu.gyro[2];
-					//printf("Accel: %d,%d,%d,\n\r",accel[0],accel[1],accel[2]);
-					//printf("Gyro: %d,%d,%d,\n\r",gyro[0],gyro[1],gyro[2]);				
 				
-				case (COMPASS_PACKET_FLAG):
-					compass[0] = p_motion_c_evt->params.motionm.motion_data.compass.compass[0];
-					compass[1] = p_motion_c_evt->params.motionm.motion_data.compass.compass[1];
-					compass[2] = p_motion_c_evt->params.motionm.motion_data.compass.compass[2];
-					//printf("Compass: %d,%d,%d,\n\r",compass[0],compass[1],compass[2]);
+				case (QUAT_PACKET_FLAG):
+					printf ("Quat RX\n\r");
+					
+					quat[0] = p_motion_c_evt->params.motionm.motion_data.quat.q[0];
+					quat[1] = p_motion_c_evt->params.motionm.motion_data.quat.q[1];
+					quat[2] = p_motion_c_evt->params.motionm.motion_data.quat.q[2];
+					quat[3] = p_motion_c_evt->params.motionm.motion_data.quat.q[3];
+							
+					memset(quat, 0, 16);
+					memset(accel, 0, 6);
+					memset(gyro, 0, 6);
+					memset(compass, 0, 6);	
+		
+				
+					
 			}
+			*/
 			 
 			
         } break;
