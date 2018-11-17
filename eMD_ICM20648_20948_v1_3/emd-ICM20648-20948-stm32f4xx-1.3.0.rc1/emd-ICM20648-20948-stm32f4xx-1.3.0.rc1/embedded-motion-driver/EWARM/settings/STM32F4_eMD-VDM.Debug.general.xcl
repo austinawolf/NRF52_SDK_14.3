@@ -1,0 +1,15 @@
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armproc.dll" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armstlink2.dll" 
+
+"C:\Users\jlin\Desktop\Developer's Corner\eMD_ICM20648_20948_20609_20689_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\Debug\Exe\STM32F4-Discovery.out" 
+
+--plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\bin\armbat.dll" 
+
+--device_macro "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\config\debugger\ST\STM32F4xx.dmac" 
+
+--flash_loader "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\config\flashloader\ST\FlashSTM32F4xxx.board" 
+
+
+
+

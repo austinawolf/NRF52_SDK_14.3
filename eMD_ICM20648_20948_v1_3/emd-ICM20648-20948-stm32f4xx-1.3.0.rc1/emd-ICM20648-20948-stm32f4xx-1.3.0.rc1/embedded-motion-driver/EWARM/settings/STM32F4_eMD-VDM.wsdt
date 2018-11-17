@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+  <CurrentConfigs><Project>STM32F4_eMD-VDM/Debug</Project></CurrentConfigs></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>347</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1159</ColumnWidth1><ColumnWidth2>309</ColumnWidth2><ColumnWidth3>77</ColumnWidth3></Build>
+      <TerminalIO/>
+      <Find-All-Declarations>
+        
+        
+        
+      <ColumnWidth0>664</ColumnWidth0><ColumnWidth1>94</ColumnWidth1><ColumnWidth2>1138</ColumnWidth2></Find-All-Declarations>
+    <Find-in-Files><ColumnWidth0>476</ColumnWidth0><ColumnWidth1>79</ColumnWidth1><ColumnWidth2>714</ColumnWidth2><ColumnWidth3>317</ColumnWidth3></Find-in-Files></Static>
+    <Windows>
+      
+      
+    <Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-6303-901</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>STM32F4_eMD-VDM</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/common</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/dmp3</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/dmp3a</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/drivers</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/drivers/include</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/drivers/source</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/20648_driver/invn</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/DeviceSupport</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/DeviceSupport/include</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/DeviceSupport/source</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/Peripheral</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/Peripheral/include</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/Peripheral/source</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/STM32F4xx_StdPeriph_Driver</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/STM32F4xx_StdPeriph_Driver/includes</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/STM32F4xx_StdPeriph_Driver/source</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/User</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/User/includes</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/User/source</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/core</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/core/include</ExpandedNode><ExpandedNode>STM32F4_eMD-VDM/core/source</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-8980-1260</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-18893-4349</Identity>
+            <TabName>Declarations</TabName>
+            <Factory>Find-All-Declarations</Factory>
+            <Session/>
+          </Tab>
+        <Tab><Identity>TabID-27029-14636</Identity><TabName>Find in Files</TabName><Factory>Find-in-Files</Factory><Session/></Tab></Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_mpu_fifo_control.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>901</YPos2><SelStart2>28308</SelStart2><SelEnd2>28308</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\invn\common\ml_math_func.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>118</YPos2><SelStart2>3878</SelStart2><SelEnd2>3878</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_i2c.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>1181</YPos2><SelStart2>45832</SelStart2><SelEnd2>45832</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_augmented_sensors.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>97</YPos2><SelStart2>4560</SelStart2><SelEnd2>4602</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_base_control.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>177</YPos2><SelStart2>6704</SelStart2><SelEnd2>6720</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_mpu_selftest.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>1235</SelStart2><SelEnd2>1256</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_slave_pressure.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>390</SelStart2><SelEnd2>390</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_transport.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>47</YPos2><SelStart2>1077</SelStart2><SelEnd2>1077</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\dmp3\inv_mems_interface_mapping.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>210</YPos2><SelStart2>8738</SelStart2><SelEnd2>8738</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_base_driver_20609.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>551</YPos2><SelStart2>15517</SelStart2><SelEnd2>15517</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_base_driver.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>176</YPos2><SelStart2>7062</SelStart2><SelEnd2>7062</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_load_firmware.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>45</YPos2><SelStart2>2369</SelStart2><SelEnd2>2369</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_data_converter.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>118</YPos2><SelStart2>5908</SelStart2><SelEnd2>5908</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_slave_compass.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>21</YPos2><SelStart2>1590</SelStart2><SelEnd2>1611</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_secondary_transport.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>86</YPos2><SelStart2>3658</SelStart2><SelEnd2>3658</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\DeviceSupport\src\board-st_discovery.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>1134</SelStart2><SelEnd2>1134</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_base_driver.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>192</YPos2><SelStart2>6580</SelStart2><SelEnd2>6580</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Peripheral\src\gpio.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>8</YPos2><SelStart2>750</SelStart2><SelEnd2>770</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Peripheral\src\i2c.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>73</YPos2><SelStart2>3971</SelStart2><SelEnd2>3979</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Peripheral\src\uart.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>149</YPos2><SelStart2>7135</SelStart2><SelEnd2>7135</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_hw_config.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>16</YPos2><SelStart2>1389</SelStart2><SelEnd2>1389</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_slave_compass.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>413</YPos2><SelStart2>13661</SelStart2><SelEnd2>13661</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\dmp3\inv_mems_interface_mapping.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>208</YPos2><SelStart2>7243</SelStart2><SelEnd2>7261</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_defines.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>373</YPos2><SelStart2>13879</SelStart2><SelEnd2>13879</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\dmp3a\dmp3Default_20648.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>168</YPos2><SelStart2>7421</SelStart2><SelEnd2>7421</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\driver\inv_mems_base_control.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>505</YPos2><SelStart2>23019</SelStart2><SelEnd2>23019</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Mems\dmp3a\dmp3Default_20648.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>33</YPos2><SelStart2>3121</SelStart2><SelEnd2>3121</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\User\src\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>1050</YPos2><SelStart2>40371</SelStart2><SelEnd2>40371</SelEnd2></Tab><ActiveTab>27</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-011029A0><key>iaridepm.enu1</key></Toolbar-011029A0></Sizes></Row0></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>599</Bottom><Right>442</Right><x>-2</x><y>-2</y><xscreen>299</xscreen><yscreen>261</yscreen><sizeHorzCX>208653</sizeHorzCX><sizeHorzCY>289037</sizeHorzCY><sizeVertCX>309839</sizeVertCX><sizeVertCY>665559</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>256</Bottom><Right>1435</Right><x>-2</x><y>-2</y><xscreen>1437</xscreen><yscreen>258</yscreen><sizeHorzCX>1002791</sizeHorzCX><sizeHorzCY>285714</sizeHorzCY><sizeVertCX>208653</sizeVertCX><sizeVertCY>289037</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+
