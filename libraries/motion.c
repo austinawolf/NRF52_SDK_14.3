@@ -37,7 +37,6 @@
 #define NRF_LOG_INFO_COLOR 0
 #define NRF_LOG_DEBUG_COLOR 0
 #include "nrf_log.h"
-
 NRF_LOG_MODULE_REGISTER();
 
 Motion motion_s;
@@ -103,7 +102,9 @@ int motion_init(MotionInit * motion_init_s) {
 	motion_s.motion_sample_rate = MOTION_SAMPLE_RATE_HZ;
 	motion_s.compass_sample_rate = COMPASS_SAMPLE_RATE_HZ;
 	
+	#ifdef SAMPLE_ON_TIMER_EVENT
 	motion_timers_init();
+	#endif
 	
 	if (motion_init_s->sensor_config & SENSOR_SAMPLE_RAW_IMU) {
 		dmp_features |= DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO;		
@@ -285,7 +286,9 @@ int motion_start(void) {
 	}
 	#endif
 	
+	#ifdef SAMPLE_ON_TIMER_EVENT
 	motion_timers_start();
+	#endif
 
 	return ret;
 
@@ -294,7 +297,9 @@ int motion_start(void) {
 int motion_stop(void) {
 	int ret = 0;
 	
+	#ifdef SAMPLE_ON_TIMER_EVENT
 	motion_timers_stop();
+	#endif
 	
 	#ifndef MOTION_SIM_MODE
 	ret = mpu_set_dmp_state(0);
@@ -339,7 +344,7 @@ SAMPLE_RATE compass_get_sample_rate(void) {
  *
  * @details Initializes the timer module. This creates and starts application timers.
  */
-void motion_timers_init(void)
+static void motion_timers_init(void)
 {
     ret_code_t err_code;
 
@@ -357,21 +362,22 @@ void motion_timers_init(void)
 
 /**@brief Function for starting application timers.
  */
-void motion_timers_start(void)
+static void motion_timers_start(void)
 {
 	NRF_LOG_INFO("Motion Timers Start");
     ret_code_t err_code;
 
-    //err_code = app_timer_start(m_motion_timer_id, APP_TIMER_TICKS(1000/sample_rate_lookup[motion_s.motion_sample_rate]), NULL);
-    //APP_ERROR_CHECK(err_code);
+    err_code = app_timer_start(m_motion_timer_id, APP_TIMER_TICKS(1000/sample_rate_lookup[motion_s.motion_sample_rate]), NULL);
+    APP_ERROR_CHECK(err_code);
 	
     err_code = app_timer_start(m_compass_timer_id, APP_TIMER_TICKS(1000/sample_rate_lookup[motion_s.compass_sample_rate]), NULL);
     APP_ERROR_CHECK(err_code);	
+
 }
 
 /**@brief Function for starting application timers.
  */
-void motion_timers_stop(void)
+static void motion_timers_stop(void)
 {
 	NRF_LOG_INFO("Motion Timers Stop");
 
@@ -533,10 +539,12 @@ static uint8_t motion_get_sample(MotionSample * motion_sample) {
 	motion_sample->event = fifo_num++;
 	
 	motion_sample->status = dmp_read_fifo(motion_sample->gyro, motion_sample->accel, (long *) motion_sample->quat, (unsigned long *) &motion_sample->timestamp, &sensors, &more);
-	NRF_LOG_DEBUG("Motion Sample @ %d ms",motion_sample->timestamp);	
 	if (motion_sample->status) {
 		NRF_LOG_ERROR("dmp_read_fifo ret: %d",motion_sample->status);
 		return 0;
+	}
+	else {
+		NRF_LOG_INFO("Motion Sample @ %d ms",motion_sample->timestamp);			
 	}
 	if (sensors & INV_WXYZ_QUAT) {
 		motion_sample->data_flags |= QUATERNION_DATA;
@@ -611,8 +619,10 @@ void motion_sample(void * p_context) {
 		
 }
 
-void motion_sample_schedule_cb(void * p_context, uint16_t len) {
+void motion_sample_scheduler_cb(void * p_context, uint16_t len) {
 	NRF_LOG_DEBUG("Motion Schedule Handler");
+	
+	motion_s.compass_ready = 1;
 	
 	static MotionSample motion_sample;
 	memset(&motion_sample,0,sizeof(MotionSample));
@@ -626,6 +636,10 @@ void motion_sample_schedule_cb(void * p_context, uint16_t len) {
 }
 
 static void compass_sample(void * p_context) {
-	NRF_LOG_INFO("Compass Timeout Handler");
+	NRF_LOG_DEBUG("Compass Timeout Handler");
 	motion_s.compass_ready = 1;
 }
+
+#ifdef MOTION_SIM_MODE
+
+#endif

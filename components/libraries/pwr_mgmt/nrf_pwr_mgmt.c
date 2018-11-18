@@ -316,7 +316,7 @@ static nrf_section_iter_t   m_handlers_iter;    /**< Shutdown handlers iterator.
 
 ret_code_t nrf_pwr_mgmt_init(void)
 {
-    NRF_LOG_INFO("Init");
+    NRF_LOG_DEBUG("Init");
 
     m_shutdown_started = false;
     nrf_mtx_init(&m_sysoff_mtx);

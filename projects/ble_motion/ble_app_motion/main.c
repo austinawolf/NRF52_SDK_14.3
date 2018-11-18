@@ -72,9 +72,7 @@
 #include "nrf_ble_gatt.h"
 #include "ble_conn_state.h"
 #include "nrf_pwr_mgmt.h"
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
+
 #include "nrf_nvic.h"
 #include "app_scheduler.h"
 
@@ -86,6 +84,14 @@
 #include "clock_interface.h"
 //#include "battery_level.h"
 
+#define NRF_LOG_MODULE_NAME main
+#define NRF_LOG_LEVEL 3
+#define NRF_LOG_INFO_COLOR 0
+#define NRF_LOG_DEBUG_COLOR 0
+#include "nrf_log.h"
+#include "nrf_log_ctrl.h"
+#include "nrf_log_default_backends.h"
+NRF_LOG_MODULE_REGISTER();
 
 // Scheduler settings
 #define SCHED_MAX_EVENT_DATA_SIZE       0
@@ -96,8 +102,8 @@ BLE_BAS_DEF(m_bas);                                                 /**< Structu
 NRF_BLE_GATT_DEF(m_gatt);                                           /**< GATT module instance. */
 BLE_ADVERTISING_DEF(m_advertising);                                 /**< Advertising module instance. */
 
-static uint32_t enable_conn_inv_notif(void);
-static uint32_t disable_conn_inv_notif(void);
+static uint32_t enable_radio_notif(void);
+static uint32_t disable_radio_notif(void);
 
 
 static uint16_t m_conn_handle         = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
@@ -518,12 +524,16 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 			system_event_call(ON_CONNECT);
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
-            m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;	
-			enable_conn_inv_notif();
+            m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+			#ifdef SAMPLE_ON_RADIO_NOTIF
+			enable_radio_notif();
+			#endif
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
-			disable_conn_inv_notif();
+			#ifdef SAMPLE_ON_RADIO_NOTIF
+			disable_radio_notif();
+			#endif
 			system_event_call(ON_DISCONNECT);
             NRF_LOG_INFO("Disconnected, reason %d.",p_ble_evt->evt.gap_evt.params.disconnected.reason);
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
@@ -858,7 +868,7 @@ void SWI1_IRQHandler(bool radio_evt)
     if (radio_evt)
     {
 		app_sched_event_put(NULL, 0, event);
-		app_sched_event_put(NULL, 0, motion_sample_schedule_cb);
+		app_sched_event_put(NULL, 0, motion_sample_scheduler_cb);
 	}
 }
 
@@ -886,7 +896,7 @@ uint32_t radio_notification_init(uint32_t irq_priority, uint8_t notification_typ
 
 /**@brief Function for initializing Radio Notification Software Interrupts.
  */
-static uint32_t enable_conn_inv_notif(void)
+static uint32_t enable_radio_notif(void)
 {
     uint32_t err_code;
 
@@ -901,7 +911,7 @@ static uint32_t enable_conn_inv_notif(void)
 
 /**@brief Function for initializing Radio Notification Software Interrupts.
  */
-static uint32_t disable_conn_inv_notif(void)
+static uint32_t disable_radio_notif(void)
 {
     uint32_t err_code;
 
@@ -925,19 +935,17 @@ int main(void)
     // Initialize.
     log_init();
 	
+	//Schduler
 	APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
-
 	
 	//system_init();
 	twi_interface_init();
-	nrf_pwr_mgmt_init();
 	
     // Initialize timer module.
     err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
 
 	//battery_level_timers_init();
-	
 	buttons_leds_init(&erase_bonds);
 
 	//ble init
@@ -945,9 +953,11 @@ int main(void)
     gap_params_init();
     gatt_init();
 	
+	#ifdef SAMPLE_ON_RADIO_NOTIF
 	err_code = radio_notification_init(3, NRF_RADIO_NOTIFICATION_TYPE_INT_ON_INACTIVE, NRF_RADIO_NOTIFICATION_DISTANCE_NONE);
-    APP_ERROR_CHECK(err_code);
-
+    APP_ERROR_CHECK(err_code);	
+	#endif
+	
     advertising_init();
     services_init();
     conn_params_init();
@@ -962,6 +972,8 @@ int main(void)
 	if (err_code) {
 		NRF_LOG_ERROR("imu_init() %d", err_code);
 	}
+	
+	nrf_pwr_mgmt_init();
 	
     // Start execution.
     NRF_LOG_INFO("Orientation Sensor example started.");

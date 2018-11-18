@@ -90,8 +90,8 @@
 #define SCAN_INTERVAL               0x00A0                              /**< Determines scan interval in units of 0.625 millisecond. */
 #define SCAN_WINDOW                 0x0050                              /**< Determines scan window in units of 0.625 millisecond. */
 
-#define MIN_CONNECTION_INTERVAL     MSEC_TO_UNITS(3500, UNIT_1_25_MS)    /**< Determines minimum connection interval in millisecond. */
-#define MAX_CONNECTION_INTERVAL     MSEC_TO_UNITS(4000, UNIT_1_25_MS)     /**< Determines maximum connection interval in millisecond. */
+#define MIN_CONNECTION_INTERVAL     MSEC_TO_UNITS(100, UNIT_1_25_MS)    /**< Determines minimum connection interval in millisecond. */
+#define MAX_CONNECTION_INTERVAL     MSEC_TO_UNITS(100, UNIT_1_25_MS)     /**< Determines maximum connection interval in millisecond. */
 #define SLAVE_LATENCY               0                                   /**< Determines slave latency in counts of connection events. */
 #define SUPERVISION_TIMEOUT         BLE_GAP_CP_CONN_SUP_TIMEOUT_MAX//MSEC_TO_UNITS(4000, UNIT_10_MS)     /**< Determines supervision time-out in units of 10 millisecond. */
 

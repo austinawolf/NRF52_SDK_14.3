@@ -52,9 +52,9 @@
 #define NRF_LOG_MODULE_NAME ble_m
 
 #if BLE_SRV_MOTION_CONFIG_LOG_ENABLED
-#define NRF_LOG_LEVEL       BLE_SRV_MOTION_CONFIG_LOG_LEVEL
-#define NRF_LOG_INFO_COLOR  BLE_SRV_MOTION_CONFIG_INFO_COLOR
-#define NRF_LOG_DEBUG_COLOR BLE_SRV_MOTION_CONFIG_DEBUG_COLOR
+#define NRF_LOG_LEVEL       3
+#define NRF_LOG_INFO_COLOR  0
+#define NRF_LOG_DEBUG_COLOR 0
 #else
 #define NRF_LOG_LEVEL       0
 #endif
@@ -141,7 +141,7 @@ static SdsReturnType encode_response(Response * p_response, ble_gatts_value_t * 
 	p_gatts_value->offset = 0;
 	p_gatts_value->len = len;
 	
-	NRF_LOG_HEXDUMP_DEBUG(p_gatts_value->p_value, p_gatts_value->len);
+	//NRF_LOG_HEXDUMP_DEBUG(p_gatts_value->p_value, p_gatts_value->len);
 	
 	return p_response -> err_code;
 	
@@ -184,9 +184,9 @@ static uint32_t on_motion_command_char_write(ble_motion_t * p_motion, ble_gatts_
 			.arg_len 	= p_evt_write->data[2],
 			.p_args 	= p_evt_write->data[2] ? &p_evt_write->data[3]: NULL,
 		};
-		NRF_LOG_DEBUG("Preamble: 0x%x", command.preamble);
-		NRF_LOG_DEBUG("Opcode: 0x%x", command.opcode);
-		NRF_LOG_DEBUG("Length: %d", command.arg_len);
+		NRF_LOG_INFO("Preamble: 0x%x", command.preamble);
+		NRF_LOG_INFO("Opcode: 0x%x", command.opcode);
+		NRF_LOG_INFO("Length: %d", command.arg_len);
 
 		//call command and get resposne
 		err_code = command_call(&command, &response);		
@@ -200,10 +200,10 @@ static uint32_t on_motion_command_char_write(ble_motion_t * p_motion, ble_gatts_
 		response.err_code 	= err_code;
 	}
 	
-	NRF_LOG_DEBUG("Preamble: 0x%x", response.preamble);
-	NRF_LOG_DEBUG("Command: 0x%x", response.opcode);
-	NRF_LOG_DEBUG("Err Code: 0x%x", response.err_code);
-	NRF_LOG_DEBUG("Length: %d",response.arg_len);
+	NRF_LOG_INFO("Preamble: 0x%x", response.preamble);
+	NRF_LOG_INFO("Command: 0x%x", response.opcode);
+	NRF_LOG_INFO("Err Code: 0x%x", response.err_code);
+	NRF_LOG_INFO("Length: %d",response.arg_len);
 	
 	err_code = encode_response(&response, &gatts_value);
 	if (err_code) {
@@ -539,8 +539,8 @@ uint32_t ble_motion_quaternion_send(ble_motion_t * p_motion, int32_t * quat)
 		
 		hvx_len = quaternion_encode(encoded_data, quat);
 		
-        for (int i = 0; i < hvx_len; i++) NRF_LOG_RAW_INFO("0x%x ",encoded_data[i]);
-		NRF_LOG_RAW_INFO("\n");
+        //for (int i = 0; i < hvx_len; i++) NRF_LOG_RAW_INFO("0x%x ",encoded_data[i]);
+		//NRF_LOG_RAW_INFO("\n");
 
 
         memset(&hvx_params, 0, sizeof(hvx_params));
@@ -596,8 +596,8 @@ uint32_t ble_motion_imu_send(ble_motion_t * p_motion, int16_t * gyro, int16_t * 
         ble_gatts_hvx_params_t hvx_params;	
 		hvx_len = imu_encode(encoded_data, gyro, accel);
 
-        for (int i = 0; i < hvx_len; i++) NRF_LOG_RAW_INFO("0x%x ",encoded_data[i]);
-		NRF_LOG_RAW_INFO("\n");
+        //for (int i = 0; i < hvx_len; i++) NRF_LOG_RAW_INFO("0x%x ",encoded_data[i]);
+		//NRF_LOG_RAW_INFO("\n");
         
 		memset(&hvx_params, 0, sizeof(hvx_params));
 
@@ -650,8 +650,8 @@ uint32_t ble_motion_compass_send(ble_motion_t * p_motion, int16_t * compass)
         ble_gatts_hvx_params_t hvx_params;	
 		hvx_len = compass_encode(encoded_data, compass);
 
-        for (int i = 0; i < hvx_len; i++) NRF_LOG_RAW_INFO("0x%x ",encoded_data[i]);
-		NRF_LOG_RAW_INFO("\n");
+        //for (int i = 0; i < hvx_len; i++) NRF_LOG_RAW_INFO("0x%x ",encoded_data[i]);
+		//NRF_LOG_RAW_INFO("\n");
 		
 		memset(&hvx_params, 0, sizeof(hvx_params));
 

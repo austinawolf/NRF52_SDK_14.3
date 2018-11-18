@@ -1784,7 +1784,7 @@
 // <104857600=> 400k 
 
 #ifndef TWI_DEFAULT_CONFIG_FREQUENCY
-#define TWI_DEFAULT_CONFIG_FREQUENCY 26738688
+#define TWI_DEFAULT_CONFIG_FREQUENCY 104857600
 #endif
 
 // <q> TWI_DEFAULT_CONFIG_CLR_BUS_INIT  - Enables bus clearing procedure during init
@@ -5162,7 +5162,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_BLE_LOG_LEVEL
-#define NRF_SDH_BLE_LOG_LEVEL 4
+#define NRF_SDH_BLE_LOG_LEVEL 3
 #endif
 
 // <o> NRF_SDH_BLE_INFO_COLOR  - ANSI escape code prefix.
@@ -5213,7 +5213,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_LOG_LEVEL
-#define NRF_SDH_LOG_LEVEL 4
+#define NRF_SDH_LOG_LEVEL 3
 #endif
 
 // <o> NRF_SDH_INFO_COLOR  - ANSI escape code prefix.
@@ -5264,7 +5264,7 @@
 // <4=> Debug 
 
 #ifndef NRF_SDH_SOC_LOG_LEVEL
-#define NRF_SDH_SOC_LOG_LEVEL 4
+#define NRF_SDH_SOC_LOG_LEVEL 3
 #endif
 
 // <o> NRF_SDH_SOC_INFO_COLOR  - ANSI escape code prefix.

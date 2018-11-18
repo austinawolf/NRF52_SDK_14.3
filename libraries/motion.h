@@ -116,7 +116,7 @@ int motion_start(void);
 int motion_stop(void);
 
 void motion_sample(void * p_context);
-void motion_sample_schedule_cb(void * p_context, uint16_t len);
+void motion_sample_scheduler_cb(void * p_context, uint16_t len);
 	
 void motion_set_sample_rate(SAMPLE_RATE sample_rate);
 SAMPLE_RATE motion_get_sample_rate(void);
