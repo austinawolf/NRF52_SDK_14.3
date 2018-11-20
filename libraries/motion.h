@@ -27,8 +27,8 @@
 
 // Sensor Config bit masks
 #define SENSOR_SAMPLE_QUATERNION    (1<<0)
-#define SENSOR_SAMPLE_RAW_IMU  		(1<<1)
-#define SENSOR_COMPASS         		(1<<2)
+#define SENSOR_SAMPLE_IMU  			(1<<1)
+#define SENSOR_SAMPLE_COMPASS   	(1<<2)
 #define SENSOR_USE_GYRO_CAL      	(1<<3)
 //#define UNUSED					(1<<4)
 //#define UNUSED					(1<<5)
@@ -57,6 +57,13 @@ typedef enum {
 	MAX_SAMPLE_RATE = _100_HZ,
 } SAMPLE_RATE;
 
+typedef enum {
+	MIN_SAMPLE_STATE = 0x00,
+	SAMPLE_OFF = MIN_SAMPLE_STATE,
+	SAMPLE_ON,
+	MAX_SAMPLE_STATE = SAMPLE_ON,
+} SAMPLE_STATE;
+
 typedef uint8_t SensorConfig;
 
 typedef struct {
@@ -77,6 +84,7 @@ typedef struct {
 	uint8_t compass_ready;	
 	SAMPLE_RATE motion_sample_rate;
 	SAMPLE_RATE compass_sample_rate;
+	SAMPLE_STATE sample_state;
 	ImuCal * p_imu_cal;
 } Motion;
 
@@ -120,6 +128,9 @@ void motion_sample_scheduler_cb(void * p_context, uint16_t len);
 	
 void motion_set_sample_rate(SAMPLE_RATE sample_rate);
 SAMPLE_RATE motion_get_sample_rate(void);
+
+void motion_set_sample_state(SAMPLE_STATE sample_state);
+SAMPLE_STATE motion_get_sample_state(void);
 
 void compass_set_sample_rate(SAMPLE_RATE sample_rate);
 SAMPLE_RATE compass_get_sample_rate(void);

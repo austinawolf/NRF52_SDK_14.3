@@ -18,14 +18,18 @@ static SdsReturnType get_sensor_location(Command * p_command, Response * p_respo
 static SdsReturnType get_sample_rate(Command * p_command, Response * p_response);
 static SdsReturnType set_sample_rate(Command * p_command, Response * p_response);
 static SdsReturnType run_motion_cal(Command * p_command, Response * p_response);
+static SdsReturnType get_sample_state(Command * p_command, Response * p_response);
+static SdsReturnType set_sample_state(Command * p_command, Response * p_response);
 
-static SdsReturnType (*CommandSet[5]) (Command * command, Response * response) =
+static SdsReturnType (*CommandSet[MAX_OPCODE_VAL - BASE_OFFSET + 1]) (Command * command, Response * response) =
 {
 	get_fw_version,
 	get_sensor_location,
 	get_sample_rate,
 	set_sample_rate,
 	run_motion_cal,
+	get_sample_state,
+	set_sample_state,
 };
 
 
@@ -112,6 +116,46 @@ static SdsReturnType run_motion_cal(Command * p_command, Response * p_response) 
 	}
 	
 	motion_run_imu_cal(10);
+	
+	p_response->preamble = RESPONSE_PREAMBLE;
+	p_response->opcode = p_command->opcode;
+	p_response->arg_len = 0;
+	p_response->p_args = NULL;
+	p_response->err_code = SDS_SUCCESS;
+	
+	return SDS_SUCCESS;
+}
+
+static SdsReturnType get_sample_state(Command * p_command, Response * p_response) {
+	NRF_LOG_INFO("get_sample_state");
+	
+	//load response arguments
+	static uint8_t sample_state;
+	sample_state = motion_get_sample_state();
+
+	p_response->preamble = RESPONSE_PREAMBLE;
+	p_response->opcode = p_command->opcode;
+	p_response->arg_len = 1;
+	p_response->p_args = &sample_state;
+	p_response->err_code = SDS_SUCCESS;
+
+	return SDS_SUCCESS;
+}
+
+static SdsReturnType set_sample_state(Command * p_command, Response * p_response) {
+	NRF_LOG_INFO("Command: set_sample_state");
+	
+	if (p_command -> arg_len != 1) {
+		return SDS_INVALID_ARG_LEN;
+	}
+	
+	SAMPLE_STATE sample_state = (SAMPLE_STATE) p_command -> p_args[0];
+	
+	if ( sample_state > MAX_SAMPLE_STATE ) {
+		return SDS_INVALID_ARG;
+	}
+	
+	motion_set_sample_state(sample_state);
 	
 	p_response->preamble = RESPONSE_PREAMBLE;
 	p_response->opcode = p_command->opcode;

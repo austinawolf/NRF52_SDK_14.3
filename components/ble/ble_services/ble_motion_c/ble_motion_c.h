@@ -162,6 +162,7 @@ typedef struct
 {
     uint16_t motionm_cccd_handle;  /**< Handle of the CCCD of the Heart Rate Measurement characteristic. */
     uint16_t motionm_handle;       /**< Handle of the Heart Rate Measurement characteristic as provided by the SoftDevice. */
+	uint16_t command_handle;
 } motion_db_t;
 
 /**@brief Heart Rate Event structure. */
@@ -205,7 +206,7 @@ typedef void (* ble_motion_c_evt_handler_t) (ble_motion_c_t * p_ble_motion_c, bl
 struct ble_motion_c_s
 {
     uint16_t                conn_handle;      /**< Connection handle as provided by the SoftDevice. */
-    motion_db_t                peer_motion_db;      /**< Handles related to MOTION on the peer*/
+    motion_db_t             peer_motion_db;      /**< Handles related to MOTION on the peer*/
     ble_motion_c_evt_handler_t evt_handler;      /**< Application event handler to be called when there is an event related to the heart rate service. */
 };
 
@@ -301,6 +302,9 @@ void ble_motion_on_db_disc_evt(ble_motion_c_t * p_ble_motion_c, const ble_db_dis
 uint32_t ble_motion_c_handles_assign(ble_motion_c_t *    p_ble_motion_c,
                                   uint16_t         conn_handle,
                                   const motion_db_t * p_peer_motion_handles);
+
+
+uint32_t motion_command_char_write(ble_motion_c_t * p_motion_c, uint8_t * payload, uint8_t len);
 
 /** @} */ // End tag for Function group.
 

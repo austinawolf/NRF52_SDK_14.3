@@ -40,7 +40,6 @@
 NRF_LOG_MODULE_REGISTER();
 
 Motion motion_s;
-ImuCal imu_cal_s;
 
 static struct platform_data_s gyro_pdata = {
     .orientation = { 1, 0, 0,
@@ -101,12 +100,13 @@ int motion_init(MotionInit * motion_init_s) {
 	motion_s.motion_event_cb = motion_init_s->event_cb;
 	motion_s.motion_sample_rate = MOTION_SAMPLE_RATE_HZ;
 	motion_s.compass_sample_rate = COMPASS_SAMPLE_RATE_HZ;
+	motion_s.sample_state = SAMPLE_OFF;
 	
 	#ifdef SAMPLE_ON_TIMER_EVENT
 	motion_timers_init();
 	#endif
 	
-	if (motion_init_s->sensor_config & SENSOR_SAMPLE_RAW_IMU) {
+	if (motion_init_s->sensor_config & SENSOR_SAMPLE_IMU) {
 		dmp_features |= DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO;		
 	}
 	
@@ -277,6 +277,7 @@ int motion_init(MotionInit * motion_init_s) {
 
 int motion_start(void) {
 	int ret = 0;
+	motion_s.sample_state = SAMPLE_ON;
 	
 	#ifndef MOTION_SIM_MODE
 	ret = mpu_set_dmp_state(1);
@@ -296,6 +297,7 @@ int motion_start(void) {
 
 int motion_stop(void) {
 	int ret = 0;
+	motion_s.sample_state = SAMPLE_OFF;
 	
 	#ifdef SAMPLE_ON_TIMER_EVENT
 	motion_timers_stop();
@@ -313,16 +315,45 @@ int motion_stop(void) {
 	return ret;
 }
 
-void motion_set_sample_rate(SAMPLE_RATE sample_rate_enum) {
-	motion_stop();
-	motion_s.motion_sample_rate = sample_rate_enum;
+void motion_set_sample_state(SAMPLE_STATE sample_state) {
+	
+	if (sample_state == motion_s.sample_state) {
+		return;
+	}
+	switch (sample_state) {	
+		case(SAMPLE_ON):
+			motion_start();
+			return;
+		case(SAMPLE_OFF):
+			motion_stop();
+			return;
+	}
+}
 
+SAMPLE_STATE motion_get_sample_state(void) {
+	return motion_s.sample_state;
+}
+
+void motion_set_sample_rate(SAMPLE_RATE sample_rate_enum) {
+	
+	//store old sample state
+	SAMPLE_STATE sample_state = motion_get_sample_state();
+	
+	//turn off sampling
+	motion_stop();
+	
+	//update sample rate of timers
+	motion_s.motion_sample_rate = sample_rate_enum;
+	
+	//update sample rate for dmp
 	#ifndef MOTION_SIM_MODE	
 	dmp_set_fifo_rate(sample_rate_lookup[sample_rate_enum]);
 	#endif	
 	
-	NRF_LOG_INFO("Sample Rate Changed to %d Hz.", sample_rate_lookup[sample_rate_enum]);
-	motion_start();
+	NRF_LOG_INFO("Sample Rate Set to %d Hz.", sample_rate_lookup[sample_rate_enum]);
+	
+	//restore previous sample rate
+	motion_set_sample_state(sample_state);
 }
 
 SAMPLE_RATE motion_get_sample_rate(void) {
@@ -440,8 +471,6 @@ void mpu_self_test(void) {
      }
 
 }
-
-
 
 static void motion_imu_cal_cb(void * p_context) {
 	

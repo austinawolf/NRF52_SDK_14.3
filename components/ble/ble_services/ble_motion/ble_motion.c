@@ -140,9 +140,7 @@ static SdsReturnType encode_response(Response * p_response, ble_gatts_value_t * 
 	p_gatts_value->p_value = response_value;
 	p_gatts_value->offset = 0;
 	p_gatts_value->len = len;
-	
-	//NRF_LOG_HEXDUMP_DEBUG(p_gatts_value->p_value, p_gatts_value->len);
-	
+		
 	return p_response -> err_code;
 	
 }

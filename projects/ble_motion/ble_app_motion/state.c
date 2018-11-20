@@ -40,23 +40,20 @@ static SYSTEM_STATE event_from_init(SYSTEM_EVENT event) {
 		case ON_CONNECT:
 			NRF_LOG_INFO("State Transition: Init -> Connected");
 		
-			motion_start();
 			state.event_call = event_from_connected;
 			return CONNECTED;
 		
 		case ON_DISCONNECT:
 			NRF_LOG_INFO("State Transition: Init -> Disconnected");
 		
-			motion_stop();
-		
+			motion_set_sample_state(SAMPLE_OFF);
 			state.event_call = event_from_disconnected;
 			return DISCONNECTED;
 		
 		case ON_SLEEP:
 			NRF_LOG_INFO("State Transition: Init -> Sleep");
 
-			motion_stop();
-		
+			motion_set_sample_state(SAMPLE_OFF);		
 			state.event_call = event_from_sleep;
 			return SLEEP;
 		
@@ -75,16 +72,14 @@ static SYSTEM_STATE event_from_connected(SYSTEM_EVENT event){
 		case ON_DISCONNECT:
 			NRF_LOG_INFO("State Transition: Connected -> Disconnected");
 			
-			motion_stop();
-		
+			motion_set_sample_state(SAMPLE_OFF);		
 			state.event_call = event_from_disconnected;
 			return DISCONNECTED;
 		
 		case ON_SLEEP:
 			NRF_LOG_INFO("State Transition: Connected -> Sleep");
 
-			motion_stop();
-		
+			motion_set_sample_state(SAMPLE_OFF);		
 			state.event_call = event_from_sleep;
 			return SLEEP;
 		
@@ -102,25 +97,14 @@ static SYSTEM_STATE event_from_disconnected(SYSTEM_EVENT event){
 			
 		case ON_CONNECT:
 			NRF_LOG_INFO("State Transition: Disconnected -> Connected");
-		
-			motion_start();
-		
+				
 			state.event_call = event_from_connected;
 			return CONNECTED;
-		
-		case ON_DISCONNECT:
-			NRF_LOG_INFO("State Transition: Disconnected -> Disconnected");
-
-			motion_stop();
-		
-			state.event_call = event_from_disconnected;
-			return DISCONNECTED;
 		
 		case ON_SLEEP:
 			NRF_LOG_INFO("State Transition: Disconnected -> Sleep");
 
-			motion_stop();
-		
+			motion_set_sample_state(SAMPLE_OFF);		
 			state.event_call = event_from_sleep;
 			return SLEEP;
 		
@@ -137,8 +121,6 @@ static SYSTEM_STATE event_from_sleep(SYSTEM_EVENT event) {
 			
 		case ON_CONNECT:
 			NRF_LOG_INFO("State Transition: Sleep -> Connected");
-
-			motion_start();
 		
 			state.event_call = event_from_connected;
 			return CONNECTED;

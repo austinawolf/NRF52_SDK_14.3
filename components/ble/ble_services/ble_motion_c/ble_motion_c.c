@@ -50,6 +50,9 @@
 #include "nordic_common.h"
 
 #define NRF_LOG_MODULE_NAME ble_motion_c
+#define NRF_LOG_LEVEL 3
+#define NRF_LOG_INFO_COLOR 0
+#define NRF_LOG_DEBUG_COLOR 0
 #include "nrf_log.h"
 NRF_LOG_MODULE_REGISTER();
 
@@ -209,8 +212,8 @@ static void on_hvx(ble_motion_c_t * p_ble_motion_c, const ble_evt_t * p_ble_evt)
     }
 	
     NRF_LOG_DEBUG("Received HVX on link 0x%x, motionm_handle 0x%x",
-    p_ble_evt->evt.gattc_evt.params.hvx.handle,
-    p_ble_motion_c->peer_motion_db.motionm_handle);
+		p_ble_evt->evt.gattc_evt.params.hvx.handle,
+		p_ble_motion_c->peer_motion_db.motionm_handle);
 	NRF_LOG_DEBUG("packet num: %d, flag: %d", p_ble_evt->evt.gattc_evt.params.hvx.data[2], p_ble_evt->evt.gattc_evt.params.hvx.data[1]);
 
     // Check if this is a quaternion orientation notification.
@@ -282,10 +285,20 @@ void ble_motion_on_db_disc_evt(ble_motion_c_t * p_ble_motion_c, const ble_db_dis
                     p_evt->params.discovered_db.charateristics[i].cccd_handle;
                 evt.params.peer_db.motionm_handle =
                     p_evt->params.discovered_db.charateristics[i].characteristic.handle_value;
+				NRF_LOG_DEBUG("Found Motion Char: 0x%x",evt.params.peer_db.motionm_handle);
                 
-				break;
 				
             }
+            if (p_evt->params.discovered_db.charateristics[i].characteristic.uuid.uuid ==
+                BLE_UUID_COMMAND_CHAR)
+            {
+                // Found Quaternion Orientation characteristic. Store CCCD handle and break.
+                evt.params.peer_db.command_handle =
+                    p_evt->params.discovered_db.charateristics[i].characteristic.handle_value;
+				NRF_LOG_DEBUG("Found Command Char: 0x%x",evt.params.peer_db.command_handle);
+                
+				
+            }			
         }
 
         NRF_LOG_DEBUG("Quaternion Service discovered at peer.");
@@ -313,7 +326,6 @@ uint32_t ble_motion_c_init(ble_motion_c_t * p_ble_motion_c, ble_motion_c_init_t 
     VERIFY_PARAM_NOT_NULL(p_ble_motion_c_init);
 
 	
-	
     // Add Custom Service UUID
     ble_uuid_t motion_uuid;	
     ble_uuid128_t base_uuid = {BLE_UUID_MOTION_SERVICE_BASE};
@@ -338,6 +350,35 @@ uint32_t ble_motion_c_init(ble_motion_c_t * p_ble_motion_c, ble_motion_c_init_t 
 
     return ble_db_discovery_evt_register(&motion_uuid);
 }
+
+/**@brief Function for handling write events to the Quaternion Orientation Measurement characteristic.
+ *
+ * @param[in]   p_motion_c    Quaternion Orientation Service structure.
+ */
+uint32_t motion_command_char_write(ble_motion_c_t * p_motion_c, uint8_t * payload, uint8_t len)
+{
+	NRF_LOG_INFO("Preamble: 0x%x", payload[0]);
+	NRF_LOG_INFO("Command: 0x%x",  payload[1]);
+	NRF_LOG_INFO("Length: %d", payload[2]);
+	if (payload[2] > 0) {
+		NRF_LOG_INFO("Arguments:");	
+		NRF_LOG_HEXDUMP_INFO(&payload[3],payload[2]);
+	}
+
+	ble_gattc_write_params_t gattc_write = {
+		.write_op = BLE_GATT_OP_WRITE_CMD,
+		.flags = BLE_GATT_EXEC_WRITE_FLAG_PREPARED_CANCEL,
+		.handle = p_motion_c->peer_motion_db.command_handle,
+		.offset = 0,
+		.len = len,
+		.p_value = payload,
+	};
+		
+	//send value
+	NRF_LOG_DEBUG("Sending Command on Connection Handle 0x%x, Command Handle 0x%x",p_motion_c->conn_handle, p_motion_c->peer_motion_db.command_handle);
+	return sd_ble_gattc_write(p_motion_c->conn_handle, &gattc_write);
+}
+
 
 void ble_motion_c_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context)
 {

@@ -72,6 +72,8 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 #include "uart_helper.h"
+#include "SEGGER_RTT.h"
+#include "nrf_delay.h"
 
 #define APP_BLE_CONN_CFG_TAG        1                                   /**< A tag identifying the SoftDevice BLE configuration. */
 
@@ -99,6 +101,8 @@
 
 #define UART_OUTPUT_INTERVAL		APP_TIMER_TICKS(100)
 APP_TIMER_DEF(m_output_timer_id);                                  /**< Battery timer. */
+
+#define RTT_BUFFER_READ_LEN 128
 
 int32_t quat[4] = {0,0,0,0};
 int16_t gyro[3] = {0,0,0};
@@ -133,6 +137,9 @@ static bool     m_whitelist_disabled;                               /**< True if
 static bool     m_memory_access_in_progress;                        /**< Flag to keep track of ongoing operations on persistent memory. */
 
 static ble_gap_scan_params_t m_scan_param;                          /**< Scan parameters requested for scanning and connection. */
+
+static uint8_t load_command_payload(uint8_t * payload, char * buffer, uint8_t len);
+
 
 /**@brief Connection parameters requested for connection. */
 static ble_gap_conn_params_t const m_connection_param =
@@ -1231,7 +1238,12 @@ static void gatt_init(void)
 int main(void)
 {
     bool erase_bonds;
-
+	char segger_rx_buffer[RTT_BUFFER_READ_LEN];
+	uint8_t len;
+	uint8_t payload_len;
+	uint8_t command_payload[20];
+	uint32_t err_code;
+	
     // Initialize.
     timer_init();
     pwr_mgmt_init();
@@ -1245,12 +1257,15 @@ int main(void)
     bas_c_init();
 	uart_helper_init();
 	timers_init();
+
+
+
 	
     // Start scanning for peripherals and initiate connection
     // with devices that advertise Heart Rate UUID.
     NRF_LOG_INFO("Quaternion Orientation collector example started.");
 	printf("Quaternion Orientation collector example started.\n\r");
-
+	
     if (erase_bonds == true)
     {
         delete_bonds();
@@ -1261,11 +1276,69 @@ int main(void)
         scan_start();
     }
 
-    for (;;)
+    while (true)
     {
         NRF_LOG_FLUSH();
-        nrf_pwr_mgmt_run();
+		
+ 		//CHECK RTT BUFFER
+		nrf_delay_ms(100);
+		len = SEGGER_RTT_Read(0, segger_rx_buffer, RTT_BUFFER_READ_LEN);
+		if (len > 0) {
+			NRF_LOG_HEXDUMP_DEBUG(segger_rx_buffer, len);
+			payload_len = load_command_payload(command_payload, segger_rx_buffer, len);
+			if (payload_len > 0) {
+				NRF_LOG_HEXDUMP_DEBUG(command_payload, payload_len);
+				err_code = motion_command_char_write(&m_motion_c, command_payload, payload_len);
+				APP_ERROR_CHECK(err_code);
+
+			}
+			else {
+				NRF_LOG_ERROR("load_command_payload error");
+			}
+		}
+
+		
     }
 }
 
 
+static uint8_t load_command_payload(uint8_t * payload, char * buffer, uint8_t len) {
+		
+	uint8_t i = 0;
+	uint8_t j = 0;
+	uint16_t value;
+	char temp[3] = {0,0,0};
+	
+	if (len>20) {
+		NRF_LOG_ERROR("Load Command Error: string exceeds max len");
+		return 0;		
+	}
+	
+	if (len % 2 == 1) {
+		NRF_LOG_ERROR("Load Command Error: odd len");
+		return 0;		
+	}
+	
+	while(true) {
+		//load buffer to temp string
+		temp[0] = buffer[i++];
+		temp[1] = buffer[i++];
+		
+		if (temp[0] == '\n' || temp[1] == '\n') {
+			break;
+		}
+		
+		//NRF_LOG_DEBUG("0x%c%c",temp[0], temp[1]);
+	
+		//convert temp string to value
+		value = strtol(temp, NULL, 16);						
+		if (value > 255) {
+			NRF_LOG_ERROR("Load Command Error: value exceed 8 bit");
+			return 0;					
+		}
+		
+		//load value to payload
+		payload[j++] = (uint8_t) value;
+	}	
+	return j;
+}
