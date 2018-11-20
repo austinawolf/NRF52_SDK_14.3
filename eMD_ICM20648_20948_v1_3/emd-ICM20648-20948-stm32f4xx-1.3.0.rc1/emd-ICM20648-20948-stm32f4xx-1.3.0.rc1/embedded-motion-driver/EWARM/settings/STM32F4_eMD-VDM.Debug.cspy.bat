@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\jlin\Desktop\Developer's Corner\eMD_ICM20648_20948_20609_20689_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.general.xcl" --backend -f "C:\Users\jlin\Desktop\Developer's Corner\eMD_ICM20648_20948_20609_20689_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Austin Wolf\Documents\GitHub\NRF52_SDK_14.3\eMD_ICM20648_20948_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.general.xcl" --backend -f "C:\Users\Austin Wolf\Documents\GitHub\NRF52_SDK_14.3\eMD_ICM20648_20948_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "C:\Users\jlin\Desktop\Developer's Corner\eMD_ICM20648_20948_20609_20689_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\jlin\Desktop\Developer's Corner\eMD_ICM20648_20948_20609_20689_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Austin Wolf\Documents\GitHub\NRF52_SDK_14.3\eMD_ICM20648_20948_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Austin Wolf\Documents\GitHub\NRF52_SDK_14.3\eMD_ICM20648_20948_v1_3\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\emd-ICM20648-20948-stm32f4xx-1.3.0.rc1\embedded-motion-driver\EWARM\settings\STM32F4_eMD-VDM.Debug.driver.xcl" 
 
 @echo off 
 :end

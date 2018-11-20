@@ -1,0 +1,3754 @@
+
+Unused fragments:
+  Section name          Index  Offset     Size  Object
+  ------------          -----  ------     ----  ------
+  .iar.as_table             1     0x0  0x20000  <internal module>
+    __as_table_start
+  .iar.as_entries           2     0x0  0x10000
+    __as_entries_start
+  .bss                     11     0x0      0x4  board-st_discovery.o
+    idle_time
+  .rodata                   8     0x0      0x4  dmp3Default_20648.o
+  .rodata                   9     0x0      0x2
+  .rodata                  10     0x0      0x2
+  .rodata                  11     0x0      0x2
+  .rodata                  12     0x0      0x2
+  .rodata                  13     0x0      0x4
+  .rodata                  14     0x0      0x2
+  .rodata                  15     0x0      0x4
+  .rodata                  16     0x0      0x4
+  .rodata                  17     0x0      0x4
+  .rodata                  18     0x0      0x4
+  .rodata                  19     0x0      0x4
+  .rodata                  20     0x0      0x4
+  .rodata                  21     0x0      0x4
+  .rodata                  22     0x0      0x2
+  .rodata                  23     0x0      0x4
+  .rodata                  24     0x0      0x2
+  .rodata                  25     0x0      0x4
+  .rodata                  26     0x0      0x4
+  .rodata                  27     0x0      0x4
+  .rodata                  28     0x0      0x2
+  .text                    30   0x1ac     0x5a
+    dmp_set_batchmode_params_20648
+  .text                    30   0x460     0x44
+    dmp_set_compass_cal_params_20648
+  .text                    30   0x4a4     0xdc
+    dmp_set_compass_matrix_20648
+  .text                    30   0x5ca      0x4
+    dmp_set_pedometer_rate_20648
+  .text                    30   0x5ce     0x28
+    dmp_set_wom_enable_20648
+  .text                    30   0x5f6     0x22
+    dmp_set_wom_motion_threshold_20648
+  .text                    30   0x618     0x24
+    dmp_set_wom_time_threshold_20648
+  .text                    30   0x6e8     0x16
+    dmp_set_eis_auth_input_20648
+  .text                    30   0x6fe     0x1e
+    dmp_get_eis_auth_output_20648
+  .text                     8    0x80     0x20  gpio.o
+    EnableInvInterrupt
+  .text                     8    0xa0     0x26
+    DisableInvInterrupt
+  .text                     8    0xc6      0xa
+    InvIntHandler
+  .rodata                  17     0x0      0xc  inv_mems_base_control.o
+  .text                    19   0x5a8    0x2a2
+    inv_get_odr
+  .text                    19   0x932     0x1c
+    inv_is_gyro_enabled
+  .text                    19   0xe7c     0x3c
+    inv_enable_batch
+  .text                    19   0xeb8     0x16
+    inv_set_batch_mode_status
+  .text                    19   0xed4     0x58
+    inv_set_batch_timeout
+  .text                    19   0xf30     0x64
+    inv_set_batch_timeout_ms
+  .text                    19   0xf94      0x4
+    inv_get_androidSensorsOn_mask
+  .text                    19   0xf98      0x6
+    inv_get_activitiy_classifier_on_flag
+  .text                    19  0x1070     0x2c
+    inv_enable_pickup
+  .text                    10   0x1c0     0x3a  inv_mems_base_driver.o
+    inv_set_secondary
+  .text                    10   0x3a8     0x1a
+    inv_set_secondary_divider
+  .text                    10   0x3c2      0x8
+    inv_get_secondary_divider
+  .text                    10   0x3fe     0xba
+    inv_get_odr_in_units
+  .text                    10   0x7d2      0x8
+    inv_set_serial_comm
+  .text                    10   0x7da     0x40
+    inv_set_int1_assertion
+  .text                    10   0x81a     0x40
+    inv_accel_read_hw_reg_data
+  .text                    10   0x898      0x4
+  .text                    10   0x8a0      0x4
+  .bss                     11     0x0      0x1
+    inv_set_secondary::lIsInited
+  .rodata                  15     0x0      0x2
+  .rodata                  16     0x0      0x2
+  .text                     9   0x1e4     0x24  inv_mems_data_converter.o
+    inv_convert_rotation_vector_2
+  .text                     9   0x208     0xa4
+    inv_convert_rotation_vector_3
+  .text                     9   0x3d4     0x18
+    inv_int32_to_little8
+  .text                    10    0x50      0xa  inv_mems_interface_mapping.o
+    dmp_set_batchmode_params
+  .text                    10    0x82      0x8
+    dmp_set_compass_cal_params
+  .text                    10    0x8a      0x8
+    dmp_set_compass_matrix
+  .text                    10    0x92      0x8
+    dmp_set_pedometer_rate
+  .text                    10    0x9e      0xa
+    dmp_set_wom_enable
+  .text                    10    0xa8      0x8
+    dmp_set_wom_motion_threshold
+  .text                    10    0xb0      0xa
+    dmp_set_wom_time_threshold
+  .text                    10    0xea      0x4
+    dmp_set_bts_accel_matrix
+  .text                    10   0x512    0x106  inv_mems_mpu_fifo_control.o
+    dmp_process_fifo
+  .bss                      8     0x0     0x20  inv_mems_secondary_transport.o
+    slv_reg
+  .text                     9     0x0     0x66
+    inv_init_secondary
+  .text                     9    0x66     0x58
+    inv_read_secondary
+  .text                     9    0xbe     0x46
+    inv_execute_read_secondary
+  .text                     9   0x104     0x64
+    inv_write_secondary
+  .text                     9   0x168     0x32
+    inv_execute_write_secondary
+  .text                     9   0x19a      0x2
+    inv_mems_secondary_saveI2cOdr
+  .text                     9   0x19c      0x2
+    inv_mems_secondary_restoreI2cOdr
+  .text                     9   0x19e     0x12
+    inv_mems_secondary_stop_channel
+  .text                     9   0x1b0     0x16
+    inv_mems_secondary_enable_i2c
+  .text                     9   0x1c6     0x16
+    inv_mems_secondary_disable_i2c
+  .text                     9   0x1dc      0x4
+  .text                     9   0x1e0      0x4
+  .text                     9   0x1e4     0x26
+    inv_mems_secondary_set_odr
+  .bss                      8     0x0     0x24  inv_mems_slave_compass.o
+    final_matrix
+  .bss                      9     0x0      0x4
+    compass_sens
+  .bss                     10     0x0      0x4
+    st_upper
+  .bss                     11     0x0      0x4
+    st_lower
+  .bss                     12     0x0      0x4
+    scale
+  .data                    13     0x0      0x1
+    dmp_on
+  .rodata                  14     0x0      0x8
+    AKM8975_ST_Lower
+  .rodata                  15     0x0      0x8
+    AKM8975_ST_Upper
+  .rodata                  16     0x0      0x8
+    AKM8972_ST_Lower
+  .rodata                  17     0x0      0x8
+    AKM8972_ST_Upper
+  .rodata                  18     0x0      0x8
+    AKM8963_ST_Lower
+  .rodata                  19     0x0      0x8
+    AKM8963_ST_Upper
+  .rodata                  20     0x0      0x8
+    AK09911_ST_Lower
+  .rodata                  21     0x0      0x8
+    AK09911_ST_Upper
+  .rodata                  22     0x0      0x8
+    AK09912_ST_Lower
+  .rodata                  23     0x0      0x8
+    AK09912_ST_Upper
+  .rodata                  24     0x0      0x8
+    AK09916_ST_Lower
+  .rodata                  25     0x0      0x8
+    AK09916_ST_Upper
+  .bss                     26     0x0      0x1
+    secondary_resume_state
+  .bss                     27     0x0      0x1
+    sModeRegAddr
+  .text                    28     0x0    0x1a4
+    inv_setup_compass_akm
+  .text                    28   0x1a4    0x36a
+    inv_check_akm_self_test
+  .text                    28   0x50e     0x48
+    inv_write_akm_scale
+  .text                    28   0x556     0x6c
+    inv_read_akm_scale
+  .text                    28   0x5c2     0x3e
+    inv_suspend_akm
+  .text                    28   0x600     0xc4
+    inv_resume_akm
+  .text                    28   0x6c4      0x6
+    inv_mems_compass_getstate
+  .text                    28   0x6ca    0x17e
+    inv_compass_dmp_cal
+  .text                    28   0x848     0x48
+    inv_apply_raw_compass_matrix
+  .text                    28   0x890      0x4
+  .text                    28   0x894      0x4
+  .text                    28   0x898      0x4
+  .text                    28   0x89c      0x4
+  .text                    28   0x8a0      0x4
+  .text                    28   0x8a4      0x4
+  .text                    28   0x8a8      0x4
+  .text                    28   0x8ac      0x4
+  .text                    28   0x8b0      0x4
+  .text                    28   0x8b4      0x4
+  .text                    28   0x8b8      0x4
+  .text                    28   0x8bc      0x4
+  .text                    28   0x8c0      0x4
+  .text                    28   0x8c4      0x4
+  .text                    28   0x8c8      0x4
+  .text                    28   0x8cc      0x4
+  .text                    28   0x8d0      0x4
+  .text                    28   0x8d4      0x4
+  .text                    28   0x8d8      0x4
+  .text                    28   0x8dc      0x4
+  .text                    28   0x8e0      0x4
+  .text                    28   0x8e4      0x4
+  .text                    28   0x8e8      0x4
+  .text                    28   0x8ec      0x4
+  .text                    28   0x8f0      0x4
+  .text                    28   0x8f4      0x4
+  .bss                      8     0x0      0x1  inv_mems_slave_pressure.o
+    secondary_resume_state
+  .bss                      9     0x0     0x18
+    sBmpCompensationParameters
+  .bss                     10     0x0      0x4
+    sBmp280Fine
+  .text                    11     0x0     0x72
+    inv_mems_pressure_setup_bmp
+  .text                    11    0x72     0x66
+    inv_mems_pressure_suspend_bmp
+  .text                    11    0xd8    0x162
+    inv_mems_pressure_resume_bmp
+  .text                    11   0x23a      0x6
+    inv_mems_pressure_getstate
+  .text                    11   0x240     0x3e
+    BMP280_compensateTemp
+  .text                    11   0x27e     0xae
+    BMP280_compensatePress
+  .text                    11   0x32c      0x4
+  .text                    11   0x330      0x4
+  .text                    11   0x334      0x4
+  .text                    11   0x338      0x4
+  .text                    11   0x33c     0x44
+    inv_mems_pressure_bmp280_rawToPascal
+  .text                     8     0x0     0xaa  log_stm32.o
+    _MLPrintLog
+  .bss                     20     0x0      0x2  main.o
+    rv_quat_was_set
+  .bss                     26     0x0     0x10
+    cube_grv
+  .bss                     29     0x0     0x10
+    cube_rv
+  .bss                     33     0x0      0xc
+    previous_bias
+  .bss                     51     0x0      0x4
+    steps
+  .rodata                  59     0x0      0x4
+  .rodata                  60     0x0      0x4
+  .rodata                  95     0x0      0x4
+  .rodata                 128     0x0      0xc
+  .rodata                 160     0x0      0x8
+  .rodata                 161     0x0      0xc
+  .rodata                 162     0x0      0xc
+  .rodata                 163     0x0     0x64
+  .rodata                 164     0x0      0xc
+  .rodata                 165     0x0      0xc
+  .rodata                 174     0x0      0x1
+    COMPASS_SLAVE_ID
+  .rodata                 175     0x0      0x1
+    COMPASS_CHIP_ADDR
+  .rodata                 176     0x0      0x1
+    PRESSURE_CHIP_ADDR
+  .data                   177     0x0      0xc
+    COMPASS_ORIENTATION
+  .data                   178     0x0     0x24
+    SOFT_IRON_MATRIX
+  .text                     8     0x0      0xa  misc.o
+    NVIC_PriorityGroupConfig
+  .text                     8    0x6c      0xc
+    NVIC_SetVectorTable
+  .text                     8    0x78     0x20
+    NVIC_SystemLPConfig
+  .text                     8    0x98     0x1c
+    SysTick_CLKSourceConfig
+  .text                     8    0xb4      0x4
+  .text                     8    0xc8      0x4
+  .text                     8    0xcc      0x4
+  .text                     8    0xd0      0x4
+  .text                     8    0xd4      0x4
+  .text                     8     0x0     0x18  ml_math_func.o
+    inv_q30_to_double
+  .text                     8    0x18     0xe4
+    inv_compass_angle
+  .text                     8    0xfc     0x1a
+    inv_get_gyro_sum_of_sqr
+  .text                     8   0x13e    0x12a
+    inv_q30_matrix_mult
+  .text                     8   0x268     0x16
+    inv_q30_div
+  .text                     8   0x27e      0xc
+    inv_q_shift_mult
+  .text                     8   0x350     0x28
+    inv_q_add
+  .text                     8   0x378     0xb4
+    inv_vector_normalize
+  .text                     8   0x42c      0x4
+  .text                     8   0x430      0xa
+    inv_q_normalize
+  .text                     8   0x454     0x80
+    quaternion_to_rotation_angle
+  .text                     8   0x4d4      0x8
+  .text                     8   0x51c     0x40
+    inv_q_rotate_BtoI
+  .text                     8   0x55c     0x40
+    inv_q_rotate_ItoB
+  .text                     8   0x59c     0xd2
+    inv_q_multf
+  .text                     8   0x66e     0x42
+    inv_q_addf
+  .text                     8   0x6b0    0x104
+    inv_q_normalizef
+  .text                     8   0x7b4      0x8
+  .text                     8   0x7bc      0x8
+  .text                     8   0x7c4      0x4
+  .text                     8   0x7c8     0x88
+    inv_q_norm4
+  .text                     8   0x850     0x2c
+    inv_q_invertf
+  .text                     8   0x87c    0x27c
+    inv_triad
+  .text                     8   0xaf8      0x4
+  .text                     8   0xafc      0x4
+  .text                     8   0xb00    0x1e4
+    inv_triad_fxp_xnorth
+  .text                     8   0xce4    0x258
+    inv_triad_fxp_ynorth
+  .text                     8  0x1280      0x4
+  .text                     8  0x1284      0x4
+  .text                     8  0x1288      0x4
+  .text                     8  0x128c      0x4
+  .text                     8  0x1290      0x4
+  .text                     8  0x1372     0xda
+    inv_quaternion_to_rotation
+  .text                     8  0x144c     0x26
+    inv_quaternion_to_rotation_vector
+  .text                     8  0x14a2      0xc
+    inv_big8_to_int16
+  .text                     8  0x14ae      0xc
+    inv_little8_to_int16
+  .text                     8  0x14c8     0x5a
+    inv_matrix_det_inc
+  .text                     8  0x1522     0x66
+    inv_matrix_det_incd
+  .text                     8  0x1588     0x9c
+    inv_matrix_det
+  .text                     8  0x1624     0xc8
+    inv_matrix_detd
+  .text                     8  0x16ec     0x34
+    inv_wrap_angle
+  .text                     8  0x1720     0x54
+    inv_angle_diff
+  .text                     8  0x1774      0x4
+  .text                     8  0x1778      0x4
+  .text                     8  0x177c      0x4
+  .text                     8  0x1780      0x4
+  .text                     8  0x1784      0x4
+  .text                     8  0x1788      0x4
+  .text                     8  0x178c      0x4
+  .text                     8  0x1790      0x8
+  .text                     8  0x1798      0x4
+  .text                     8  0x179c     0x1e
+    inv_checksum
+  .text                     8  0x17ba     0x4e
+    inv_row_2_scale
+  .text                     8  0x1808     0x26
+    inv_orientation_matrix_to_scalar
+  .text                     8  0x182e     0x8a
+    inv_convert_orient_scalar_to_dmp_compass_mtx
+  .text                     8  0x18b8     0x5e
+    inv_convert_to_body
+  .text                     8  0x1916     0x5e
+    inv_convert_to_chip
+  .text                     8  0x1974     0x70
+    inv_orientation_scalar_to_matrix
+  .text                     8  0x19e4     0x76
+    inv_convert_to_body_with_scale
+  .text                     8  0x1a5a     0x3e
+    inv_convert_quaternion_to_body
+  .text                     8  0x1a98     0x38
+    inv_vector_norm
+  .text                     8  0x1ad0     0x56
+    inv_get_cross_product_vec
+  .text                     8  0x1b26     0x46
+    mlMatrixVectorMult
+  .text                     8  0x1b6c     0x9a
+    inv_inverse_sqrt
+  .text                     8  0x1ce4    0x124
+    inv_one_over_x
+  .text                     8  0x1efc     0x5a
+    inv_fastsine29
+  .text                     8  0x1f56     0x16
+    inv_fastcosine29
+  .text                     8  0x1fb0    0x178
+    inv_compute_quat_from_accel
+  .text                     8  0x2128      0x4
+  .text                     8  0x212c     0x28
+    inv_q30_scalar_product
+  .text                     8  0x2208     0x1c
+    sqrt_fun_q15
+  .text                     8  0x233c      0x4
+  .text                     8  0x2340     0x84
+    inv_fastsine_q15
+  .text                     8  0x23c4      0x4
+  .text                     8  0x23c8     0x46
+    inv_fastcosine_q15
+  .text                     8  0x240e     0xa6
+    inverse_sqrt_q30
+  .text                     8  0x24bc      0x4
+  .text                     8  0x24c0      0x4
+  .text                     8  0x24c4      0x4
+  .text                     8  0x24c8      0x4
+  .text                     8  0x24cc      0x4
+  .text                     8  0x24d0      0x4
+  .text                     8  0x24ec     0x42
+    sqrt_fun_q30
+  .text                     8  0x252e     0x34
+    reciprocal_fun_q30
+  .text                     8  0x2562     0x30
+    sqrt_abacus_q30_q30
+  .text                     8  0x2592     0x26
+    inverse_sqrt_abacus_q30_q15
+  .text                     8  0x25b8     0x72
+    num_over_den_q30
+  .text                     8  0x262a    0x2d2
+    inv_rotation_to_quaternion_fxp
+  .text                     8  0x28fc    0x26c
+    inv_triad2
+  .text                     8  0x2b68      0x4
+  .text                     8  0x2b6c      0x4
+  .text                     8  0x2b70      0x4
+  .text                     8  0x2b74      0x4
+  .text                     8  0x2b78      0x4
+  .text                     8  0x2b7c      0x4
+  .text                     8  0x2b88      0x4
+  .text                     8  0x2b8c      0x4
+  .text                     8  0x2b90    0x1bc
+    inv_triad_fp
+  .text                     8     0x0      0x8  mlmath.o
+    ml_asin
+  .text                     8     0x8      0x8
+    ml_atan
+  .text                     8    0x10      0x8
+    ml_atan2
+  .text                     8    0x18      0x8
+    ml_log
+  .text                     8    0x20      0x8
+    ml_sqrt
+  .text                     8    0x28      0x8
+    ml_ceil
+  .text                     8    0x30      0x8
+    ml_floor
+  .text                     8    0x38      0x8
+    ml_cos
+  .text                     8    0x40      0x8
+    ml_sin
+  .text                     8    0x48      0x8
+    ml_acos
+  .text                     8    0x50      0x8
+    ml_pow
+  .text                     9     0x0      0x4  startup_stm32f40x.o
+  .text                    11     0x0      0x4
+  .text                    12     0x0      0x4
+  .text                    13     0x0      0x4
+  .text                    14     0x0      0x4
+  .text                    15     0x0      0x4
+  .text                    17     0x0      0x4
+  .text                    25     0x0      0x4
+  .text                    48     0x0      0x4
+  .data                     8     0x0     0x10  stm32f4_discovery.o
+    GPIO_PORT
+  .rodata                   9     0x0      0x8
+    GPIO_PIN
+  .rodata                  10     0x0     0x10
+    GPIO_CLK
+  .data                    11     0x0      0x4
+    BUTTON_PORT
+  .rodata                  12     0x0      0x2
+    BUTTON_PIN
+  .rodata                  13     0x0      0x4
+    BUTTON_CLK
+  .rodata                  14     0x0      0x2
+    BUTTON_EXTI_LINE
+  .rodata                  15     0x0      0x1
+    BUTTON_PORT_SOURCE
+  .rodata                  16     0x0      0x1
+    BUTTON_PIN_SOURCE
+  .rodata                  17     0x0      0x1
+    BUTTON_IRQn
+  .bss                     18     0x0      0x4
+    NVIC_InitStructure
+  .text                    19     0x0     0x48
+    STM_EVAL_LEDInit
+  .text                    19    0x48     0x16
+    STM_EVAL_LEDOn
+  .text                    19    0x5e     0x16
+    STM_EVAL_LEDOff
+  .text                    19    0x74     0x26
+    STM_EVAL_LEDToggle
+  .text                    19    0x9a     0xae
+    STM_EVAL_PBInit
+  .text                    19   0x148     0x1c
+    STM_EVAL_PBGetState
+  .text                    19   0x164      0x4
+  .text                    19   0x168      0x4
+  .text                    19   0x16c      0x4
+  .text                    19   0x170      0x4
+  .text                    19   0x174      0x4
+  .text                    19   0x178      0x4
+  .text                    19   0x17c      0x4
+  .text                    19   0x180      0x4
+  .text                    19   0x184      0x4
+  .text                    19   0x188      0x4
+  .text                     8     0x0     0x18  stm32f4xx_adc.o
+    ADC_DeInit
+  .text                     8    0x18     0x4a
+    ADC_Init
+  .text                     8    0x62     0x1e
+    ADC_StructInit
+  .text                     8    0x80     0x22
+    ADC_CommonInit
+  .text                     8    0xa2     0x12
+    ADC_CommonStructInit
+  .text                     8    0xb4     0x1a
+    ADC_Cmd
+  .text                     8    0xce      0xe
+    ADC_AnalogWatchdogCmd
+  .text                     8    0xdc      0xa
+    ADC_AnalogWatchdogThresholdsConfig
+  .text                     8    0xe6     0x10
+    ADC_AnalogWatchdogSingleChannelConfig
+  .text                     8    0xf6     0x1e
+    ADC_TempSensorVrefintCmd
+  .text                     8   0x114     0x1e
+    ADC_VBATCmd
+  .text                     8   0x132     0xd4
+    ADC_RegularChannelConfig
+  .text                     8   0x206      0xa
+    ADC_SoftwareStartConv
+  .text                     8   0x210     0x12
+    ADC_GetSoftwareStartConvStatus
+  .text                     8   0x222     0x1a
+    ADC_EOCOnEachRegularChannelCmd
+  .text                     8   0x23c     0x1a
+    ADC_ContinuousModeCmd
+  .text                     8   0x256     0x16
+    ADC_DiscModeChannelCountConfig
+  .text                     8   0x26c     0x1a
+    ADC_DiscModeCmd
+  .text                     8   0x286      0x6
+    ADC_GetConversionValue
+  .text                     8   0x28c      0x6
+    ADC_GetMultiModeConversionValue
+  .text                     8   0x292     0x1a
+    ADC_DMACmd
+  .text                     8   0x2ac     0x1a
+    ADC_DMARequestAfterLastTransferCmd
+  .text                     8   0x2c6     0x1e
+    ADC_MultiModeDMARequestAfterLastTransferCmd
+  .text                     8   0x2e4      0x4
+  .text                     8   0x2e8      0x4
+  .text                     8   0x2ec      0x4
+  .text                     8   0x2f0      0x4
+  .text                     8   0x2f4      0x4
+  .text                     8   0x2f8      0x4
+  .text                     8   0x2fc     0x8e
+    ADC_InjectedChannelConfig
+  .text                     8   0x38a     0x16
+    ADC_InjectedSequencerLengthConfig
+  .text                     8   0x3a0     0x1a
+    ADC_SetInjectedOffset
+  .text                     8   0x3ba      0xe
+    ADC_ExternalTrigInjectedConvConfig
+  .text                     8   0x3c8      0xe
+    ADC_ExternalTrigInjectedConvEdgeConfig
+  .text                     8   0x3d6      0xa
+    ADC_SoftwareStartInjectedConv
+  .text                     8   0x3e0     0x12
+    ADC_GetSoftwareStartInjectedConvCmdStatus
+  .text                     8   0x3f2     0x1a
+    ADC_AutoInjectedConvCmd
+  .text                     8   0x40c     0x1a
+    ADC_InjectedDiscModeCmd
+  .text                     8   0x426     0x1c
+    ADC_GetInjectedConversionValue
+  .text                     8   0x442     0x22
+    ADC_ITConfig
+  .text                     8   0x464     0x14
+    ADC_GetFlagStatus
+  .text                     8   0x478      0x8
+    ADC_ClearFlag
+  .text                     8   0x480     0x30
+    ADC_GetITStatus
+  .text                     8   0x4b0      0xe
+    ADC_ClearITPendingBit
+  .text                     8     0x0     0x36  stm32f4xx_can.o
+    CAN_DeInit
+  .text                     8    0x36    0x10a
+    CAN_Init
+  .text                     8   0x140     0xda
+    CAN_FilterInit
+  .text                     8   0x21a     0x2e
+    CAN_StructInit
+  .text                     8   0x248     0x2a
+    CAN_SlaveStartBank
+  .text                     8   0x272     0x1a
+    CAN_DBGFreeze
+  .text                     8   0x28c     0x62
+    CAN_TTComModeCmd
+  .text                     8   0x2ee    0x13e
+    CAN_Transmit
+  .text                     8   0x42c     0x84
+    CAN_TransmitStatus
+  .text                     8   0x4b0     0x2e
+    CAN_CancelTransmit
+  .text                     8   0x4de    0x104
+    CAN_Receive
+  .text                     8   0x5e2     0x1a
+    CAN_FIFORelease
+  .text                     8   0x5fc     0x26
+    CAN_MessagePending
+  .text                     8   0x622     0xaa
+    CAN_OperatingModeRequest
+  .text                     8   0x6cc     0x20
+    CAN_Sleep
+  .text                     8   0x6ec     0x2a
+    CAN_WakeUp
+  .text                     8   0x716      0xc
+    CAN_GetLastErrorCode
+  .text                     8   0x722      0xa
+    CAN_GetReceiveErrorCounter
+  .text                     8   0x72c      0xa
+    CAN_GetLSBTransmitErrorCounter
+  .text                     8   0x736     0x18
+    CAN_ITConfig
+  .text                     8   0x74e     0x66
+    CAN_GetFlagStatus
+  .text                     8   0x7b4     0x2e
+    CAN_ClearFlag
+  .text                     8   0x7e2     0xe8
+    CAN_GetITStatus
+  .text                     8   0x8ca     0x92
+    CAN_ClearITPendingBit
+  .text                     8   0x95c      0x4
+  .text                     8   0x960      0x4
+  .text                     8   0x964      0x4
+  .text                     8   0x968      0x4
+  .text                     8   0x96c      0x4
+  .text                     8   0x970      0x4
+  .text                     8   0x974      0x4
+  .text                     8   0x978      0x4
+  .text                     8   0x97c      0x4
+  .text                     8   0x980      0x4
+  .text                     8   0x984      0x4
+  .text                     8   0x988      0x4
+  .text                     8   0x98c      0x4
+  .text                     8   0x990      0x4
+  .text                     8   0x994      0x4
+  .text                     8   0x998      0x4
+  .text                     8   0x99c     0x10
+    CheckITStatus
+  .text                     8     0x0      0x8  stm32f4xx_crc.o
+    CRC_ResetDR
+  .text                     8     0x8      0x8
+    CRC_CalcCRC
+  .text                     8    0x10     0x1e
+    CRC_CalcBlockCRC
+  .text                     8    0x2e      0x6
+    CRC_GetCRC
+  .text                     8    0x34      0x6
+    CRC_SetIDRegister
+  .text                     8    0x3a      0xa
+    CRC_GetIDRegister
+  .text                     8    0x44      0x4
+  .text                     8    0x48      0x4
+  .text                     8    0x4c      0x4
+  .text                     8     0x0     0x14  stm32f4xx_cryp.o
+    CRYP_DeInit
+  .text                     8    0x14     0x5c
+    CRYP_Init
+  .text                     8    0x70     0x12
+    CRYP_StructInit
+  .text                     8    0x82     0x32
+    CRYP_KeyInit
+  .text                     8    0xb4     0x22
+    CRYP_KeyStructInit
+  .text                     8    0xd6     0x1a
+    CRYP_IVInit
+  .text                     8    0xf0     0x12
+    CRYP_IVStructInit
+  .text                     8   0x102      0xc
+    CRYP_FIFOFlush
+  .text                     8   0x10e     0x1e
+    CRYP_Cmd
+  .text                     8   0x12c      0x6
+    CRYP_DataIn
+  .text                     8   0x132      0x6
+    CRYP_DataOut
+  .text                     8   0x138     0xa0
+    CRYP_SaveContext
+  .text                     8   0x1d8     0x58
+    CRYP_RestoreContext
+  .text                     8   0x230     0x20
+    CRYP_DMACmd
+  .text                     8   0x250     0x20
+    CRYP_ITConfig
+  .text                     8   0x270     0x16
+    CRYP_GetITStatus
+  .text                     8   0x286     0x22
+    CRYP_GetFlagStatus
+  .text                     8   0x2a8      0x4
+  .text                     8   0x2ac      0x4
+  .text                     8   0x2b0      0x4
+  .text                     8   0x2b4      0x4
+  .text                     8   0x2b8      0x4
+  .text                     8   0x2bc      0x4
+  .text                     8   0x2c0      0x4
+  .text                     8   0x2c4      0x4
+  .text                     8   0x2c8      0x4
+  .text                     8   0x2cc      0x4
+  .text                     8   0x2d0      0x4
+  .text                     8   0x2d4      0x4
+  .text                     8   0x2d8      0x4
+  .text                     8   0x2dc      0x4
+  .text                     8   0x2e0      0x4
+  .text                     8   0x2e4      0x4
+  .text                     8   0x2e8      0x4
+  .text                     8   0x2ec      0x4
+  .text                     8   0x2f0      0x4
+  .text                     8   0x2f4      0x4
+  .text                     8     0x0    0x228  stm32f4xx_cryp_aes.o
+    CRYP_AES_ECB
+  .text                     8   0x228    0x25c
+    CRYP_AES_CBC
+  .text                     8   0x484    0x214
+    CRYP_AES_CTR
+  .text                     8     0x0     0xd8  stm32f4xx_cryp_des.o
+    CRYP_DES_ECB
+  .text                     8    0xd8     0xee
+    CRYP_DES_CBC
+  .text                     8     0x0     0xf8  stm32f4xx_cryp_tdes.o
+    CRYP_TDES_ECB
+  .text                     8    0xf8    0x10e
+    CRYP_TDES_CBC
+  .text                     8     0x0     0x18  stm32f4xx_dac.o
+    DAC_DeInit
+  .text                     8    0x18     0x2c
+    DAC_Init
+  .text                     8    0x44     0x12
+    DAC_StructInit
+  .text                     8    0x56     0x28
+    DAC_Cmd
+  .text                     8    0x7e     0x2c
+    DAC_SoftwareTriggerCmd
+  .text                     8    0xaa     0x1e
+    DAC_DualSoftwareTriggerCmd
+  .text                     8    0xc8     0x24
+    DAC_WaveGenerationCmd
+  .text                     8    0xec     0x1c
+    DAC_SetChannel1Data
+  .text                     8   0x108     0x1c
+    DAC_SetChannel2Data
+  .text                     8   0x124     0x24
+    DAC_SetDualChannelData
+  .text                     8   0x148     0x1e
+    DAC_GetDataOutputValue
+  .text                     8   0x166     0x2c
+    DAC_DMACmd
+  .text                     8   0x192     0x24
+    DAC_ITConfig
+  .text                     8   0x1b6     0x18
+    DAC_GetFlagStatus
+  .text                     8   0x1ce      0xa
+    DAC_ClearFlag
+  .text                     8   0x1d8     0x28
+    DAC_GetITStatus
+  .text                     8   0x200      0xc
+    DAC_ClearITPendingBit
+  .text                     8   0x20c      0x4
+  .text                     8   0x210      0x4
+  .text                     8   0x214      0x4
+  .text                     8     0x0      0x8  stm32f4xx_dbgmcu.o
+    DBGMCU_GetREVID
+  .text                     8     0x8      0xa
+    DBGMCU_GetDEVID
+  .text                     8    0x12     0x1c
+    DBGMCU_Config
+  .text                     8    0x2e     0x1c
+    DBGMCU_APB1PeriphConfig
+  .text                     8    0x4a     0x1e
+    DBGMCU_APB2PeriphConfig
+  .text                     8    0x68      0x4
+  .text                     8    0x6c      0x4
+  .text                     8    0x70      0x4
+  .text                     8    0x74      0x4
+  .text                     8     0x0     0x2c  stm32f4xx_dcmi.o
+    DCMI_DeInit
+  .text                     8    0x2c     0x36
+    DCMI_Init
+  .text                     8    0x62     0x1e
+    DCMI_StructInit
+  .text                     8    0x80     0x1a
+    DCMI_CROPConfig
+  .text                     8    0x9a     0x1e
+    DCMI_CROPCmd
+  .text                     8    0xb8     0x1a
+    DCMI_SetEmbeddedSynchroCodes
+  .text                     8    0xd2     0x1e
+    DCMI_JPEGCmd
+  .text                     8    0xf0     0x1e
+    DCMI_Cmd
+  .text                     8   0x10e     0x1e
+    DCMI_CaptureCmd
+  .text                     8   0x12c      0x6
+    DCMI_ReadData
+  .text                     8   0x132     0x20
+    DCMI_ITConfig
+  .text                     8   0x152     0x34
+    DCMI_GetFlagStatus
+  .text                     8   0x186      0x8
+    DCMI_ClearFlag
+  .text                     8   0x18e     0x1a
+    DCMI_GetITStatus
+  .text                     8   0x1a8      0x8
+    DCMI_ClearITPendingBit
+  .text                     8   0x1b0      0x4
+  .text                     8   0x1b4      0x4
+  .text                     8   0x1b8      0x4
+  .text                     8   0x1bc      0x4
+  .text                     8   0x1c0      0x4
+  .text                     8   0x1c4      0x4
+  .text                     8   0x1c8      0x4
+  .text                     8   0x1cc      0x4
+  .text                     8   0x1d0      0x4
+  .text                     8   0x1d4      0x4
+  .text                     8   0x1d8      0x4
+  .text                     8   0x1dc      0x4
+  .text                     8   0x1e0      0x4
+  .text                     8     0x0    0x140  stm32f4xx_dma.o
+    DMA_DeInit
+  .text                     8   0x140     0x54
+    DMA_Init
+  .text                     8   0x194     0x3e
+    DMA_StructInit
+  .text                     8   0x1d2     0x1a
+    DMA_Cmd
+  .text                     8   0x1ec     0x18
+    DMA_PeriphIncOffsetSizeConfig
+  .text                     8   0x204     0x18
+    DMA_FlowControllerConfig
+  .text                     8   0x21c      0x6
+    DMA_SetCurrDataCounter
+  .text                     8   0x222      0x6
+    DMA_GetCurrDataCounter
+  .text                     8   0x228     0x1a
+    DMA_DoubleBufferModeConfig
+  .text                     8   0x242     0x1a
+    DMA_DoubleBufferModeCmd
+  .text                     8   0x25c      0xc
+    DMA_MemoryTargetConfig
+  .text                     8   0x268     0x10
+    DMA_GetCurrentMemoryTarget
+  .text                     8   0x278     0x12
+    DMA_GetCmdStatus
+  .text                     8   0x28a      0xa
+    DMA_GetFIFOStatus
+  .text                     8   0x294     0x2c
+    DMA_GetFlagStatus
+  .text                     8   0x2c0     0x20
+    DMA_ClearFlag
+  .text                     8   0x2e0     0x42
+    DMA_ITConfig
+  .text                     8   0x322     0x4c
+    DMA_GetITStatus
+  .text                     8   0x36e     0x22
+    DMA_ClearITPendingBit
+  .text                     8   0x390      0x4
+  .text                     8   0x394      0x4
+  .text                     8   0x398      0x4
+  .text                     8   0x39c      0x4
+  .text                     8   0x3a0      0x4
+  .text                     8   0x3a4      0x4
+  .text                     8   0x3a8      0x4
+  .text                     8   0x3ac      0x4
+  .text                     8   0x3b0      0x4
+  .text                     8   0x3b4      0x4
+  .text                     8   0x3b8      0x4
+  .text                     8   0x3bc      0x4
+  .text                     8   0x3c0      0x4
+  .text                     8   0x3c4      0x4
+  .text                     8   0x3c8      0x4
+  .text                     8   0x3cc      0x4
+  .text                     8   0x3d0      0x4
+  .text                     8   0x3d4      0x4
+  .text                     8   0x3d8      0x4
+  .text                     8   0x3dc      0x4
+  .text                     8   0x3e0      0x4
+  .text                     8   0x3e4      0x4
+  .text                     8   0x3e8      0x4
+  .text                     8   0x3ec      0x4
+  .text                     8   0x3f0      0x4
+  .text                     8   0x3f4      0x4
+  .text                     8   0x3f8      0x4
+  .text                     8   0x3fc      0x4
+  .text                     8     0x0     0x20  stm32f4xx_exti.o
+    EXTI_DeInit
+  .text                     8    0x98     0x12
+    EXTI_StructInit
+  .text                     8    0xaa      0xa
+    EXTI_GenerateSWInterrupt
+  .text                     8    0xb4     0x14
+    EXTI_GetFlagStatus
+  .text                     8    0xc8      0x6
+    EXTI_ClearFlag
+  .text                     8    0xce     0x20
+    EXTI_GetITStatus
+  .text                     8   0x104      0x4
+  .text                     8   0x10c      0x4
+  .text                     8     0x0      0x8  stm32f4xx_flash.o
+    FLASH_SetLatency
+  .text                     8     0x8     0x22
+    FLASH_PrefetchBufferCmd
+  .text                     8    0x2a     0x22
+    FLASH_InstructionCacheCmd
+  .text                     8    0x4c     0x22
+    FLASH_DataCacheCmd
+  .text                     8    0x6e      0xe
+    FLASH_InstructionCacheReset
+  .text                     8    0x7c      0xe
+    FLASH_DataCacheReset
+  .text                     8    0x8a     0x1c
+    FLASH_Unlock
+  .text                     8    0xa6      0xe
+    FLASH_Lock
+  .text                     8    0xb4     0x80
+    FLASH_EraseSector
+  .text                     8   0x134     0x6e
+    FLASH_EraseAllSectors
+  .text                     8   0x1a2     0x44
+    FLASH_ProgramDoubleWord
+  .text                     8   0x1e6     0x40
+    FLASH_ProgramWord
+  .text                     8   0x226     0x40
+    FLASH_ProgramHalfWord
+  .text                     8   0x266     0x3c
+    FLASH_ProgramByte
+  .text                     8   0x2a2     0x14
+    FLASH_OB_Unlock
+  .text                     8   0x2b6      0xc
+    FLASH_OB_Lock
+  .text                     8   0x2c2     0x2e
+    FLASH_OB_WRPConfig
+  .text                     8   0x2f0     0x16
+    FLASH_OB_RDPConfig
+  .text                     8   0x306     0x28
+    FLASH_OB_UserConfig
+  .text                     8   0x32e     0x12
+    FLASH_OB_BORConfig
+  .text                     8   0x340     0x16
+    FLASH_OB_Launch
+  .text                     8   0x356      0xa
+    FLASH_OB_GetUser
+  .text                     8   0x360      0x8
+    FLASH_OB_GetWRP
+  .text                     8   0x368     0x16
+    FLASH_OB_GetRDP
+  .text                     8   0x37e      0xa
+    FLASH_OB_GetBOR
+  .text                     8   0x388     0x1c
+    FLASH_ITConfig
+  .text                     8   0x3a4     0x14
+    FLASH_GetFlagStatus
+  .text                     8   0x3b8      0x6
+    FLASH_ClearFlag
+  .text                     8   0x3be     0x36
+    FLASH_GetStatus
+  .text                     8   0x3f4      0x4
+  .text                     8   0x3f8      0x4
+  .text                     8   0x3fc      0x4
+  .text                     8   0x400      0x4
+  .text                     8   0x404      0x4
+  .text                     8   0x408      0x4
+  .text                     8   0x40c      0x4
+  .text                     8   0x410      0x4
+  .text                     8   0x414      0x4
+  .text                     8   0x418      0x4
+  .text                     8   0x41c      0x4
+  .text                     8   0x420      0x4
+  .text                     8   0x424     0x28
+    FLASH_WaitForLastOperation
+  .text                     8     0x0     0x36  stm32f4xx_fsmc.o
+    FSMC_NORSRAMDeInit
+  .text                     8    0x36     0xda
+    FSMC_NORSRAMInit
+  .text                     8   0x110     0x8c
+    FSMC_NORSRAMStructInit
+  .text                     8   0x19c     0x2c
+    FSMC_NORSRAMCmd
+  .text                     8   0x1c8     0x48
+    FSMC_NANDDeInit
+  .text                     8   0x210     0x8e
+    FSMC_NANDInit
+  .text                     8   0x29e     0x4e
+    FSMC_NANDStructInit
+  .text                     8   0x2ec     0x3e
+    FSMC_NANDCmd
+  .text                     8   0x32a     0x3e
+    FSMC_NANDECCCmd
+  .text                     8   0x368     0x12
+    FSMC_GetECC
+  .text                     8   0x37a     0x1e
+    FSMC_PCCARDDeInit
+  .text                     8   0x398     0x78
+    FSMC_PCCARDInit
+  .text                     8   0x410     0x56
+    FSMC_PCCARDStructInit
+  .text                     8   0x466     0x1e
+    FSMC_PCCARDCmd
+  .text                     8   0x484     0x5c
+    FSMC_ITConfig
+  .text                     8   0x4e0     0x2c
+    FSMC_GetFlagStatus
+  .text                     8   0x50c     0x2e
+    FSMC_ClearFlag
+  .text                     8   0x53a     0x3c
+    FSMC_GetITStatus
+  .text                     8   0x576     0x2e
+    FSMC_ClearITPendingBit
+  .text                     8   0x5a4      0x4
+  .text                     8   0x5a8      0x4
+  .text                     8   0x5ac      0x4
+  .text                     8   0x5b0      0x4
+  .text                     8   0x5b4      0x4
+  .text                     8   0x5b8      0x4
+  .text                     8   0x5bc      0x4
+  .text                     8   0x5c0      0x4
+  .text                     8   0x5c4      0x4
+  .text                     8   0x5c8      0x4
+  .text                     8   0x5cc      0x4
+  .text                     8   0x5d0      0x4
+  .text                     8   0x5d4      0x4
+  .text                     8   0x5d8      0x4
+  .text                     8   0x5dc      0x4
+  .text                     8   0x5e0      0x4
+  .text                     8   0x5e4      0x4
+  .text                     8   0x5e8      0x4
+  .text                     8   0x5ec      0x4
+  .text                     8     0x0     0xe0  stm32f4xx_gpio.o
+    GPIO_DeInit
+  .text                     8    0xe0      0x4
+  .text                     8    0xe4      0x4
+  .text                     8    0xe8      0x4
+  .text                     8    0xec      0x4
+  .text                     8    0xf0      0x4
+  .text                     8    0xf4      0x4
+  .text                     8    0xf8      0x4
+  .text                     8    0xfc      0x4
+  .text                     8   0x100      0x4
+  .text                     8   0x1ac     0x18
+    GPIO_StructInit
+  .text                     8   0x1c4     0x2a
+    GPIO_PinLockConfig
+  .text                     8   0x1ee     0x14
+    GPIO_ReadInputDataBit
+  .text                     8   0x202      0x6
+    GPIO_ReadInputData
+  .text                     8   0x208     0x14
+    GPIO_ReadOutputDataBit
+  .text                     8   0x21c      0x6
+    GPIO_ReadOutputData
+  .text                     8   0x222      0x4
+    GPIO_SetBits
+  .text                     8   0x226      0x4
+    GPIO_ResetBits
+  .text                     8   0x22a      0xe
+    GPIO_WriteBit
+  .text                     8   0x238      0x6
+    GPIO_Write
+  .text                     8   0x23e      0xa
+    GPIO_ToggleBits
+  .text                     8     0x0     0x14  stm32f4xx_hash.o
+    HASH_DeInit
+  .text                     8    0x14     0x3e
+    HASH_Init
+  .text                     8    0x52     0x12
+    HASH_StructInit
+  .text                     8    0x64      0xc
+    HASH_Reset
+  .text                     8    0x70     0x14
+    HASH_SetLastWordValidBitsNbr
+  .text                     8    0x84      0x6
+    HASH_DataIn
+  .text                     8    0x8a      0xc
+    HASH_GetInFIFOWordsNbr
+  .text                     8    0x96     0x20
+    HASH_GetDigest
+  .text                     8    0xb6      0xc
+    HASH_StartDigest
+  .text                     8    0xc2     0x38
+    HASH_SaveContext
+  .text                     8    0xfa     0x44
+    HASH_RestoreContext
+  .text                     8   0x13e     0x1e
+    HASH_DMACmd
+  .text                     8   0x15c     0x20
+    HASH_ITConfig
+  .text                     8   0x17c     0x22
+    HASH_GetFlagStatus
+  .text                     8   0x19e      0xa
+    HASH_ClearFlag
+  .text                     8   0x1a8     0x1e
+    HASH_GetITStatus
+  .text                     8   0x1c6      0xa
+    HASH_ClearITPendingBit
+  .text                     8   0x1d0      0x4
+  .text                     8   0x1d4      0x4
+  .text                     8   0x1d8      0x4
+  .text                     8   0x1dc      0x4
+  .text                     8   0x1e0      0x4
+  .text                     8   0x1e4      0x4
+  .text                     8   0x1e8      0x4
+  .text                     8   0x1ec      0x4
+  .text                     8   0x1f0      0x4
+  .text                     8   0x1f4      0x4
+  .text                     8   0x1f8      0x4
+  .text                     8     0x0     0xae  stm32f4xx_hash_md5.o
+    HASH_MD5
+  .text                     8    0xae    0x16a
+    HMAC_MD5
+  .text                     8     0x0     0xb6  stm32f4xx_hash_sha1.o
+    HASH_SHA1
+  .text                     8    0xb6    0x172
+    HMAC_SHA1
+  .text                     8   0x130     0x20  stm32f4xx_i2c.o
+    I2C_StructInit
+  .text                     8   0x1d6     0x16
+    I2C_OwnAddress2Config
+  .text                     8   0x1ec     0x1c
+    I2C_DualAddressCmd
+  .text                     8   0x208     0x1c
+    I2C_GeneralCallCmd
+  .text                     8   0x23e     0x1c
+    I2C_StretchClockCmd
+  .text                     8   0x25a     0x1e
+    I2C_FastModeDutyCycleConfig
+  .text                     8   0x278     0x1e
+    I2C_NACKPositionConfig
+  .text                     8   0x296     0x1e
+    I2C_SMBusAlertConfig
+  .text                     8   0x2b4     0x1c
+    I2C_ARPCmd
+  .text                     8   0x2dc     0x1c
+    I2C_TransmitPEC
+  .text                     8   0x2f8     0x1e
+    I2C_PECPositionConfig
+  .text                     8   0x316     0x1c
+    I2C_CalculatePEC
+  .text                     8   0x332      0xa
+    I2C_GetPEC
+  .text                     8   0x33c     0x1c
+    I2C_DMACmd
+  .text                     8   0x358     0x1c
+    I2C_DMALastTransferCmd
+  .text                     8   0x38c     0x18
+    I2C_ITConfig
+  .text                     8   0x3a4     0x24
+    I2C_CheckEvent
+  .text                     8   0x3c8     0x16
+    I2C_GetLastEvent
+  .text                     8   0x42c     0x26
+    I2C_GetITStatus
+  .text                     8   0x452      0xc
+    I2C_ClearITPendingBit
+  .text                     8     0x0      0x8  stm32f4xx_iwdg.o
+    IWDG_WriteAccessCmd
+  .text                     8     0x8      0x8
+    IWDG_SetPrescaler
+  .text                     8    0x10      0x8
+    IWDG_SetReload
+  .text                     8    0x18      0xa
+    IWDG_ReloadCounter
+  .text                     8    0x22      0xa
+    IWDG_Enable
+  .text                     8    0x2c     0x18
+    IWDG_GetFlagStatus
+  .text                     8    0x44      0x4
+  .text                     8    0x48      0x4
+  .text                     8    0x4c      0x4
+  .text                     8    0x50      0x4
+  .text                     8     0x0     0x18  stm32f4xx_pwr.o
+    PWR_DeInit
+  .text                     8    0x20     0x10
+    PWR_PVDLevelConfig
+  .text                     8    0x30      0x8
+    PWR_PVDCmd
+  .text                     8    0x38      0x8
+    PWR_WakeUpPinCmd
+  .text                     8    0x40      0x8
+    PWR_BackupRegulatorCmd
+  .text                     8    0x48     0x1c
+    PWR_MainRegulatorModeConfig
+  .text                     8    0x64      0x8
+    PWR_FlashPowerDownCmd
+  .text                     8    0x6c     0x2e
+    PWR_EnterSTOPMode
+  .text                     8    0x9a     0x20
+    PWR_EnterSTANDBYMode
+  .text                     8    0xba     0x14
+    PWR_GetFlagStatus
+  .text                     8    0xce      0xe
+    PWR_ClearFlag
+  .text                     8    0xe0      0x4
+  .text                     8    0xe4      0x4
+  .text                     8    0xe8      0x4
+  .text                     8    0xec      0x4
+  .text                     8    0xf0      0x4
+  .text                     8    0xf4      0x4
+  .text                     8    0xf8      0x4
+  .text                     9     0x0     0x3a  stm32f4xx_rcc.o
+    RCC_DeInit
+  .text                     9    0x3a      0xc
+    RCC_HSEConfig
+  .text                     9    0x46     0x38
+    RCC_WaitForHSEStartUp
+  .text                     9    0x7e     0x16
+    RCC_AdjustHSICalibrationValue
+  .text                     9    0x94      0xa
+    RCC_HSICmd
+  .text                     9    0x9e     0x26
+    RCC_LSEConfig
+  .text                     9    0xc4      0xa
+    RCC_LSICmd
+  .text                     9    0xce     0x20
+    RCC_PLLConfig
+  .text                     9    0xee      0xa
+    RCC_PLLCmd
+  .text                     9    0xf8      0xe
+    RCC_PLLI2SConfig
+  .text                     9   0x106      0xa
+    RCC_PLLI2SCmd
+  .text                     9   0x110      0xa
+    RCC_ClockSecuritySystemCmd
+  .text                     9   0x11a     0x14
+    RCC_MCO1Config
+  .text                     9   0x12e     0x14
+    RCC_MCO2Config
+  .text                     9   0x142     0x12
+    RCC_SYSCLKConfig
+  .text                     9   0x154      0xc
+    RCC_GetSYSCLKSource
+  .text                     9   0x160     0x12
+    RCC_HCLKConfig
+  .text                     9   0x172     0x12
+    RCC_PCLK1Config
+  .text                     9   0x184     0x14
+    RCC_PCLK2Config
+  .text                     9   0x250     0x2a
+    RCC_RTCCLKConfig
+  .text                     9   0x27a      0x8
+    RCC_RTCCLKCmd
+  .text                     9   0x28a      0x6
+    RCC_I2SCLKConfig
+  .text                     9   0x2ac     0x1c
+    RCC_AHB2PeriphClockCmd
+  .text                     9   0x2c8     0x1c
+    RCC_AHB3PeriphClockCmd
+  .text                     9   0x31c     0x1c
+    RCC_AHB1PeriphResetCmd
+  .text                     9   0x338     0x1c
+    RCC_AHB2PeriphResetCmd
+  .text                     9   0x354     0x1c
+    RCC_AHB3PeriphResetCmd
+  .text                     9   0x38c     0x1c
+    RCC_APB2PeriphResetCmd
+  .text                     9   0x3a8     0x1c
+    RCC_AHB1PeriphClockLPModeCmd
+  .text                     9   0x3c4     0x1c
+    RCC_AHB2PeriphClockLPModeCmd
+  .text                     9   0x3e0     0x1c
+    RCC_AHB3PeriphClockLPModeCmd
+  .text                     9   0x3fc     0x1c
+    RCC_APB1PeriphClockLPModeCmd
+  .text                     9   0x418     0x1c
+    RCC_APB2PeriphClockLPModeCmd
+  .text                     9   0x434     0x1c
+    RCC_ITConfig
+  .text                     9   0x450     0x3c
+    RCC_GetFlagStatus
+  .text                     9   0x48c      0xc
+    RCC_ClearFlag
+  .text                     9   0x498     0x16
+    RCC_GetITStatus
+  .text                     9   0x4ae      0x6
+    RCC_ClearITPendingBit
+  .text                     9   0x4b4      0x4
+  .text                     9   0x4bc      0x4
+  .text                     9   0x4c0      0x4
+  .text                     9   0x4c8      0x4
+  .text                     9   0x4cc      0x4
+  .text                     9   0x4d0      0x4
+  .text                     9   0x4d4      0x4
+  .text                     9   0x4d8      0x4
+  .text                     9   0x4dc      0x4
+  .text                     9   0x4e0      0x4
+  .text                     9   0x4e4      0x4
+  .text                     9   0x4e8      0x4
+  .text                     9   0x4f8      0x4
+  .text                     9   0x4fc      0x4
+  .text                     9   0x504      0x4
+  .text                     9   0x50c      0x4
+  .text                     9   0x510      0x4
+  .text                     9   0x51c      0x4
+  .text                     9   0x520      0x4
+  .text                     9   0x524      0x4
+  .text                     9   0x52c      0x4
+  .text                     9   0x530      0x4
+  .text                     9   0x534      0x4
+  .text                     9   0x538      0x4
+  .text                     9   0x53c      0x4
+  .text                     9   0x540      0x4
+  .text                     9   0x544      0x4
+  .text                     9   0x548      0x4
+  .text                     9   0x54c      0x4
+  .text                     8     0x0     0x14  stm32f4xx_rng.o
+    RNG_DeInit
+  .text                     8    0x14     0x1e
+    RNG_Cmd
+  .text                     8    0x32      0x6
+    RNG_GetRandomNumber
+  .text                     8    0x38     0x1e
+    RNG_ITConfig
+  .text                     8    0x56     0x16
+    RNG_GetFlagStatus
+  .text                     8    0x6c      0xc
+    RNG_ClearFlag
+  .text                     8    0x78     0x16
+    RNG_GetITStatus
+  .text                     8    0x8e      0xa
+    RNG_ClearITPendingBit
+  .text                     8    0x98      0x4
+  .text                     8    0x9c      0x4
+  .text                     8    0xa0      0x4
+  .text                     8     0x0     0xba  stm32f4xx_rtc.o
+    RTC_DeInit
+  .text                     8    0xba     0x52
+    RTC_Init
+  .text                     8   0x10c      0xe
+    RTC_StructInit
+  .text                     8   0x11a     0x1e
+    RTC_WriteProtectionCmd
+  .text                     8   0x138     0x48
+    RTC_EnterInitMode
+  .text                     8   0x180      0xe
+    RTC_ExitInitMode
+  .text                     8   0x18e     0x50
+    RTC_WaitForSynchro
+  .text                     8   0x1de     0x4c
+    RTC_RefClockCmd
+  .text                     8   0x22a     0x32
+    RTC_BypassShadowCmd
+  .text                     8   0x25c     0xb6
+    RTC_SetTime
+  .text                     8   0x312     0x12
+    RTC_TimeStructInit
+  .text                     8   0x324     0x52
+    RTC_GetTime
+  .text                     8   0x376     0x10
+    RTC_GetSubSecond
+  .text                     8   0x386     0xb0
+    RTC_SetDate
+  .text                     8   0x436     0x12
+    RTC_DateStructInit
+  .text                     8   0x448     0x4e
+    RTC_GetDate
+  .text                     8   0x496     0xe4
+    RTC_SetAlarm
+  .text                     8   0x57a     0x1e
+    RTC_AlarmStructInit
+  .text                     8   0x598     0x7a
+    RTC_GetAlarm
+  .text                     8   0x612     0x6a
+    RTC_AlarmCmd
+  .text                     8   0x67c     0x2e
+    RTC_AlarmSubSecondConfig
+  .text                     8   0x6aa     0x20
+    RTC_GetAlarmSubSecond
+  .text                     8   0x6ca     0x24
+    RTC_WakeUpClockConfig
+  .text                     8   0x6ee     0x18
+    RTC_SetWakeUpCounter
+  .text                     8   0x706      0xa
+    RTC_GetWakeUpCounter
+  .text                     8   0x710     0x6a
+    RTC_WakeUpCmd
+  .text                     8   0x77a     0x28
+    RTC_DayLightSavingConfig
+  .text                     8   0x7a2      0xc
+    RTC_GetStoreOperation
+  .text                     8   0x7ae     0x28
+    RTC_OutputConfig
+  .text                     8   0x7d6     0x34
+    RTC_CoarseCalibConfig
+  .text                     8   0x80a     0x4a
+    RTC_CoarseCalibCmd
+  .text                     8   0x854     0x30
+    RTC_CalibOutputCmd
+  .text                     8   0x884     0x22
+    RTC_CalibOutputConfig
+  .text                     8   0x8a6     0x4a
+    RTC_SmoothCalibConfig
+  .text                     8   0x8f0     0x32
+    RTC_TimeStampCmd
+  .text                     8   0x922     0x8e
+    RTC_GetTimeStamp
+  .text                     8   0x9b0      0x6
+    RTC_GetTimeStampSubSecond
+  .text                     8   0x9b6     0x1c
+    RTC_TamperTriggerConfig
+  .text                     8   0x9d2     0x1c
+    RTC_TamperCmd
+  .text                     8   0x9ee     0x12
+    RTC_TamperFilterConfig
+  .text                     8   0xa00     0x12
+    RTC_TamperSamplingFreqConfig
+  .text                     8   0xa12     0x12
+    RTC_TamperPinsPrechargeDuration
+  .text                     8   0xa24     0x1e
+    RTC_TimeStampOnTamperDetectionCmd
+  .text                     8   0xa42     0x1e
+    RTC_TamperPullUpCmd
+  .text                     8   0xa60     0x1a
+    RTC_WriteBackupRegister
+  .text                     8   0xa7a     0x1a
+    RTC_ReadBackupRegister
+  .text                     8   0xa94     0x12
+    RTC_TamperPinSelection
+  .text                     8   0xaa6     0x12
+    RTC_TimeStampPinSelection
+  .text                     8   0xab8     0x14
+    RTC_OutputTypeConfig
+  .text                     8   0xacc      0x4
+  .text                     8   0xad0      0x4
+  .text                     8   0xad4      0x4
+  .text                     8   0xad8      0x4
+  .text                     8   0xadc     0x5c
+    RTC_SynchroShiftConfig
+  .text                     8   0xb38      0x4
+  .text                     8   0xb3c      0x4
+  .text                     8   0xb40      0x4
+  .text                     8   0xb44      0x4
+  .text                     8   0xb48      0x4
+  .text                     8   0xb4c      0x4
+  .text                     8   0xb50     0x4e
+    RTC_ITConfig
+  .text                     8   0xb9e     0x1c
+    RTC_GetFlagStatus
+  .text                     8   0xbba     0x16
+    RTC_ClearFlag
+  .text                     8   0xbd0     0x34
+    RTC_GetITStatus
+  .text                     8   0xc04     0x1c
+    RTC_ClearITPendingBit
+  .text                     8   0xc20      0x4
+  .text                     8   0xc24      0x4
+  .text                     8   0xc28      0x4
+  .text                     8   0xc2c      0x4
+  .text                     8   0xc30      0x4
+  .text                     8   0xc34      0x4
+  .text                     8   0xc38      0x4
+  .text                     8   0xc3c      0x4
+  .text                     8   0xc40      0x4
+  .text                     8   0xc44      0x4
+  .text                     8   0xc48      0x4
+  .text                     8   0xc4c      0x4
+  .text                     8   0xc50      0x4
+  .text                     8   0xc54      0x4
+  .text                     8   0xc58      0x4
+  .text                     8   0xc5c      0x4
+  .text                     8   0xc60     0x18
+    RTC_ByteToBcd2
+  .text                     8   0xc78     0x18
+    RTC_Bcd2ToByte
+  .text                     8     0x0     0x18  stm32f4xx_sdio.o
+    SDIO_DeInit
+  .text                     8    0x18     0x2a
+    SDIO_Init
+  .text                     8    0x42     0x1a
+    SDIO_StructInit
+  .text                     8    0x5c      0x8
+    SDIO_ClockCmd
+  .text                     8    0x64      0x6
+    SDIO_SetPowerState
+  .text                     8    0x6a      0xa
+    SDIO_GetPowerState
+  .text                     8    0x74     0x28
+    SDIO_SendCommand
+  .text                     8    0x9c     0x16
+    SDIO_CmdStructInit
+  .text                     8    0xb2      0x8
+    SDIO_GetCommandResponse
+  .text                     8    0xba     0x14
+    SDIO_GetResponse
+  .text                     8    0xce     0x2e
+    SDIO_DataConfig
+  .text                     8    0xfc     0x1c
+    SDIO_DataStructInit
+  .text                     8   0x118      0x6
+    SDIO_GetDataCounter
+  .text                     8   0x11e      0x6
+    SDIO_ReadData
+  .text                     8   0x124      0x6
+    SDIO_WriteData
+  .text                     8   0x12a      0x6
+    SDIO_GetFIFOCount
+  .text                     8   0x130      0x8
+    SDIO_StartSDIOReadWait
+  .text                     8   0x138      0x8
+    SDIO_StopSDIOReadWait
+  .text                     8   0x140      0x6
+    SDIO_SetSDIOReadWaitMode
+  .text                     8   0x146      0x8
+    SDIO_SetSDIOOperation
+  .text                     8   0x14e      0x8
+    SDIO_SendSDIOSuspendCmd
+  .text                     8   0x156      0x8
+    SDIO_CommandCompletionCmd
+  .text                     8   0x15e      0xe
+    SDIO_CEATAITCmd
+  .text                     8   0x16c      0x8
+    SDIO_SendCEATACmd
+  .text                     8   0x174      0x8
+    SDIO_DMACmd
+  .text                     8   0x17c     0x1c
+    SDIO_ITConfig
+  .text                     8   0x198     0x14
+    SDIO_GetFlagStatus
+  .text                     8   0x1ac      0x6
+    SDIO_ClearFlag
+  .text                     8   0x1b2     0x14
+    SDIO_GetITStatus
+  .text                     8   0x1c6      0x6
+    SDIO_ClearITPendingBit
+  .text                     8   0x1cc      0x4
+  .text                     8   0x1d0      0x4
+  .text                     8   0x1d4      0x4
+  .text                     8   0x1d8      0x4
+  .text                     8   0x1dc      0x4
+  .text                     8   0x1e0      0x4
+  .text                     8   0x1e4      0x4
+  .text                     8   0x1e8      0x4
+  .text                     8   0x1ec      0x4
+  .text                     8   0x1f0      0x4
+  .text                     8   0x1f4      0x4
+  .text                     8   0x1f8      0x4
+  .text                     8   0x1fc      0x4
+  .text                     8   0x200      0x4
+  .text                     8   0x204      0x4
+  .text                     8   0x208      0x4
+  .text                     8   0x20c      0x4
+  .text                     8   0x210      0x4
+  .text                     8   0x214      0x4
+  .text                     8   0x218      0x4
+  .text                     8   0x21c      0x4
+  .text                     8   0x220      0x4
+  .text                     8   0x224      0x4
+  .text                     8   0x228      0x4
+  .text                     8   0x22c      0x4
+  .text                     8   0x230      0x4
+  .text                     8     0x0     0x56  stm32f4xx_spi.o
+    SPI_I2S_DeInit
+  .text                     8    0x56     0x3e
+    SPI_Init
+  .text                     8    0x94     0xe4
+    I2S_Init
+  .text                     8   0x178      0x4
+  .text                     8   0x17c      0x4
+  .text                     8   0x180      0x4
+  .text                     8   0x184      0x4
+  .text                     8   0x188      0x4
+  .text                     8   0x18c      0x4
+  .text                     8   0x190      0x4
+  .text                     8   0x194     0x26
+    SPI_StructInit
+  .text                     8   0x1ba     0x1a
+    I2S_StructInit
+  .text                     8   0x1d4     0x1c
+    SPI_Cmd
+  .text                     8   0x1f0     0x1c
+    I2S_Cmd
+  .text                     8   0x20c     0x12
+    SPI_DataSizeConfig
+  .text                     8   0x21e     0x1e
+    SPI_BiDirectionalLineConfig
+  .text                     8   0x23c     0x1c
+    SPI_NSSInternalSoftwareConfig
+  .text                     8   0x258     0x1c
+    SPI_SSOutputCmd
+  .text                     8   0x274     0x1c
+    SPI_TIModeCmd
+  .text                     8   0x290     0x54
+    I2S_FullDuplexConfig
+  .text                     8   0x2e4      0x4
+    SPI_I2S_ReceiveData
+  .text                     8   0x2e8      0x4
+    SPI_I2S_SendData
+  .text                     8   0x2ec     0x1c
+    SPI_CalculateCRC
+  .text                     8   0x308      0xa
+    SPI_TransmitCRC
+  .text                     8   0x312     0x12
+    SPI_GetCRC
+  .text                     8   0x324      0x4
+    SPI_GetCRCPolynomial
+  .text                     8   0x328     0x18
+    SPI_I2S_DMACmd
+  .text                     8   0x340     0x28
+    SPI_I2S_ITConfig
+  .text                     8   0x368     0x12
+    SPI_I2S_GetFlagStatus
+  .text                     8   0x37a      0x8
+    SPI_I2S_ClearFlag
+  .text                     8   0x382     0x3c
+    SPI_I2S_GetITStatus
+  .text                     8   0x3be     0x14
+    SPI_I2S_ClearITPendingBit
+  .text                     8     0x0     0x18  stm32f4xx_syscfg.o
+    SYSCFG_DeInit
+  .text                     8    0x18      0x8
+    SYSCFG_MemoryRemapConfig
+  .text                     8    0x70      0x6
+    SYSCFG_ETH_MediaInterfaceConfig
+  .text                     8    0x76      0x8
+    SYSCFG_CompensationCellCmd
+  .text                     8    0x7e     0x16
+    SYSCFG_GetCompensationCellStatus
+  .text                     8    0x94      0x4
+  .text                     8    0x9c      0x4
+  .text                     8    0xa0      0x4
+  .text                     8    0xa4      0x4
+  .text                     8     0x0    0x17c  stm32f4xx_tim.o
+    TIM_DeInit
+  .text                     8   0x17c     0x6a
+    TIM_TimeBaseInit
+  .text                     8   0x1e6     0x18
+    TIM_TimeBaseStructInit
+  .text                     8   0x1fe      0x6
+    TIM_PrescalerConfig
+  .text                     8   0x204     0x10
+    TIM_CounterModeConfig
+  .text                     8   0x214      0x4
+    TIM_SetCounter
+  .text                     8   0x218      0x4
+    TIM_SetAutoreload
+  .text                     8   0x21c      0x4
+    TIM_GetCounter
+  .text                     8   0x220      0x4
+    TIM_GetPrescaler
+  .text                     8   0x224     0x1c
+    TIM_UpdateDisableConfig
+  .text                     8   0x240     0x1c
+    TIM_UpdateRequestConfig
+  .text                     8   0x25c     0x1c
+    TIM_ARRPreloadConfig
+  .text                     8   0x278     0x12
+    TIM_SelectOnePulseMode
+  .text                     8   0x28a     0x12
+    TIM_SetClockDivision
+  .text                     8   0x29c     0x1c
+    TIM_Cmd
+  .text                     8   0x2b8     0x78
+    TIM_OC1Init
+  .text                     8   0x330     0x86
+    TIM_OC2Init
+  .text                     8   0x3b6     0x84
+    TIM_OC3Init
+  .text                     8   0x43a     0x62
+    TIM_OC4Init
+  .text                     8   0x49c      0x4
+  .text                     8   0x4a0      0x4
+  .text                     8   0x4a4      0x4
+  .text                     8   0x4a8      0x4
+  .text                     8   0x4ac      0x4
+  .text                     8   0x4b0      0x4
+  .text                     8   0x4b4      0x4
+  .text                     8   0x4b8      0x4
+  .text                     8   0x4bc      0x4
+  .text                     8   0x4c0      0x4
+  .text                     8   0x4c4      0x4
+  .text                     8   0x4c8      0x4
+  .text                     8   0x4cc      0x4
+  .text                     8   0x4d0     0x22
+    TIM_OCStructInit
+  .text                     8   0x4f2     0x64
+    TIM_SelectOCxM
+  .text                     8   0x556      0x4
+    TIM_SetCompare1
+  .text                     8   0x55a      0x4
+    TIM_SetCompare2
+  .text                     8   0x55e      0x4
+    TIM_SetCompare3
+  .text                     8   0x562      0x4
+    TIM_SetCompare4
+  .text                     8   0x566     0x10
+    TIM_ForcedOC1Config
+  .text                     8   0x576     0x12
+    TIM_ForcedOC2Config
+  .text                     8   0x588     0x10
+    TIM_ForcedOC3Config
+  .text                     8   0x598     0x12
+    TIM_ForcedOC4Config
+  .text                     8   0x5aa     0x10
+    TIM_OC1PreloadConfig
+  .text                     8   0x5ba     0x12
+    TIM_OC2PreloadConfig
+  .text                     8   0x5cc     0x10
+    TIM_OC3PreloadConfig
+  .text                     8   0x5dc     0x12
+    TIM_OC4PreloadConfig
+  .text                     8   0x5ee     0x10
+    TIM_OC1FastConfig
+  .text                     8   0x5fe     0x12
+    TIM_OC2FastConfig
+  .text                     8   0x610     0x10
+    TIM_OC3FastConfig
+  .text                     8   0x620     0x12
+    TIM_OC4FastConfig
+  .text                     8   0x632     0x10
+    TIM_ClearOC1Ref
+  .text                     8   0x642     0x10
+    TIM_ClearOC2Ref
+  .text                     8   0x652     0x10
+    TIM_ClearOC3Ref
+  .text                     8   0x662     0x10
+    TIM_ClearOC4Ref
+  .text                     8   0x672     0x10
+    TIM_OC1PolarityConfig
+  .text                     8   0x682     0x10
+    TIM_OC1NPolarityConfig
+  .text                     8   0x692     0x12
+    TIM_OC2PolarityConfig
+  .text                     8   0x6a4     0x12
+    TIM_OC2NPolarityConfig
+  .text                     8   0x6b6     0x12
+    TIM_OC3PolarityConfig
+  .text                     8   0x6c8     0x12
+    TIM_OC3NPolarityConfig
+  .text                     8   0x6da     0x12
+    TIM_OC4PolarityConfig
+  .text                     8   0x6ec     0x20
+    TIM_CCxCmd
+  .text                     8   0x70c     0x20
+    TIM_CCxNCmd
+  .text                     8   0x72c     0x70
+    TIM_ICInit
+  .text                     8   0x79c     0x16
+    TIM_ICStructInit
+  .text                     8   0x7b2     0x84
+    TIM_PWMIConfig
+  .text                     8   0x83e      0x4
+    TIM_GetCapture3
+  .text                     8   0x842      0x4
+    TIM_GetCapture4
+  .text                     8   0x846     0x12
+    TIM_SetIC1Prescaler
+  .text                     8   0x858     0x14
+    TIM_SetIC2Prescaler
+  .text                     8   0x86c     0x12
+    TIM_SetIC3Prescaler
+  .text                     8   0x87e     0x14
+    TIM_SetIC4Prescaler
+  .text                     8   0x892     0x20
+    TIM_BDTRConfig
+  .text                     8   0x8b2     0x1e
+    TIM_BDTRStructInit
+  .text                     8   0x8d0     0x22
+    TIM_CtrlPWMOutputs
+  .text                     8   0x8f2     0x1c
+    TIM_SelectCOM
+  .text                     8   0x90e     0x1c
+    TIM_CCPreloadControl
+  .text                     8   0x92a     0x18
+    TIM_ITConfig
+  .text                     8   0x942      0x4
+    TIM_GenerateEvent
+  .text                     8   0x946     0x12
+    TIM_GetFlagStatus
+  .text                     8   0x958      0x8
+    TIM_ClearFlag
+  .text                     8   0x960     0x24
+    TIM_GetITStatus
+  .text                     8   0x98c      0x8
+    TIM_DMAConfig
+  .text                     8   0x994     0x18
+    TIM_DMACmd
+  .text                     8   0x9ac     0x1c
+    TIM_SelectCCDMA
+  .text                     8   0x9c8      0xc
+    TIM_InternalClockConfig
+  .text                     8   0x9d4     0x16
+    TIM_ITRxExternalClockConfig
+  .text                     8   0x9ea     0x3e
+    TIM_TIxExternalClockConfig
+  .text                     8   0xa28     0x2c
+    TIM_ETRClockMode1Config
+  .text                     8   0xa54     0x1a
+    TIM_ETRClockMode2Config
+  .text                     8   0xa6e     0x10
+    TIM_SelectInputTrigger
+  .text                     8   0xa7e     0x12
+    TIM_SelectOutputTrigger
+  .text                     8   0xa90     0x12
+    TIM_SelectSlaveMode
+  .text                     8   0xaa2     0x12
+    TIM_SelectMasterSlaveMode
+  .text                     8   0xab4     0x18
+    TIM_ETRConfig
+  .text                     8   0xacc     0x38
+    TIM_EncoderInterfaceConfig
+  .text                     8   0xb04     0x1c
+    TIM_SelectHallSensor
+  .text                     8   0xb20      0x6
+    TIM_RemapConfig
+  .text                     8   0xb26     0x34
+    TI1_Config
+  .text                     8   0xb5a     0x3a
+    TI2_Config
+  .text                     8   0xb94     0x38
+    TI3_Config
+  .text                     8   0xbcc     0x3a
+    TI4_Config
+  .text                     8     0x0     0xa2  stm32f4xx_usart.o
+    USART_DeInit
+  .text                     8   0x160      0x4
+  .text                     8   0x164      0x4
+  .text                     8   0x168      0x4
+  .text                     8   0x16c      0x4
+  .text                     8   0x178     0x1c
+    USART_StructInit
+  .text                     8   0x194     0x20
+    USART_ClockInit
+  .text                     8   0x1b4     0x12
+    USART_ClockStructInit
+  .text                     8   0x1e2     0x12
+    USART_SetPrescaler
+  .text                     8   0x20e     0x1c
+    USART_OneBitMethodCmd
+  .text                     8   0x23a     0x14
+    USART_SetAddress
+  .text                     8   0x24e     0x1c
+    USART_ReceiverWakeUpCmd
+  .text                     8   0x26a     0x12
+    USART_WakeUpConfig
+  .text                     8   0x27c     0x12
+    USART_LINBreakDetectLengthConfig
+  .text                     8   0x28e     0x1c
+    USART_LINCmd
+  .text                     8   0x2aa      0xa
+    USART_SendBreak
+  .text                     8   0x2b4     0x1c
+    USART_HalfDuplexCmd
+  .text                     8   0x2d0     0x14
+    USART_SetGuardTime
+  .text                     8   0x2e4     0x1c
+    USART_SmartCardCmd
+  .text                     8   0x300     0x1c
+    USART_SmartCardNACKCmd
+  .text                     8   0x31c     0x12
+    USART_IrDAConfig
+  .text                     8   0x32e     0x1c
+    USART_IrDACmd
+  .text                     8   0x34a     0x18
+    USART_DMACmd
+  .text                     8   0x3d0      0xe
+    USART_ClearFlag
+  .text                     8     0x0     0x18  stm32f4xx_wwdg.o
+    WWDG_DeInit
+  .text                     8    0x18     0x10
+    WWDG_SetPrescaler
+  .text                     8    0x28     0x24
+    WWDG_SetWindowValue
+  .text                     8    0x4c      0x8
+    WWDG_EnableIT
+  .text                     8    0x54      0xc
+    WWDG_SetCounter
+  .text                     8    0x60      0xc
+    WWDG_Enable
+  .text                     8    0x6c     0x14
+    WWDG_GetFlagStatus
+  .text                     8    0x80      0x8
+    WWDG_ClearFlag
+  .text                     8    0x88      0x4
+  .text                     8    0x8c      0x4
+  .text                     8    0x90      0x4
+  .text                     8    0x94      0x4
+  .text                     6     0x0     0x34  vsprintf.o
+    vsprintf
+  .text                     6     0x0     0x10  DblAdd.o
+    __aeabi_dadd
+  .text                     7     0x0      0x8  math_wrappers64.o
+    __iar_vfp___difftime32
+  .text                     7     0x8      0x6
+    __iar_vfp___difftime64
+  .text                     7     0xe      0x6
+  .text                     7    0x14      0x8
+    __iar_vfp_difftime
+  .text                     7    0x1c      0x8
+    __iar_vfp_atof
+  .text                     7    0x24      0x8
+    __iar_vfp_strtod
+  .text                     7    0x2c      0x8
+    __iar_vfp_strtold
+  .text                     7    0x34      0x8
+    __iar_vfp_wcstod
+  .text                     7    0x3c      0x8
+    __iar_vfp_wcstold
+  .text                     7    0x44      0x8
+    __iar_vfp___iar_Sto64
+  .text                     7    0x4c      0x8
+    __iar_vfp___iar_WSto64
+  .text                     7    0x54      0xc
+    __iar_vfp_acos
+  .text                     7    0x60      0xc
+    __iar_vfp_acosl
+  .text                     7    0x6c      0xc
+    __iar_vfp_asin
+  .text                     7    0x78      0xc
+    __iar_vfp_asinl
+  .text                     7    0x84      0xc
+    __iar_vfp_atan
+  .text                     7    0x90      0xc
+    __iar_vfp_atanl
+  .text                     7    0x9c     0x10
+    __iar_vfp_atan2
+  .text                     7    0xac     0x10
+    __iar_vfp_atan2l
+  .text                     7    0xbc     0x10
+    __iar_vfp_fdim
+  .text                     7    0xcc     0x10
+    __iar_vfp_fdiml
+  .text                     7    0xdc      0xc
+    __iar_vfp_acosh
+  .text                     7    0xe8      0xc
+    __iar_vfp_acoshl
+  .text                     7    0xf4      0xc
+    __iar_vfp_asinh
+  .text                     7   0x100      0xc
+    __iar_vfp_asinhl
+  .text                     7   0x10c      0xc
+    __iar_vfp_atanh
+  .text                     7   0x118      0xc
+    __iar_vfp_atanhl
+  .text                     7   0x124      0xc
+    __iar_vfp_log
+  .text                     7   0x130      0xc
+    __iar_vfp_logl
+  .text                     7   0x13c      0xc
+    __iar_vfp_log10
+  .text                     7   0x148      0xc
+    __iar_vfp_log10l
+  .text                     7   0x154      0xc
+    __iar_vfp_log1p
+  .text                     7   0x160      0xc
+    __iar_vfp_log1pl
+  .text                     7   0x16c      0xc
+    __iar_vfp_log2
+  .text                     7   0x178      0xc
+    __iar_vfp_log2l
+  .text                     7   0x184      0xc
+    __iar_vfp___iar_log_medium
+  .text                     7   0x190      0xc
+    __iar_vfp___iar_log10_medium
+  .text                     7   0x19c      0xc
+    __iar_vfp___iar_log2_medium
+  .text                     7   0x1a8      0xc
+    __iar_vfp___iar_log_mediuml
+  .text                     7   0x1b4      0xc
+    __iar_vfp___iar_log10_mediuml
+  .text                     7   0x1c0      0xc
+    __iar_vfp___iar_log2_mediuml
+  .text                     7   0x1cc      0xc
+    __iar_vfp_exp
+  .text                     7   0x1d8      0xc
+    __iar_vfp_expl
+  .text                     7   0x1e4      0xc
+    __iar_vfp___iar_exp_medium
+  .text                     7   0x1f0      0xc
+    __iar_vfp___iar_exp_mediuml
+  .text                     7   0x1fc      0xc
+    __iar_vfp_expm1
+  .text                     7   0x208      0xc
+    __iar_vfp_expm1l
+  .text                     7   0x214      0xc
+    __iar_vfp_exp2
+  .text                     7   0x220      0xc
+    __iar_vfp_exp2l
+  .text                     7   0x22c      0xc
+    __iar_vfp_cosh
+  .text                     7   0x238      0xc
+    __iar_vfp_coshl
+  .text                     7   0x244      0xc
+    __iar_vfp_sinh
+  .text                     7   0x250      0xc
+    __iar_vfp_sinhl
+  .text                     7   0x25c      0xc
+    __iar_vfp_tanh
+  .text                     7   0x268      0xc
+    __iar_vfp_tanhl
+  .text                     7   0x274     0x10
+    __iar_vfp_pow
+  .text                     7   0x284      0xc
+    __iar_vfp_tan
+  .text                     7   0x290      0xc
+    __iar_vfp_cos
+  .text                     7   0x29c      0xc
+    __iar_vfp_sin
+  .text                     7   0x2a8      0xc
+    __iar_vfp_cbrt
+  .text                     7   0x2b4      0xc
+    __iar_vfp_erf
+  .text                     7   0x2c0      0xc
+    __iar_vfp_erfc
+  .text                     7   0x2cc     0x14
+    __iar_vfp_fma
+  .text                     7   0x2e0     0x10
+    __iar_vfp_hypot
+  .text                     7   0x2f0      0x8
+    __iar_vfp_nan
+  .text                     7   0x2f8     0x10
+    __iar_vfp_remainder
+  .text                     7   0x308     0x12
+    __iar_vfp_remquo
+  .text                     7   0x31a     0x10
+    __iar_vfp_powl
+  .text                     7   0x32a      0xc
+    __iar_vfp_tanl
+  .text                     7   0x336      0xc
+    __iar_vfp_cbrtl
+  .text                     7   0x342      0xc
+    __iar_vfp_erfl
+  .text                     7   0x34e      0xc
+    __iar_vfp_erfcl
+  .text                     7   0x35a     0x12
+    __iar_vfp_fmal
+  .text                     7   0x36c      0x8
+  .text                     7   0x374     0x10
+    __iar_vfp_hypotl
+  .text                     7   0x384      0x8
+    __iar_vfp_nanl
+  .text                     7   0x38c     0x10
+    __iar_vfp_remainderl
+  .text                     7   0x39c     0x12
+    __iar_vfp_remquol
+  .text                     7   0x3ae      0xc
+    __iar_vfp_lgamma
+  .text                     7   0x3ba      0xc
+    __iar_vfp_tgamma
+  .text                     7   0x3c6      0xc
+    __iar_vfp_lgammal
+  .text                     7   0x3d2      0xc
+    __iar_vfp_tgammal
+  .text                     7   0x3de      0xc
+    __iar_vfp_cosl
+  .text                     7   0x3ea      0xc
+    __iar_vfp_sinl
+  .text                     7   0x3f6      0xc
+    __iar_vfp___iar_cos_accurate
+  .text                     7   0x402      0xc
+    __iar_vfp___iar_cos_accuratel
+  .text                     7   0x40e      0xc
+    __iar_vfp___iar_cos_small
+  .text                     7   0x41a      0xc
+    __iar_vfp___iar_cos_smalll
+  .text                     7   0x426      0xc
+    __iar_vfp___iar_exp_small
+  .text                     7   0x432      0xc
+    __iar_vfp___iar_exp_smalll
+  .text                     7   0x43e      0xc
+    __iar_vfp___iar_log10_small
+  .text                     7   0x44a      0xc
+    __iar_vfp___iar_log10_smalll
+  .text                     7   0x456      0xc
+    __iar_vfp___iar_log2_small
+  .text                     7   0x462      0xc
+    __iar_vfp___iar_log2_smalll
+  .text                     7   0x46e      0xc
+    __iar_vfp___iar_log_small
+  .text                     7   0x47a      0xc
+    __iar_vfp___iar_log_smalll
+  .text                     7   0x486     0x10
+    __iar_vfp___iar_pow_accurate
+  .text                     7   0x496     0x10
+    __iar_vfp___iar_pow_accuratel
+  .text                     7   0x4a6     0x10
+    __iar_vfp___iar_pow_small
+  .text                     7   0x4b6     0x10
+    __iar_vfp___iar_pow_smalll
+  .text                     7   0x4c6      0xc
+    __iar_vfp___iar_sin_accurate
+  .text                     7   0x4d2      0xc
+    __iar_vfp___iar_sin_accuratel
+  .text                     7   0x4de      0xc
+    __iar_vfp___iar_sin_small
+  .text                     7   0x4ea      0xc
+    __iar_vfp___iar_sin_smalll
+  .text                     7   0x4f6      0xc
+    __iar_vfp___iar_tan_accurate
+  .text                     7   0x502      0xc
+    __iar_vfp___iar_tan_accuratel
+  .text                     7   0x50e      0xc
+    __iar_vfp___iar_tan_small
+  .text                     7   0x51a      0xc
+    __iar_vfp___iar_tan_smalll
+  .text                     7   0x526      0xc
+    __iar_vfp___iar_cos_medium
+  .text                     7   0x532     0x10
+    __iar_vfp___iar_pow_medium
+  .text                     7   0x542      0xc
+    __iar_vfp___iar_sin_medium
+  .text                     7   0x54e      0xc
+    __iar_vfp___iar_tan_medium
+  .text                     7   0x55a      0xc
+    __iar_vfp___iar_cos_mediuml
+  .text                     7   0x566     0x10
+    __iar_vfp___iar_pow_mediuml
+  .text                     7   0x576      0xc
+    __iar_vfp___iar_sin_mediuml
+  .text                     7   0x582      0xc
+    __iar_vfp___iar_tan_mediuml
+  .text                     7   0x58e      0xc
+    __iar_vfp__XLgamma64
+  .text                     7   0x59a     0x14
+    __iar_vfp___iar_Cbuild
+  .text                     7   0x5ae     0x12
+    __iar_vfp___iar_Cbuildl
+  .text                     7   0x5c0      0xa
+  .text                     7   0x5ca     0x10
+    __iar_vfp_cabs
+  .text                     7   0x5da     0x10
+    __iar_vfp_cabsl
+  .text                     7   0x5ea     0x26
+    __iar_vfp_cacos
+  .text                     7   0x610     0x24
+    __iar_vfp_cacosh
+  .text                     7   0x634      0xa
+  .text                     7   0x63e     0x26
+    __iar_vfp_cacoshl
+  .text                     7   0x664     0x26
+    __iar_vfp_cacosl
+  .text                     7   0x68a     0x10
+    __iar_vfp_carg
+  .text                     7   0x69a     0x10
+    __iar_vfp_cargl
+  .text                     7   0x6aa     0x26
+    __iar_vfp_casin
+  .text                     7   0x6d0     0x26
+    __iar_vfp_casinh
+  .text                     7   0x6f6     0x26
+    __iar_vfp_casinhl
+  .text                     7   0x71c     0x26
+    __iar_vfp_casinl
+  .text                     7   0x742     0x26
+    __iar_vfp_catan
+  .text                     7   0x768     0x26
+    __iar_vfp_catanh
+  .text                     7   0x78e     0x26
+    __iar_vfp_catanhl
+  .text                     7   0x7b4     0x26
+    __iar_vfp_catanl
+  .text                     7   0x7da     0x26
+    __iar_vfp_ccos
+  .text                     7   0x800     0x26
+    __iar_vfp_ccosh
+  .text                     7   0x826     0x26
+    __iar_vfp_ccoshl
+  .text                     7   0x84c     0x26
+    __iar_vfp_ccosl
+  .text                     7   0x872     0x26
+    __iar_vfp_cexp
+  .text                     7   0x898     0x26
+    __iar_vfp_cexpl
+  .text                     7   0x8be      0x2
+    __iar_vfp_cimag
+  .text                     7   0x8c0      0x2
+    __iar_vfp_cimagl
+  .text                     7   0x8c2      0xa
+  .text                     7   0x8cc     0x26
+    __iar_vfp_clog
+  .text                     7   0x8f2     0x26
+    __iar_vfp_clog10
+  .text                     7   0x918     0x26
+    __iar_vfp_clog10l
+  .text                     7   0x93e     0x26
+    __iar_vfp_clogl
+  .text                     7   0x964     0x26
+    __iar_vfp_conj
+  .text                     7   0x98a     0x26
+    __iar_vfp_conjl
+  .text                     7   0x9b0     0x34
+    __iar_vfp_cpow
+  .text                     7   0x9e4     0x32
+    __iar_vfp_cpowl
+  .text                     7   0xa16      0xa
+  .text                     7   0xa20     0x26
+    __iar_vfp_cproj
+  .text                     7   0xa46     0x26
+    __iar_vfp_cprojl
+  .text                     7   0xa6c      0x2
+    __iar_vfp_creal
+  .text                     7   0xa6e      0x2
+    __iar_vfp_creall
+  .text                     7   0xa70     0x26
+    __iar_vfp_csin
+  .text                     7   0xa96     0x26
+    __iar_vfp_csinh
+  .text                     7   0xabc     0x26
+    __iar_vfp_csinhl
+  .text                     7   0xae2     0x26
+    __iar_vfp_csinl
+  .text                     7   0xb08     0x26
+    __iar_vfp_csqrt
+  .text                     7   0xb2e     0x26
+    __iar_vfp_csqrtl
+  .text                     7   0xb54     0x26
+    __iar_vfp_ctan
+  .text                     7   0xb7a     0x26
+    __iar_vfp_ctanh
+  .text                     7   0xba0     0x26
+    __iar_vfp_ctanhl
+  .text                     7   0xbc6     0x26
+    __iar_vfp_ctanl
+  .text                     7   0xbec     0x12
+    __iar_vfp_norm
+  .text                     7   0xbfe     0x12
+    __iar_vfp_norml
+  .text                     7   0xc10     0x12
+    __iar_vfp___iar_Cosh64
+  .text                     7   0xc22     0x14
+    __iar_vfp___iar_Exp64
+  .text                     7   0xc36     0x12
+    __iar_vfp___iar_Sinh64
+  .text                     7   0xc48     0x16
+    __iar_vfp___iar_c99_complex_float_negate
+  .text                     7   0xc5e     0x14
+    __iar_vfp___iar_c99_complex_float_conj
+  .text                     7   0xc72      0xa
+  .text                     7   0xc7c     0x26
+    __iar_vfp___iar_c99_complex_float_add
+  .text                     7   0xca2     0x26
+    __iar_vfp___iar_c99_complex_float_subtract
+  .text                     7   0xcc8     0x26
+    __iar_vfp___iar_c99_complex_float_multiply
+  .text                     7   0xcee     0x26
+    __iar_vfp___iar_c99_complex_float_divide
+  .text                     7   0xd14     0x1c
+    __iar_vfp___iar_c99_complex_float_eq
+  .text                     7   0xd30     0x1c
+    __iar_vfp___iar_c99_complex_float_ne
+  .text                     7   0xd4c      0xe
+    __iar_vfp___iar_c99_ifloat_to_cfloat
+  .text                     7   0xd5a      0xe
+    __iar_vfp___iar_c99_float_to_cfloat
+  .text                     7   0xd68     0x14
+    __iar_vfp___iar_c99_cfloat_to_ifloat
+  .text                     7   0xd7c     0x12
+    __iar_vfp___iar_c99_cfloat_to_float
+  .text                     7   0xd8e      0x6
+  .text                     7   0xd94     0x28
+    __iar_vfp___iar_c99_complex_double_negate
+  .text                     7   0xdbc     0x28
+    __iar_vfp___iar_c99_complex_long_double_negate
+  .text                     7   0xde4     0x28
+    __iar_vfp___iar_c99_complex_double_conj
+  .text                     7   0xe0c     0x28
+    __iar_vfp___iar_c99_complex_long_double_conj
+  .text                     7   0xe34     0x34
+    __iar_vfp___iar_c99_complex_double_add
+  .text                     7   0xe68     0x34
+    __iar_vfp___iar_c99_complex_long_double_add
+  .text                     7   0xe9c     0x34
+    __iar_vfp___iar_c99_complex_double_subtract
+  .text                     7   0xed0     0x34
+    __iar_vfp___iar_c99_complex_long_double_subtract
+  .text                     7   0xf04     0x34
+    __iar_vfp___iar_c99_complex_double_multiply
+  .text                     7   0xf38     0x34
+    __iar_vfp___iar_c99_complex_long_double_multiply
+  .text                     7   0xf6c     0x34
+    __iar_vfp___iar_c99_complex_double_divide
+  .text                     7   0xfa0     0x34
+    __iar_vfp___iar_c99_complex_long_double_divide
+  .text                     7   0xfd4     0x2a
+    __iar_vfp___iar_c99_complex_double_eq
+  .text                     7   0xffe     0x2a
+    __iar_vfp___iar_c99_complex_long_double_eq
+  .text                     7  0x1028     0x2a
+    __iar_vfp___iar_c99_complex_double_ne
+  .text                     7  0x1052     0x2a
+    __iar_vfp___iar_c99_complex_long_double_ne
+  .text                     7  0x107c     0x18
+    __iar_vfp___iar_c99_cfloat_to_cdouble
+  .text                     7  0x1094     0x16
+    __iar_vfp___iar_c99_cfloat_to_clong_double
+  .text                     7  0x10aa      0xa
+  .text                     7  0x10b4     0x26
+    __iar_vfp___iar_c99_cdouble_to_cfloat
+  .text                     7  0x10da     0x28
+    __iar_vfp___iar_c99_cdouble_to_clong_double
+  .text                     7  0x1102     0x24
+    __iar_vfp___iar_c99_clong_double_to_cfloat
+  .text                     7  0x1126      0xa
+  .text                     7  0x1130     0x28
+    __iar_vfp___iar_c99_clong_double_to_cdouble
+  .text                     7  0x1158     0x10
+    __iar_vfp___iar_c99_idouble_to_cdouble
+  .text                     7  0x1168     0x10
+    __iar_vfp___iar_c99_ilong_double_to_clong_double
+  .text                     7  0x1178     0x10
+    __iar_vfp___iar_c99_double_to_cdouble
+  .text                     7  0x1188     0x10
+    __iar_vfp___iar_c99_long_double_to_clong_double
+  .text                     7  0x1198     0x12
+    __iar_vfp___iar_c99_cdouble_to_idouble
+  .text                     7  0x11aa     0x12
+    __iar_vfp___iar_c99_clong_double_to_ilong_double
+  .text                     7  0x11bc     0x12
+    __iar_vfp___iar_c99_cdouble_to_double
+  .text                     7  0x11ce     0x12
+    __iar_vfp___iar_c99_clong_double_to_long_double
+  .text                     6     0x0     0x10  atan2f.o
+    __iar_softfp_atan2f
+    __iar_softfp___iar_atan2_32
+  .text                     6    0x10     0x6a
+    atan2f
+    __iar_atan2_32
+  .text                     6     0x0     0x10  sqrt.o
+    __iar_vfp_sqrt
+    __iar_vfp___iar_sqrt64
+    __iar_vfp_sqrtl
+  .text                     6    0x10     0xf2
+    sqrt
+    __iar_sqrt64
+    sqrtl
+  .text                     6     0x0     0x10  sqrtf.o
+    __iar_softfp_sqrtf
+    __iar_softfp___iar_sqrt32
+  .text                     6     0x0     0x10  ceil.o
+    __iar_vfp_ceil
+    __iar_vfp___iar_ceil64
+    __iar_vfp_ceill
+  .text                     6    0x10     0x56
+    ceil
+    __iar_ceil64
+    ceill
+  .text                     6     0x0     0x10  floor.o
+    __iar_vfp_floor
+    __iar_vfp___iar_floor64
+    __iar_vfp_floorl
+  .text                     6    0x10     0x58
+    floor
+    __iar_floor64
+    floorl
+  .text                     6     0x0      0x8  ABImemset48.o
+    __aeabi_memset4
+    __aeabi_memset8
+  .text                     6     0x0     0xc4  xlgamma.o
+    _XLgamma32
+  .text                     6    0xc4    0x154
+    _XLgamma64
+  .text                     6   0x218      0x4
+  .text                     6   0x21c      0x4
+  .text                     6   0x220      0x4
+  .text                     6   0x224      0x4
+  .text                     6   0x228      0x4
+  .text                     6   0x22c      0x4
+  .text                     6   0x230      0x4
+  .text                     6   0x234      0x8
+  .text                     6   0x23c      0x4
+  .text                     6   0x240      0x4
+  .text                     6   0x244      0x4
+  .text                     6   0x248      0x4
+  .text                     6   0x24c      0x4
+  .text                     6   0x250      0x4
+  .text                     6   0x254      0x4
+  .text                     6   0x258      0x4
+  .text                     6   0x25c      0x4
+  .text                     6   0x260      0x4
+  .text                     6   0x264      0x4
+  .text                     6   0x268      0x4
+  .text                     6   0x26c      0x4
+  .text                     6   0x270      0x4
+  .text                     6   0x274      0x4
+  .text                     6   0x278      0x4
+  .text                     6   0x27c      0x4
+  .text                     6   0x280      0x4
+  .rodata                   7     0x0     0x30
+    _XLgamma64::coeff
+  .rodata                   8     0x0     0x18
+    _XLgamma32::coeff
+  .text                     6     0x0     0x1c  difftime.o
+    __difftime32
+    difftime
+  .text                     6     0x0     0x28  difftime64.o
+    __difftime64
+  .text                     6     0x0     0x20  iar_Cbuild64.o
+    __iar_Cbuild
+    __iar_Cbuild64
+    __iar_Cbuildl
+  .text                     6     0x0    0x128  iar_Cosh64.o
+    __iar_Cosh64
+  .text                     6   0x128      0x8
+  .text                     6   0x130      0x4
+  .text                     6   0x134      0x4
+  .text                     6   0x138      0x4
+  .text                     6     0x0    0x388  iar_Exp64.o
+    __iar_Exp64
+  .text                     6   0x388      0x8
+  .text                     6   0x390      0x4
+  .text                     6   0x394      0x4
+  .text                     6   0x398      0x4
+  .text                     6   0x39c      0x4
+  .text                     6   0x3a0      0x8
+  .text                     6   0x3a8      0x4
+  .text                     6   0x3ac      0x4
+  .text                     6   0x3b0      0x4
+  .text                     6   0x3b4      0x4
+  .text                     6   0x3b8      0x4
+  .text                     6   0x3bc      0x4
+  .text                     6   0x3c0      0x4
+  .text                     6   0x3c4      0x4
+  .text                     6   0x3c8      0x4
+  .text                     6   0x3cc      0x4
+  .text                     6   0x3d0      0x4
+  .text                     6   0x3d4      0x4
+  .text                     6   0x3d8      0x8
+  .text                     6   0x3e0      0x8
+  .text                     6     0x0     0x94  iar_Sinh64.o
+    Sinh_small
+  .text                     6    0x94     0x4c
+    Cosh_small
+  .text                     6    0xe0    0x240
+    __iar_Sinh64
+  .text                     6   0x320      0x4
+  .text                     6   0x324      0x4
+  .text                     6   0x328      0x4
+  .text                     6   0x32c      0x4
+  .text                     6   0x330      0x4
+  .text                     6   0x334      0x4
+  .text                     6   0x338      0x4
+  .text                     6   0x33c      0x4
+  .text                     6   0x340      0x4
+  .text                     6   0x344      0x4
+  .text                     6   0x348      0x4
+  .text                     6   0x34c      0x4
+  .text                     6   0x350      0x4
+  .text                     6   0x354      0x4
+  .text                     6   0x358      0x4
+  .text                     6   0x35c      0x4
+  .text                     6   0x360      0x4
+  .text                     6   0x364      0x4
+  .text                     6   0x368      0x4
+  .text                     6   0x36c      0x4
+  .text                     6   0x370      0x4
+  .text                     6   0x374      0x4
+  .text                     6   0x378      0x4
+  .text                     6   0x37c      0x4
+  .rodata                   6     0x0     0x48  strto64.o
+    pows
+  .text                     7     0x0     0xc8
+    dmul
+  .text                     7    0xc8     0xc4
+    ddiv
+  .text                     7   0x18c     0x10
+  .text                     7   0x19c    0x190
+    Dtentox
+  .text                     7   0x32c      0x8
+  .text                     7   0x334      0x8
+  .text                     7   0x33c    0x194
+    __iar_Sto64
+  .text                     7   0x4d0      0x4
+  .text                     7   0x4d4      0x4
+  .text                     7   0x4d8      0x4
+  .text                     7   0x4dc      0x4
+  .text                     7   0x4e0      0x4
+  .text                     7   0x4e4      0x4
+  .text                     7   0x4e8      0x8
+  .text                     7   0x4f0      0x8
+  .text                     7   0x4f8      0x8
+  .text                     7   0x500      0x8
+  .text                     7   0x508      0x4
+  .text                     7   0x50c      0x8
+  .text                     7   0x514      0x8
+    atof
+  .text                     7   0x51c      0x6
+    strtod
+    strtold
+  .rodata                   6     0x0     0x48  wcsto64.o
+    pows
+  .text                     7     0x0     0xc8
+    dmul
+  .text                     7    0xc8     0xc4
+    ddiv
+  .text                     7   0x18c     0x10
+  .text                     7   0x19c    0x190
+    Dtentox
+  .text                     7   0x32c      0x8
+  .text                     7   0x334      0x8
+  .text                     7   0x33c    0x194
+    __iar_WSto64
+  .text                     7   0x4d0      0x4
+  .text                     7   0x4d4      0x4
+  .text                     7   0x4d8      0x4
+  .text                     7   0x4dc      0x4
+  .text                     7   0x4e0      0x4
+  .text                     7   0x4e4      0x4
+  .text                     7   0x4e8      0x8
+  .text                     7   0x4f0      0x8
+  .text                     7   0x4f8      0x8
+  .text                     7   0x500      0x8
+  .text                     7   0x508      0x4
+  .text                     7   0x50c      0x8
+  .text                     7   0x514      0x6
+    wcstod
+    wcstold
+  .text                     6     0x0     0x16  c99_complex.o
+    __iar_c99_complex_float_negate
+  .text                     6    0x16      0xc
+    __iar_c99_complex_float_conj
+  .text                     6    0x22      0xa
+  .text                     6    0x2c     0x1a
+    __iar_c99_complex_float_add
+  .text                     6    0x46     0x18
+    __iar_c99_complex_float_subtract
+  .text                     6    0x5e      0x8
+  .text                     6    0x66      0x8
+  .text                     6    0x6e     0x2a
+    __iar_c99_complex_float_multiply
+  .text                     6    0x98     0x36
+    __iar_c99_complex_float_divide
+  .text                     6    0xce     0x2c
+    __iar_c99_complex_float_eq
+  .text                     6    0xfa     0x2e
+    __iar_c99_complex_float_ne
+  .text                     6   0x128     0x10
+    __iar_c99_ifloat_to_cfloat
+  .text                     6   0x138      0xc
+    __iar_c99_float_to_cfloat
+  .text                     6   0x144      0x6
+  .text                     6   0x14a      0xa
+    __iar_c99_cfloat_to_ifloat
+  .text                     6   0x154      0x2
+    __iar_c99_cfloat_to_float
+  .text                     6   0x156      0x4
+    __iar_c99_cfloat_to_cdouble
+  .text                     6   0x15a      0x2
+    __iar_c99_cfloat_to_clong_double
+  .text                     6   0x15c     0x40
+  .text                     6   0x19c      0x2
+    __iar_c99_complex_double_negate
+  .text                     6   0x19e      0xe
+    __iar_c99_complex_double_conj
+  .text                     6   0x1ac     0x38
+    __iar_c99_complex_double_add
+  .text                     6   0x1e4      0x6
+    __iar_c99_complex_double_subtract
+  .text                     6   0x1ea     0x80
+    __iar_c99_complex_double_multiply
+  .text                     6   0x26a      0x6
+    __iar_c99_complex_double_divide
+  .text                     6   0x270     0x38
+    __iar_c99_complex_double_eq
+  .text                     6   0x2a8     0x34
+    __iar_c99_complex_double_ne
+  .text                     6   0x2dc      0x4
+    __iar_c99_idouble_to_cdouble
+  .text                     6   0x2e0     0x1c
+    __iar_c99_double_to_cdouble
+  .text                     6   0x2fc      0x4
+  .text                     6   0x300      0x2
+    __iar_c99_cdouble_to_idouble
+  .text                     6   0x302      0x2
+    __iar_c99_cdouble_to_double
+  .text                     6   0x304      0x6
+    __iar_c99_cdouble_to_cfloat
+  .text                     6   0x30a      0x2
+    __iar_c99_cdouble_to_clong_double
+  .text                     6   0x30c      0x2
+    __iar_c99_complex_long_double_negate
+  .text                     6   0x30e     0x18
+  .text                     6   0x326     0x14
+  .text                     6   0x33a      0xe
+    __iar_c99_complex_long_double_conj
+  .text                     6   0x348     0x38
+    __iar_c99_complex_long_double_add
+  .text                     6   0x380      0x4
+    __iar_c99_complex_long_double_subtract
+  .text                     6   0x384     0x36
+  .text                     6   0x3ba     0x1a
+  .text                     6   0x3d4     0x80
+    __iar_c99_complex_long_double_multiply
+  .text                     6   0x454      0x4
+    __iar_c99_complex_long_double_divide
+  .text                     6   0x458     0xb6
+  .text                     6   0x50e      0x6
+  .text                     6   0x514     0x36
+    __iar_c99_complex_long_double_eq
+  .text                     6   0x54a      0x6
+  .text                     6   0x550     0x34
+    __iar_c99_complex_long_double_ne
+  .text                     6   0x584      0x8
+  .text                     6   0x58c      0x8
+  .text                     6   0x594      0x4
+    __iar_c99_ilong_double_to_clong_double
+  .text                     6   0x598     0x18
+  .text                     6   0x5b0      0x8
+  .text                     6   0x5b8     0x1c
+    __iar_c99_long_double_to_clong_double
+  .text                     6   0x5d4      0x8
+  .text                     6   0x5dc      0x2
+    __iar_c99_clong_double_to_ilong_double
+  .text                     6   0x5de      0xa
+  .text                     6   0x5e8      0x2
+    __iar_c99_clong_double_to_long_double
+  .text                     6   0x5ea      0x4
+    __iar_c99_clong_double_to_cfloat
+  .text                     6   0x5ee     0x3a
+  .text                     6   0x628      0x2
+    __iar_c99_clong_double_to_cdouble
+  .text                     6   0x62a     0x20
+  .text                     6     0x0    0x18a  cos_sin_accurate64.o
+    __iar_Sin_accurate64
+  .text                     6   0x18a      0x6
+  .text                     6   0x190      0x4
+  .text                     6   0x194      0x4
+  .text                     6   0x198      0x4
+  .text                     6   0x19c      0x4
+  .text                     6   0x1a0      0x4
+  .text                     6   0x1a4      0x4
+  .text                     6   0x1a8      0x4
+  .text                     6   0x1ac      0x4
+  .text                     6   0x1b0      0x4
+  .text                     6   0x1b4      0x4
+  .text                     6   0x1b8      0x4
+  .text                     6   0x1bc      0x4
+  .text                     6   0x1c0      0x4
+  .text                     6   0x1c4      0x4
+  .text                     6   0x1c8      0x4
+  .text                     6   0x1cc      0x4
+  .text                     6   0x1d0      0x4
+  .text                     6   0x1d4      0x4
+  .text                     6   0x1d8      0x4
+  .text                     6   0x1dc      0x4
+  .text                     6   0x1e0      0x4
+  .text                     6   0x1e4      0x4
+  .text                     6   0x1e8      0x4
+  .text                     6   0x1ec      0x4
+  .text                     6   0x1f0      0x4
+    __iar_cos_accurate
+    __iar_cos_accurate64
+    __iar_cos_accuratel
+  .text                     6   0x1f4      0x4
+    __iar_sin_accurate
+    __iar_sin_accurate64
+    __iar_sin_accuratel
+  .text                     6     0x0    0x3ac  cos_sin64.o
+    __iar_Sin64
+  .text                     6   0x3ac      0x4
+  .text                     6   0x3b0      0x4
+  .text                     6   0x3b4      0x4
+  .text                     6   0x3b8      0x4
+  .text                     6   0x3bc      0x4
+  .text                     6   0x3c0      0x4
+  .text                     6   0x3c4      0x4
+  .text                     6   0x3c8      0x4
+  .text                     6   0x3cc      0x4
+  .text                     6   0x3d0      0x4
+  .text                     6   0x3d4      0x4
+  .text                     6   0x3d8      0x4
+  .text                     6   0x3dc      0x4
+  .text                     6   0x3e0      0x4
+  .text                     6   0x3e4      0x4
+  .text                     6   0x3e8      0x4
+  .text                     6   0x3ec      0x4
+  .text                     6   0x3f0      0x4
+  .text                     6   0x3f4      0x4
+  .text                     6   0x3f8      0x4
+  .text                     6   0x3fc      0x4
+  .text                     6   0x400      0x4
+  .text                     6   0x404      0x4
+  .text                     6   0x408      0x4
+  .text                     6   0x40c      0x4
+  .text                     6   0x410      0x4
+  .text                     6   0x414      0x4
+  .text                     6   0x418      0x4
+  .text                     6   0x41c      0x4
+  .text                     6   0x420      0x4
+  .text                     6   0x424      0x4
+  .text                     6   0x428      0x4
+  .text                     6   0x42c      0x4
+  .text                     6   0x430      0x4
+  .text                     6   0x434      0x8
+  .text                     6   0x43c      0x4
+    __iar_cos64
+    __iar_cos_medium
+    __iar_cos_medium64
+    __iar_cos_mediuml
+    cos
+    cosl
+  .text                     6   0x440      0x4
+    __iar_sin64
+    __iar_sin_medium
+    __iar_sin_medium64
+    __iar_sin_mediuml
+    sin
+    sinl
+  .text                     6     0x0    0x1b0  cos_sin_small64.o
+    __iar_Sin_small64
+  .text                     6   0x1b0      0x8
+  .text                     6   0x1b8      0x8
+  .text                     6   0x1c0      0x4
+  .text                     6   0x1c4      0x4
+  .text                     6   0x1c8      0x4
+  .text                     6   0x1cc      0x4
+  .text                     6   0x1d0      0x4
+  .text                     6   0x1d4      0x4
+  .text                     6   0x1d8      0x4
+  .text                     6   0x1dc      0x4
+  .text                     6   0x1e0      0x4
+  .text                     6   0x1e4      0x4
+  .text                     6   0x1e8      0x4
+  .text                     6   0x1ec      0x4
+  .text                     6   0x1f0      0x4
+  .text                     6   0x1f4      0x4
+  .text                     6   0x1f8      0x4
+  .text                     6   0x1fc      0x4
+  .text                     6   0x200      0x4
+  .text                     6   0x204      0x4
+  .text                     6   0x208      0x4
+  .text                     6   0x20c      0x4
+  .text                     6   0x210      0x4
+  .text                     6   0x214      0x4
+  .text                     6   0x218      0x4
+  .text                     6   0x21c      0x4
+  .text                     6   0x220      0x4
+    __iar_cos_small
+    __iar_cos_small64
+    __iar_cos_smalll
+  .text                     6   0x224      0x4
+    __iar_sin_small
+    __iar_sin_small64
+    __iar_sin_smalll
+  .text                     6     0x0     0x4c  exp64.o
+    __iar_exp64
+    __iar_exp_medium
+    __iar_exp_medium64
+    __iar_exp_mediuml
+    exp
+    expl
+  .text                     6     0x0    0x1e4  exp_small64.o
+    __iar_exp_small
+    __iar_exp_small64
+    __iar_exp_smalll
+  .text                     6   0x1e4      0x8
+  .text                     6   0x1ec      0x8
+  .text                     6   0x1f4      0x4
+  .text                     6   0x1f8      0x4
+  .text                     6   0x1fc      0x4
+  .text                     6   0x200      0x4
+  .text                     6   0x204      0x4
+  .text                     6   0x208      0x4
+  .text                     6   0x20c      0x4
+  .text                     6   0x210      0x4
+  .text                     6   0x214      0x4
+  .text                     6   0x218      0x4
+  .text                     6   0x21c      0x4
+  .text                     6   0x220      0x4
+  .text                     6   0x224      0x4
+  .text                     6   0x228      0x4
+  .text                     6   0x22c      0x4
+  .text                     6   0x230      0x4
+  .text                     6   0x234      0x4
+  .text                     6   0x238      0x4
+  .text                     6   0x23c      0x8
+  .text                     6     0x0    0x280  logx64.o
+    __iar_Log64
+  .text                     6   0x280      0x8
+  .text                     6   0x288      0x4
+  .text                     6   0x28c      0x4
+  .text                     6   0x290      0x4
+  .text                     6   0x294      0x4
+  .text                     6   0x298      0x4
+  .text                     6   0x29c      0x4
+  .text                     6   0x2a0      0x4
+  .text                     6   0x2a4      0x4
+  .text                     6   0x2a8      0x4
+  .text                     6   0x2ac      0x4
+  .text                     6   0x2b0      0x4
+  .text                     6   0x2b4      0x4
+  .text                     6   0x2b8      0x4
+  .text                     6   0x2bc      0x4
+  .text                     6   0x2c0      0x4
+  .text                     6   0x2c4      0x4
+  .text                     6   0x2c8      0x4
+  .text                     6   0x2cc      0x4
+  .text                     6   0x2d0      0x4
+  .text                     6   0x2d4      0x4
+  .text                     6   0x2d8      0x4
+  .text                     6   0x2dc      0x4
+  .text                     6   0x2e0      0x4
+  .text                     6   0x2e4      0x4
+  .text                     6   0x2e8      0x4
+  .text                     6   0x2ec      0x4
+  .text                     6   0x2f0      0x4
+  .text                     6   0x2f4      0x4
+  .text                     6   0x2f8      0x4
+  .text                     6   0x2fc      0x4
+  .text                     6   0x300      0x4
+  .text                     6   0x304      0x4
+  .text                     6   0x308      0x4
+  .text                     6   0x30c      0x4
+  .text                     6   0x310      0x4
+  .text                     6   0x314      0x4
+  .text                     6   0x318      0x4
+    __iar_log10_64
+    __iar_log10_medium
+    __iar_log10_medium64
+    __iar_log10_mediuml
+    log10
+    log10l
+  .text                     6   0x31c      0x6
+    __iar_log2_64
+    __iar_log2_medium
+    __iar_log2_medium64
+    __iar_log2_mediuml
+    log2
+    log2l
+  .text                     6   0x322      0x4
+    __iar_log64
+    __iar_log_medium
+    __iar_log_medium64
+    __iar_log_mediuml
+    log
+    logl
+  .text                     6     0x0    0x1ac  logx_small64.o
+    __iar_Log_small64
+  .text                     6   0x1ac      0x8
+  .text                     6   0x1b4      0x4
+  .text                     6   0x1b8      0x4
+  .text                     6   0x1bc      0x4
+  .text                     6   0x1c0      0x4
+  .text                     6   0x1c4      0x4
+  .text                     6   0x1c8      0x4
+  .text                     6   0x1cc      0x4
+  .text                     6   0x1d0      0x4
+  .text                     6   0x1d4      0x4
+  .text                     6   0x1d8      0x4
+  .text                     6   0x1dc      0x4
+  .text                     6   0x1e0      0x4
+  .text                     6   0x1e4      0x4
+  .text                     6   0x1e8      0x4
+  .text                     6   0x1ec      0x4
+  .text                     6   0x1f0      0x4
+  .text                     6   0x1f4      0x4
+  .text                     6   0x1f8      0x4
+  .text                     6   0x1fc      0x4
+  .text                     6   0x200      0x4
+  .text                     6   0x204      0x4
+  .text                     6   0x208      0x4
+  .text                     6   0x20c      0x4
+  .text                     6   0x210      0x4
+  .text                     6   0x214      0x4
+  .text                     6   0x218      0x4
+  .text                     6   0x21c      0x4
+    __iar_log10_small
+    __iar_log10_small64
+    __iar_log10_smalll
+  .text                     6   0x220      0x6
+    __iar_log2_small
+    __iar_log2_small64
+    __iar_log2_smalll
+  .text                     6   0x226      0x4
+    __iar_log_small
+    __iar_log_small64
+    __iar_log_smalll
+  .rodata                   6     0x0    0x420  pow_accurate64.o
+    lnbias
+  .text                     7     0x0    0x8c8
+    __iar_Pow_accurate64
+  .text                     7   0x8c8      0x4
+  .text                     7   0x8cc      0x4
+  .text                     7   0x8d0      0x4
+  .text                     7   0x8d4      0x4
+  .text                     7   0x8d8      0x4
+  .text                     7   0x8dc      0x4
+  .text                     7   0x8e0      0x4
+  .text                     7   0x8e4      0x4
+  .text                     7   0x8e8      0x4
+  .text                     7   0x8ec      0x4
+  .text                     7   0x8f0      0x4
+  .text                     7   0x8f4      0x4
+  .text                     7   0x8f8      0x4
+  .text                     7   0x8fc      0x4
+  .text                     7   0x900      0x4
+  .text                     7   0x904      0x4
+  .text                     7   0x908      0x4
+  .text                     7   0x90c      0x4
+  .text                     7   0x910      0x4
+  .text                     7   0x914      0x4
+  .text                     7   0x918      0x4
+  .text                     7   0x91c      0x4
+  .text                     7   0x920      0x4
+  .text                     7   0x924      0x4
+  .text                     7   0x928      0x4
+  .text                     7   0x92c      0x4
+  .text                     7   0x930      0x4
+  .text                     7   0x934      0x4
+  .text                     7   0x938      0x4
+  .text                     7   0x93c      0x8
+  .text                     7   0x944      0x4
+  .text                     7   0x948      0x4
+  .text                     7   0x94c      0x4
+  .text                     7   0x950      0x8
+  .text                     7   0x958      0x8
+  .text                     7   0x960     0x18
+    __iar_pow_accurate
+    __iar_pow_accurate64
+    __iar_pow_accuratel
+  .text                     7   0x978     0x20
+    log2e
+  .rodata                   6     0x0    0x420  pow64.o
+    lnbias
+  .text                     7     0x0    0x654
+    __iar_Pow64
+  .text                     7   0x654      0x4
+  .text                     7   0x658      0x4
+  .text                     7   0x65c      0x4
+  .text                     7   0x660      0x4
+  .text                     7   0x664      0x4
+  .text                     7   0x668      0x4
+  .text                     7   0x66c      0x4
+  .text                     7   0x670      0x8
+  .text                     7   0x678      0x4
+  .text                     7   0x67c      0x4
+  .text                     7   0x680      0x4
+  .text                     7   0x684      0x4
+  .text                     7   0x688      0x4
+  .text                     7   0x68c      0x4
+  .text                     7   0x690      0x4
+  .text                     7   0x694      0x4
+  .text                     7   0x698      0x4
+  .text                     7   0x69c      0x4
+  .text                     7   0x6a0      0x4
+  .text                     7   0x6a4      0x4
+  .text                     7   0x6a8      0x4
+  .text                     7   0x6ac      0x4
+  .text                     7   0x6b0      0x4
+  .text                     7   0x6b4      0x4
+  .text                     7   0x6b8      0x4
+  .text                     7   0x6bc      0x4
+  .text                     7   0x6c0      0x4
+  .text                     7   0x6c4      0x4
+  .text                     7   0x6c8      0x4
+  .text                     7   0x6cc      0x8
+  .text                     7   0x6d4      0x8
+  .text                     7   0x6dc      0x8
+  .text                     7   0x6e4      0x8
+  .text                     7   0x6ec     0x14
+    __iar_pow64
+    __iar_pow_medium
+    __iar_pow_medium64
+    __iar_pow_mediuml
+    pow
+    powl
+  .text                     6     0x0    0x544  pow_small64.o
+    __iar_pow_small
+    __iar_pow_small64
+    __iar_pow_smalll
+  .text                     6     0x0    0x1e8  tan_accurate64.o
+    __iar_tan_accurate
+    __iar_tan_accurate64
+    __iar_tan_accuratel
+  .text                     6   0x1e8      0xc
+  .text                     6   0x1f4      0x4
+  .text                     6   0x1f8      0x4
+  .text                     6   0x1fc      0x4
+  .text                     6   0x200      0x4
+  .text                     6   0x204      0x8
+  .text                     6   0x20c      0x4
+  .text                     6   0x210      0x4
+  .text                     6   0x214      0x4
+  .text                     6   0x218      0x4
+  .text                     6   0x21c      0x4
+  .text                     6   0x220      0x4
+  .text                     6   0x224      0x4
+  .text                     6   0x228      0x4
+  .text                     6   0x22c      0x4
+  .text                     6   0x230      0x4
+  .text                     6   0x234      0x4
+  .text                     6   0x238      0x4
+  .text                     6   0x23c      0x4
+  .text                     6     0x0    0x348  tan64.o
+    __iar_tan64
+    __iar_tan_medium
+    __iar_tan_medium64
+    __iar_tan_mediuml
+    tan
+    tanl
+  .text                     6   0x348      0x8
+  .text                     6   0x350      0x4
+  .text                     6   0x354      0x4
+  .text                     6   0x358      0x4
+  .text                     6   0x35c      0x4
+  .text                     6   0x360      0x4
+  .text                     6   0x364      0x4
+  .text                     6   0x368      0x4
+  .text                     6   0x36c      0x4
+  .text                     6   0x370      0x4
+  .text                     6   0x374      0x4
+  .text                     6   0x378      0x4
+  .text                     6   0x37c      0x4
+  .text                     6   0x380      0x4
+  .text                     6   0x384      0x4
+  .text                     6   0x388      0x4
+  .text                     6   0x38c      0x4
+  .text                     6   0x390      0x4
+  .text                     6   0x394      0x4
+  .text                     6   0x398      0x4
+  .text                     6   0x39c      0x4
+  .text                     6   0x3a0      0x4
+  .text                     6   0x3a4      0x4
+  .text                     6   0x3a8      0x4
+  .text                     6   0x3ac      0x4
+  .text                     6     0x0    0x1c8  tan_small64.o
+    __iar_tan_small
+    __iar_tan_small64
+    __iar_tan_smalll
+  .text                     6     0x0     0xc8  acos64.o
+    __iar_acos64
+    acos
+    acosl
+  .text                     6     0x0     0xbc  acosh64.o
+    __iar_acosh64
+    acosh
+    acoshl
+  .text                     6    0xbc      0x8
+  .text                     6    0xc4      0x4
+  .text                     6    0xc8      0x4
+  .text                     6    0xcc      0x4
+  .text                     6    0xd0      0x4
+  .text                     6    0xd4      0x4
+  .text                     6     0x0     0xec  asin64.o
+    __iar_asin64
+    asin
+    asinl
+  .text                     6     0x0     0xe4  asinh64.o
+    __iar_asinh64
+    asinh
+    asinhl
+  .text                     6     0x0     0xa8  atan64.o
+    __iar_atan64
+    atan
+    atanl
+  .text                     6     0x0    0x13c  atan2_64.o
+    __iar_atan2_64
+    atan2
+    atan2l
+  .text                     6     0x0    0x100  atanh64.o
+    __iar_atanh64
+    atanh
+    atanhl
+  .text                     6     0x0      0x4  cabs64.o
+    __iar_cabs64
+    cabs
+    cabsl
+  .text                     6     0x0    0x33c  cacos64.o
+    __iar_cacos64
+    cacos
+    cacosl
+  .text                     6     0x0    0x398  cacosh64.o
+    __iar_cacosh64
+    cacosh
+    cacoshl
+  .text                     6     0x0     0x14  carg64.o
+    __iar_carg64
+    carg
+    cargl
+  .text                     6     0x0     0x6c  casin64.o
+    __iar_casin64
+    casin
+    casinl
+  .text                     6     0x0    0x390  casinh64.o
+    __iar_casinh64
+    casinh
+    casinhl
+  .text                     6     0x0     0x6c  catan64.o
+    __iar_catan64
+    catan
+    catanl
+  .text                     6     0x0    0x3a0  catanh64.o
+    __iar_catanh64
+    catanh
+    catanhl
+  .text                     6     0x0    0x258  cbrt64.o
+    __iar_cbrt64
+    cbrt
+    cbrtl
+  .text                     6   0x258      0x8
+  .text                     6   0x260      0x4
+  .text                     6   0x264      0x4
+  .text                     6   0x268      0x4
+  .text                     6   0x26c      0x4
+  .text                     6   0x270      0x4
+  .text                     6   0x274      0x4
+  .text                     6   0x278      0x4
+  .text                     6   0x27c      0x4
+  .text                     6   0x280      0x4
+  .text                     6   0x284      0x4
+  .text                     6   0x288      0x4
+  .text                     6   0x28c      0x8
+  .text                     6   0x294      0x4
+  .text                     6   0x298      0x8
+  .text                     6     0x0     0x44  ccos64.o
+    __iar_ccos64
+    ccos
+    ccosl
+  .text                     6     0x0    0x214  ccosh64.o
+    __iar_ccosh64
+    ccosh
+    ccoshl
+  .text                     6     0x0    0x1c8  cexp64.o
+    __iar_cexp64
+    cexp
+    cexpl
+  .text                     6     0x0    0x310  clog64.o
+    __iar_clog64
+    clog
+    clogl
+  .text                     6     0x0     0x54  clog10_64.o
+    __iar_clog10_64
+    clog10
+    clog10l
+  .text                     6     0x0     0x28  conj64.o
+    __iar_conj64
+    conj
+    conjl
+  .text                     6     0x0      0xc  cosh64.o
+    __iar_cosh64
+    cosh
+    coshl
+  .text                     6     0x0     0xd2  cpow64.o
+    __iar_cpow64
+    cpow
+    cpowl
+  .text                     6    0xd2      0x8
+  .rodata                   7     0x0     0x10
+  .text                     6     0x0     0x54  cproj64.o
+    __iar_cproj64
+    cproj
+    cprojl
+  .text                     6    0x54      0x8
+  .text                     6    0x5c      0x8
+  .text                     6    0x64      0x4
+  .text                     6     0x0     0x6c  csin64.o
+    __iar_csin64
+    csin
+    csinl
+  .text                     6     0x0    0x1b4  csinh64.o
+    __iar_csinh64
+    csinh
+    csinhl
+  .text                     6     0x0    0x1b8  csqrt64.o
+    __iar_csqrt64
+    csqrt
+    csqrtl
+  .text                     6   0x1b8      0xc
+  .text                     6   0x1c4      0x8
+  .text                     6   0x1cc      0x8
+  .text                     6   0x1d4      0x4
+  .text                     6   0x1d8      0x8
+  .text                     6     0x0     0x6c  ctan64.o
+    __iar_ctan64
+    ctan
+    ctanl
+  .text                     6     0x0    0x1b8  ctanh64.o
+    __iar_ctanh64
+    ctanh
+    ctanhl
+  .text                     6     0x0    0x304  erf64.o
+    __iar_erf64
+    erf
+    erfl
+  .text                     6   0x304      0x8
+  .text                     6   0x30c      0x4
+  .text                     6   0x310      0x4
+  .text                     6   0x314      0x4
+  .text                     6   0x318      0x4
+  .text                     6   0x31c      0x4
+  .text                     6   0x320      0x4
+  .text                     6   0x324      0x4
+  .text                     6   0x328      0x4
+  .text                     6   0x32c      0x4
+  .text                     6   0x330      0x4
+  .text                     6   0x334      0x4
+  .text                     6   0x338      0x4
+  .text                     6   0x33c      0x4
+  .text                     6   0x340      0x4
+  .text                     6   0x344      0x4
+  .text                     6   0x348      0x4
+  .text                     6   0x34c      0x4
+  .text                     6   0x350      0x4
+  .text                     6   0x354      0x4
+  .text                     6   0x358      0x4
+  .text                     6   0x35c      0x4
+  .text                     6   0x360      0x4
+  .text                     6   0x364      0x4
+  .text                     6   0x368      0x4
+  .text                     6   0x36c      0x4
+  .text                     6   0x370      0x4
+  .text                     6   0x374      0x4
+  .text                     6   0x378      0x4
+  .text                     6   0x37c      0x4
+  .text                     6   0x380      0x4
+  .text                     6   0x384      0x4
+  .text                     6   0x388      0x8
+  .text                     6   0x390      0x8
+  .text                     6   0x398      0x4
+  .text                     6   0x39c      0x4
+  .rodata                   7     0x0     0x70
+    s1
+    c1
+  .text                     6     0x0    0x274  erfc64.o
+    __iar_erfc64
+    erfc
+    erfcl
+  .text                     6   0x274      0x8
+  .text                     6   0x27c      0x8
+  .text                     6   0x284      0x8
+  .text                     6   0x28c      0x4
+  .text                     6   0x290      0x4
+  .text                     6   0x294      0x4
+  .text                     6   0x298      0x4
+  .text                     6   0x29c      0x4
+  .text                     6   0x2a0      0x4
+  .text                     6   0x2a4      0x4
+  .text                     6   0x2a8      0x4
+  .text                     6   0x2ac      0x4
+  .text                     6   0x2b0      0x4
+  .text                     6   0x2b4      0x4
+  .text                     6   0x2b8      0x4
+  .text                     6   0x2bc      0x4
+  .text                     6   0x2c0      0x4
+  .text                     6   0x2c4      0x4
+  .text                     6   0x2c8      0x4
+  .rodata                   7     0x0    0x4f0
+    approx0
+    s00
+    c00
+    s01
+    c01
+  .text                     6     0x0     0xd0  exp2_64.o
+    __iar_exp2_64
+    exp2
+    exp2l
+  .text                     6    0xd0      0x8
+  .text                     6    0xd8      0x8
+  .text                     6    0xe0      0x4
+  .text                     6    0xe4      0x4
+  .text                     6    0xe8      0x4
+  .text                     6    0xec      0x4
+  .text                     6    0xf0      0x4
+  .text                     6    0xf4      0x4
+  .text                     6    0xf8      0x4
+  .text                     6    0xfc      0x4
+  .text                     6     0x0     0xd8  expm1_64.o
+    Expm1_approx
+  .text                     6    0xd8     0xbc
+    __iar_expm1_64
+    expm1
+    expm1l
+  .text                     6   0x194      0x4
+  .text                     6   0x198      0x4
+  .text                     6   0x19c      0x4
+  .text                     6   0x1a0      0x4
+  .text                     6   0x1a4      0x4
+  .text                     6   0x1a8      0x4
+  .text                     6   0x1ac      0x4
+  .text                     6   0x1b0      0x4
+  .text                     6   0x1b4      0x4
+  .text                     6   0x1b8      0x4
+  .text                     6   0x1bc      0x8
+  .text                     6   0x1c4      0x4
+  .text                     6   0x1c8      0x4
+  .text                     6   0x1cc      0x4
+  .text                     6   0x1d0      0x4
+  .text                     6   0x1d4      0x4
+  .text                     6   0x1d8      0x4
+  .text                     6   0x1dc      0x4
+  .text                     6   0x1e0      0x4
+  .text                     6   0x1e4      0x4
+  .text                     6   0x1e8      0x8
+  .text                     6   0x1f0      0x4
+  .text                     6   0x1f4      0x4
+  .text                     6   0x1f8      0x4
+  .text                     6   0x1fc      0x4
+  .text                     6   0x200      0x4
+  .text                     6   0x204      0x4
+  .text                     6   0x208      0x4
+  .text                     6   0x20c      0x4
+  .text                     6   0x210      0x4
+  .text                     6     0x0     0x68  fdim64.o
+    __iar_fdim64
+    fdim
+    fdiml
+  .text                     6     0x0    0x3c4  fma64.o
+    __iar_fma64
+    fma
+    fmal
+  .text                     6   0x3c4      0xc
+  .text                     6   0x3d0      0x4
+  .text                     6   0x3d4      0x4
+  .text                     6   0x3d8      0x4
+  .text                     6   0x3dc      0x4
+  .text                     6   0x3e0      0x4
+  .text                     6   0x3e4      0x8
+  .text                     6   0x3ec      0x8
+  .text                     6   0x3f4      0x8
+  .text                     6     0x0     0x8c  hypot64.o
+    __iar_hypot64
+    hypot
+    hypotl
+  .rodata                   6     0x0     0x60  lgamma64.o
+    s10
+  .rodata                   7     0x0     0x28
+    sr00
+  .rodata                   8     0x0     0x28
+    sr01
+  .rodata                   9     0x0     0xc8
+    sr02
+  .rodata                  10     0x0     0x28
+    sr03
+  .rodata                  11     0x0     0xb0
+    sr04
+  .rodata                  12     0x0     0x68
+    sr05
+  .rodata                  13     0x0     0xc8
+    sr06
+  .rodata                  14     0x0     0xd8
+    sr07
+  .rodata                  15     0x0     0xb8
+    sr08
+  .rodata                  16     0x0    0x100
+    sr09
+  .rodata                  17     0x0    0x150
+    sr10
+  .rodata                  18     0x0    0x1b8
+    rootapprox
+  .rodata                  19     0x0     0x20
+    approx
+  .text                    20     0x0     0xb8
+    lgamma_big64
+  .text                    20    0xb8    0x280
+    __iar_lgamma64
+    lgamma
+    lgammal
+  .text                    20   0x338      0x8
+  .text                    20   0x340      0x4
+  .text                    20   0x344      0x4
+  .text                    20   0x348      0x4
+  .text                    20   0x34c      0x4
+  .text                    20   0x350      0x4
+  .text                    20   0x354      0x4
+  .text                    20   0x358      0x4
+  .text                    20   0x35c      0x4
+  .text                    20   0x360      0x4
+  .text                    20   0x364      0x4
+  .text                    20   0x368      0x4
+  .text                    20   0x36c      0x4
+  .text                    20   0x370      0x4
+  .text                    20   0x374      0x4
+  .text                    20   0x378      0x4
+  .text                    20   0x37c      0x4
+  .text                    20   0x380      0x4
+  .text                    20   0x384      0x4
+  .text                    20   0x388      0x4
+  .text                    20   0x38c      0x4
+  .text                    20   0x390      0x4
+  .text                    20   0x394      0x4
+  .text                    20   0x398      0x4
+  .text                    20   0x39c      0x4
+  .text                    20   0x3a0      0x4
+  .text                    20   0x3a4      0x4
+  .text                    20   0x3a8      0x4
+  .text                    20   0x3ac      0x4
+  .text                    20   0x3b0      0x8
+  .text                    20   0x3b8     0x18
+    c10
+  .text                     6     0x0     0xd6  log1p64.o
+    __iar_log1p64
+    log1p
+    log1pl
+  .text                     6    0xd6      0x6
+  .text                     6    0xdc      0x4
+  .text                     6    0xe0      0x4
+  .text                     6    0xe4      0x4
+  .text                     6    0xe8      0x4
+  .text                     6     0x0      0xa  nan64.o
+    __iar_nan64
+    nan
+    nanl
+  .text                     6     0x0     0x40  norm64.o
+    __iar_norm64
+    norm
+    norml
+  .text                     6     0x0     0x14  remainder64.o
+    __iar_remainder64
+    remainder
+    remainderl
+  .text                     6     0x0    0x23c  remquo64.o
+    _Remquo_subtract
+  .text                     6   0x23c      0x8
+  .text                     6   0x244    0x2b4
+    __iar_remquo64
+    remquo
+    remquol
+  .text                     6   0x4f8      0x4
+  .text                     6   0x4fc      0x8
+  .text                     6   0x504      0x4
+  .text                     6   0x508      0x4
+  .text                     6     0x0      0xc  sinh64.o
+    __iar_sinh64
+    sinh
+    sinhl
+  .text                     6     0x0     0x94  tanh64.o
+    approx
+  .text                     6    0x94    0x148
+    __iar_tanh64
+    tanh
+    tanhl
+  .text                     6   0x1dc      0x4
+  .text                     6   0x1e0      0x4
+  .text                     6   0x1e4      0x4
+  .text                     6   0x1e8      0x4
+  .text                     6   0x1ec      0x4
+  .text                     6   0x1f0      0x4
+  .text                     6   0x1f4      0x4
+  .text                     6   0x1f8      0x4
+  .text                     6   0x1fc      0x4
+  .text                     6   0x200      0x4
+  .text                     6   0x204      0x8
+  .text                     6   0x20c      0x4
+  .text                     6   0x210      0x4
+  .text                     6   0x214      0x4
+  .text                     6   0x218      0x4
+  .text                     6   0x21c      0x4
+  .text                     6   0x220      0x4
+  .text                     6   0x224      0x4
+  .text                     6     0x0    0x370  tgamma64.o
+    __iar_tgamma64
+    tgamma
+    tgammal
+  .text                     6   0x370      0x8
+  .text                     6   0x378      0x4
+  .text                     6   0x37c      0x4
+  .text                     6   0x380      0x4
+  .text                     6   0x384      0x4
+  .text                     6   0x388      0x4
+  .text                     6   0x38c      0x4
+  .text                     6   0x390      0x4
+  .text                     6   0x394      0x4
+  .text                     6     0x0     0xa4  xatanf.o
+    __iar_xatanf
+  .text                     7     0x0     0x16  xfail_s.o
+    set_constraint_handler_s
+  .text                     7    0x16      0x2
+    ignore_handler_s
+  .text                     6     0x0     0x18  frexp.o
+    frexp
+    __iar_frexp64
+    frexpl
+  .text                     6     0x0     0x14  ldexp.o
+    __iar_vfp_ldexp
+    __iar_vfp___iar_ldexp64
+    __iar_vfp_scalbn
+    __iar_vfp___iar_scalbn64
+    __iar_vfp_scalbln
+    __iar_vfp___iar_scalbln64
+    __iar_vfp_ldexpl
+    __iar_vfp_scalbnl
+    __iar_vfp_scalblnl
+  .text                     6     0x0     0x10  logf.o
+    __iar_softfp_logf
+    __iar_softfp___iar_log_mediumf
+  .text                     6    0x10     0xc0
+    logf
+    __iar_log32
+    __iar_log_mediumf
+    __iar_log_medium32
+    __iar_safe_logf
+    __iar_logf_NoFini
+    __iar_logf_ZerNeg
+  .rodata                   7     0x0     0x44
+    __iar_logf_cTab
+  .text                     6     0x0     0x46  U64ToDbl.o
+    __aeabi_ul2d
+  .text                     6     0x0     0x68  DblToFlt.o
+    __aeabi_d2f
+  .text                     6     0x0     0x20  DblCmpEq.o
+    __aeabi_cdcmpeq
+  .text                     6     0x0    0x1c4  iar_Stoflt.o
+    __iar_Stoflt
+  .text                     6     0x0    0x120  iar_Stopfx.o
+    __iar_Stopfx
+  .text                     6     0x0    0x1e0  iar_Stoxflt.o
+    __iar_Stoxflt
+  .text                     6   0x1e0      0x4
+  .text                     6   0x1e4     0x18
+    __iar_Stoxflt::digits
+  .text                     6   0x1fc     0x18
+    __iar_Stoxflt::vals
+  .text                     6     0x0    0x1d8  iar_WStoflt.o
+    __iar_WStoflt
+  .text                     6     0x0    0x10c  iar_WStopfx.o
+    __iar_WStopfx
+  .text                     6     0x0    0x200  iar_WStoxfl.o
+    __iar_WStoxflt
+  .rodata                   7     0x0     0xb4
+    __iar_WStoxflt::vals
+    __iar_WStoxflt::digits
+  .rodata                   6     0x0    0x600  iar_Quad_accurate64.o
+    quad_c
+    quad_b
+  .text                     7     0x0     0x4c
+    get_acsize
+  .text                     7    0x4c    0x480
+    __iar_Quad_accurate64
+  .text                     7   0x4cc      0x4
+  .text                     7   0x4d0      0x4
+  .text                     7   0x4d4      0x4
+  .text                     7   0x4d8      0x4
+  .text                     7   0x4dc      0x4
+  .text                     7   0x4e0      0x4
+  .text                     7   0x4e4      0x4
+  .text                     7   0x4e8      0x8
+  .text                     7   0x4f0      0x4
+  .text                     7   0x4f4      0x4
+  .text                     7   0x4f8      0x4
+  .text                     7   0x4fc      0x4
+  .text                     7   0x500      0x4
+  .text                     7   0x504      0x4
+  .text                     7   0x508      0x4
+  .text                     7   0x50c      0x4
+  .text                     7   0x510      0x4
+  .text                     7   0x514      0x4
+  .text                     7   0x518      0x4
+  .text                     7   0x51c      0x4
+  .text                     7   0x520      0x4
+  .text                     6     0x0     0x10  modf.o
+    modf
+    __iar_modf64
+    modfl
+  .text                     6    0x10     0x18
+    __iar_vfp_modf
+    __iar_vfp___iar_modf64
+    __iar_vfp_modfl
+  .text                     6    0x28     0xa8
+    __iar_modf
+    __iar_modfl
+  .text                     6     0x0     0xd8  iar_Precision64.o
+    __iar_Xp_getw64
+  .text                     6    0xd8    0x298
+    __iar_Xp_setw64
+  .text                     6   0x370      0x8
+  .text                     6   0x378    0x65c
+    __iar_Xp_addh64
+  .text                     6   0x9d4    0x248
+    __iar_Xp_mulh64
+  .text                     6   0xc1c      0x8
+  .text                     6   0xc24     0x50
+    __iar_Xp_setn64
+  .text                     6   0xc74      0x4
+  .text                     6   0xc78      0x4
+  .text                     6   0xc7c      0x4
+  .text                     6   0xc80      0x8
+  .text                     6   0xc88      0x8
+  .text                     6   0xc90     0x14
+    __iar_Xp_movx64
+  .text                     6   0xca4     0x3a
+    __iar_Xp_addx64
+  .text                     6   0xcde     0x3e
+    __iar_Xp_subx64
+  .text                     6   0xd1c     0x38
+    __iar_Xp_ldexpx64
+  .text                     6   0xd54     0xac
+    __iar_Xp_mulx64
+  .text                     6   0xe00    0x104
+    __iar_Xp_invx64
+  .text                     6   0xf04    0x10c
+    __iar_Xp_sqrtx64
+  .text                     6  0x1010      0x4
+  .text                     6  0x1014      0x4
+  .text                     6  0x1018      0x4
+  .text                     6  0x101c      0x4
+  .text                     6  0x1020      0x4
+  .text                     6  0x1024      0x4
+  .rodata                   6     0x0     0x40  iar_Atan64.o
+    a
+  .text                     7     0x0    0x1d0
+    __iar_Atan64
+  .text                     6     0x0     0x9a  iar_Cmulcc64.o
+    __iar_Cmulcc64
+  .text                     6     0x0     0x48  iar_Cmulcr64.o
+    __iar_Cmulcr64
+  .text                     6     0x0    0x31c  iar_Hypot64.o
+    __iar_Hypot64
+  .text                     6   0x31c      0xc
+  .text                     6   0x328      0x4
+  .text                     6   0x32c      0x4
+  .text                     6   0x330      0x4
+  .text                     6   0x334      0x4
+  .text                     6   0x338      0x8
+  .text                     6   0x340      0x4
+  .text                     6   0x344      0x4
+  .text                     6   0x348      0x4
+  .text                     6   0x34c      0x4
+  .text                     6   0x350      0x4
+  .text                     6   0x354      0x4
+  .text                     6   0x358      0x4
+  .text                     6     0x0     0x3c  iar_Poly64.o
+    __iar_Poly64
+  .rodata                   6     0x0    0x110  iar_Tgamma64.o
+    s
+    c
+    approx0
+  .text                     7     0x0    0x2c0
+    __iar_Tgamma64
+  .text                     6     0x2      0x4  cexit.o
+    __cexit_call_dtors
+  .text                     6     0x6      0x4
+    __cexit_closeall
+  .text                     6     0xa      0x4
+    __cexit_clearlocks
+  .text                     6     0x0     0x38  btowc.o
+    btowc
+  .text                     6    0x38      0x8
+  .text                     6     0x0      0x6  iswdigit.o
+    iswdigit
+  .text                     6     0x0      0x6  iswalnum.o
+    iswalnum
+  .text                     6     0x0      0x6  iswspace.o
+    iswspace
+  .text                     6     0x0      0x8  iswxdigit.o
+    iswxdigit
+  .text                     6     0x0     0x14  wmemchr.o
+    __iar_Wmemchr
+  .text                     6    0x14     0x14
+    wmemchr
+  .text                     6     0x0     0x14  fmod.o
+    __iar_vfp_fmod
+    __iar_vfp___iar_fmod64
+    __iar_vfp_fmodl
+  .text                     6    0x14    0x1a8
+    fmod
+    __iar_fmod64
+    fmodl
+  .text                     6     0x0      0x4  xlocale_c.o
+    _LocaleC_islower
+  .text                     6     0x4      0x2
+    _LocaleC_isupper
+  .text                     6     0x6      0xc
+    _LocaleC_isalpha
+  .text                     6    0x12      0xa
+  .text                     6    0x1c     0x10
+    _LocaleC_iscntrl
+  .text                     6    0x2c     0x22
+    _LocaleC_ispunct
+  .text                     6    0x4e     0x14
+    _LocaleC_isspace
+  .text                     6    0x62      0xc
+    _LocaleC_tolower
+  .text                     6    0x6e      0xc
+    _LocaleC_toupper
+  .text                     6    0x7a     0x24
+    CacheMore
+  .text                     6    0x9e     0x32
+    _gLocale_mblenInt
+  .text                     6    0xd0     0x48
+    _gLocale_mbtowcInt
+  .text                     6   0x118      0x4
+    _gLocale_wctombInt
+  .text                     6   0x11c      0x4
+    _gLocale_mblen
+  .text                     6   0x120      0xc
+    _gLocale_mbtowc
+  .text                     6   0x12c      0x4
+    _gLocale_wctomb
+  .text                     6   0x130      0x4
+    __iar_localeC_Tinfo
+  .text                     6   0x134      0x4
+    localeconv
+  .text                     6   0x138      0x4
+  .text                     6   0x13c      0x4
+  .rodata                   7     0x0     0x58
+    days
+  .rodata                   8     0x0     0x30
+    fmts
+  .rodata                   9     0x0     0x88
+    mons
+  .rodata                  10     0x0     0x4c
+    _LocaleC_Tinfo
+  .rodata                  11     0x0      0x2
+  .rodata                  11     0x2      0x2
+  .rodata                  11     0x4      0x4
+    alt_digits
+  .rodata                  11     0x8      0x8
+    am_pm
+  .rodata                  11    0x10      0x1
+    era
+  .data                    12     0x0     0x38
+    _Locale_lconv
+  .data                     6     0x0    0x100  isw_getw.o
+    masks
+  .text                     7     0x0     0x10
+    __iar_getw
+  .text                     7    0x10     0x18
+    __iar_isw
+  .text                     7    0x28      0x4
+  .iar.locale_encoding      6     0x0     0x18  xencoding_8859_1.o
+    _Encoding_8859_1_name
+  .text                     7     0x0     0x12
+    _Encoding_8859_1_Wctomb
+  .text                     7    0x12      0x8
+    _Encoding_8859_1_Mbtowc
+  .text                     7    0x1a      0x2
+    _Encoding_8859_1_Mbrlen
+  .text                     7    0x1c      0xa
+  .rodata                  10     0x0      0xc
+  .rodata                  10     0xc      0xc
+  .rodata                  10    0x18      0x8

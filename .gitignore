@@ -40,3 +40,7 @@
 *.__i
 *._ia
 examples
+*.linf
+*.browse
+*.pbd
+eMD_ICM20648_20948_v1_3/emd-ICM20648-20948-stm32f4xx-1.3.0.rc1/emd-ICM20648-20948-stm32f4xx-1.3.0.rc1/embedded-motion-driver/EWARM/Debug/Obj/STM32F4_eMD-VDM.pbw
