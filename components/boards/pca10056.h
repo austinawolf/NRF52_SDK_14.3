@@ -59,6 +59,14 @@ extern "C" {
 
 #define LEDS_INV_MASK  LEDS_MASK
 
+#define TP1 NRF_GPIO_PIN_MAP(0,8)
+#define TP2 NRF_GPIO_PIN_MAP(1,6)
+#define TP3 NRF_GPIO_PIN_MAP(0,9)
+#define TP4 NRF_GPIO_PIN_MAP(0,10)
+
+#define TPS_NUMBER 4
+#define TPS_LIST { TP1, TP2, TP3, TP4 }
+
 #define BSP_LED_0      13
 #define BSP_LED_1      14
 #define BSP_LED_2      15

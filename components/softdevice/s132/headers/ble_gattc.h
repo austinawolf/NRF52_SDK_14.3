@@ -177,7 +177,7 @@ typedef struct
 typedef struct
 {
   uint8_t        write_op;             /**< Write Operation to be performed, see @ref BLE_GATT_WRITE_OPS. */
-  uint8_t        flags;                /**< Flags, see @ref BLE_GATT_EXEC_WRITE_FLAGS. */
+  uint8_t        flags;                /**< Flags, see @ref handl. */
   uint16_t       handle;               /**< Handle to the attribute to be written. */
   uint16_t       offset;               /**< Offset in bytes. @note For WRITE_CMD and WRITE_REQ, offset must be 0. */
   uint16_t       len;                  /**< Length of data in bytes. */

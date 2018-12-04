@@ -946,7 +946,7 @@ int main(void)
     APP_ERROR_CHECK(err_code);
 
 	//battery_level_timers_init();
-	buttons_leds_init(&erase_bonds);
+	//buttons_leds_init(&erase_bonds);
 
 	//ble init
     ble_stack_init();
@@ -972,7 +972,6 @@ int main(void)
 	if (err_code) {
 		NRF_LOG_ERROR("imu_init() %d", err_code);
 	}
-	
 	nrf_pwr_mgmt_init();
 	
     // Start execution.

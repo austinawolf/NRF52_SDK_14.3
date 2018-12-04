@@ -8,7 +8,7 @@
 //motion config
 #define RUN_CAL 0
 #define SENSOR_NUM 1
-#define MOTION_SAMPLE_RATE_HZ _1_HZ
+#define MOTION_SAMPLE_RATE_HZ _100_HZ
 #define COMPASS_SAMPLE_RATE_HZ _1_HZ
 #define MPU_INTERAL_RATE 100
 #define INV_QUAT_SAMPLE_RATE_uS 10000

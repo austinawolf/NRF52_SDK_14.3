@@ -2835,7 +2835,7 @@
 // <i> Selected pin will be set when CPU is in sleep mode.
 //==========================================================
 #ifndef NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED
-#define NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED 0
+#define NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED 1
 #endif
 // <o> NRF_PWR_MGMT_SLEEP_DEBUG_PIN  - Pin number
  
@@ -2874,7 +2874,7 @@
 // <4294967295=> Not connected 
 
 #ifndef NRF_PWR_MGMT_SLEEP_DEBUG_PIN
-#define NRF_PWR_MGMT_SLEEP_DEBUG_PIN 31
+#define NRF_PWR_MGMT_SLEEP_DEBUG_PIN 13
 #endif
 
 // </e>
@@ -2885,7 +2885,7 @@
 // <i> Module will trace percentage of CPU usage in one second intervals.
 
 #ifndef NRF_PWR_MGMT_CONFIG_CPU_USAGE_MONITOR_ENABLED
-#define NRF_PWR_MGMT_CONFIG_CPU_USAGE_MONITOR_ENABLED 0
+#define NRF_PWR_MGMT_CONFIG_CPU_USAGE_MONITOR_ENABLED 1
 #endif
 
 // <e> NRF_PWR_MGMT_CONFIG_STANDBY_TIMEOUT_ENABLED - Enable standby timeout.
@@ -2913,7 +2913,7 @@
  
 
 #ifndef NRF_PWR_MGMT_CONFIG_AUTO_SHUTDOWN_RETRY
-#define NRF_PWR_MGMT_CONFIG_AUTO_SHUTDOWN_RETRY 0
+#define NRF_PWR_MGMT_CONFIG_AUTO_SHUTDOWN_RETRY 1
 #endif
 
 // <q> NRF_PWR_MGMT_CONFIG_USE_SCHEDULER  - Module will use @ref app_scheduler.
@@ -3294,7 +3294,7 @@
 // <e> NRF_MPU_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef NRF_MPU_CONFIG_LOG_ENABLED
-#define NRF_MPU_CONFIG_LOG_ENABLED 0
+#define NRF_MPU_CONFIG_LOG_ENABLED 1
 #endif
 // <o> NRF_MPU_CONFIG_LOG_LEVEL  - Default Severity level
  

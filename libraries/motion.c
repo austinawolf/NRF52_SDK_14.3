@@ -474,7 +474,6 @@ void mpu_self_test(void) {
 
 static void motion_imu_cal_cb(void * p_context) {
 	
-	
 	MotionSample * motion_sample;
 	motion_sample = p_context;
 	
@@ -636,7 +635,8 @@ static uint8_t motion_get_sample(MotionSample * motion_sample) {
 
 void motion_sample(void * p_context) {
 	NRF_LOG_DEBUG("Motion Timeout Handler");
-	
+	nrf_gpio_pin_clear(NRF_PWR_MGMT_SLEEP_DEBUG_PIN);
+
 	static MotionSample motion_sample;
 	memset(&motion_sample,0,sizeof(MotionSample));
 	
@@ -650,6 +650,7 @@ void motion_sample(void * p_context) {
 
 void motion_sample_scheduler_cb(void * p_context, uint16_t len) {
 	NRF_LOG_DEBUG("Motion Schedule Handler");
+	nrf_gpio_pin_clear(NRF_PWR_MGMT_SLEEP_DEBUG_PIN);
 	
 	motion_s.compass_ready = 1;
 	
