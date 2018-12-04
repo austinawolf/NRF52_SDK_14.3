@@ -33,8 +33,6 @@ Unused fragments:
     dmp_set_batchmode_params_20648
   .text                    30   0x460     0x44
     dmp_set_compass_cal_params_20648
-  .text                    30   0x4a4     0xdc
-    dmp_set_compass_matrix_20648
   .text                    30   0x5ca      0x4
     dmp_set_pedometer_rate_20648
   .text                    30   0x5ce     0x28
@@ -54,44 +52,43 @@ Unused fragments:
   .text                     8    0xc6      0xa
     InvIntHandler
   .rodata                  17     0x0      0xc  inv_mems_base_control.o
-  .text                    19   0x5a8    0x2a2
+  .text                    19   0x72e    0x2a2
     inv_get_odr
-  .text                    19   0x932     0x1c
+  .text                    19   0xab8     0x1c
     inv_is_gyro_enabled
-  .text                    19   0xe7c     0x3c
+  .text                    19  0x106c     0x3c
     inv_enable_batch
-  .text                    19   0xeb8     0x16
+  .text                    19  0x10a8     0x16
     inv_set_batch_mode_status
-  .text                    19   0xed4     0x58
+  .text                    19  0x10c4     0x9c
     inv_set_batch_timeout
-  .text                    19   0xf30     0x64
+  .text                    19  0x1160     0xb0
     inv_set_batch_timeout_ms
-  .text                    19   0xf94      0x4
+  .text                    19  0x1210      0x4
     inv_get_androidSensorsOn_mask
-  .text                    19   0xf98      0x6
+  .text                    19  0x1214      0x6
     inv_get_activitiy_classifier_on_flag
-  .text                    19  0x1070     0x2c
+  .text                    19  0x12ec     0x2c
     inv_enable_pickup
-  .text                    10   0x1c0     0x3a  inv_mems_base_driver.o
-    inv_set_secondary
-  .text                    10   0x3a8     0x1a
-    inv_set_secondary_divider
-  .text                    10   0x3c2      0x8
+  .text                    12   0x3a2      0xa  inv_mems_base_driver.o
+    activate_pressure
+  .text                    12   0x3ac      0xa
+    desactivate_pressure
+  .text                    12   0x3f6     0x2a
+    inv_set_slave_pressure_id
+  .text                    12   0x45c      0x8
     inv_get_secondary_divider
-  .text                    10   0x3fe     0xba
+  .text                    12   0x498     0xba
     inv_get_odr_in_units
-  .text                    10   0x7d2      0x8
+  .text                    12   0x894      0x8
     inv_set_serial_comm
-  .text                    10   0x7da     0x40
+  .text                    12   0x89c     0x40
     inv_set_int1_assertion
-  .text                    10   0x81a     0x40
+  .text                    12   0x8dc     0x40
     inv_accel_read_hw_reg_data
-  .text                    10   0x898      0x4
-  .text                    10   0x8a0      0x4
-  .bss                     11     0x0      0x1
-    inv_set_secondary::lIsInited
-  .rodata                  15     0x0      0x2
-  .rodata                  16     0x0      0x2
+  .text                    12   0x970      0x4
+  .rodata                  17     0x0      0x2
+  .rodata                  18     0x0      0x2
   .text                     9   0x1e4     0x24  inv_mems_data_converter.o
     inv_convert_rotation_vector_2
   .text                     9   0x208     0xa4
@@ -102,8 +99,6 @@ Unused fragments:
     dmp_set_batchmode_params
   .text                    10    0x82      0x8
     dmp_set_compass_cal_params
-  .text                    10    0x8a      0x8
-    dmp_set_compass_matrix
   .text                    10    0x92      0x8
     dmp_set_pedometer_rate
   .text                    10    0x9e      0xa
@@ -116,137 +111,26 @@ Unused fragments:
     dmp_set_bts_accel_matrix
   .text                    10   0x512    0x106  inv_mems_mpu_fifo_control.o
     dmp_process_fifo
-  .bss                      8     0x0     0x20  inv_mems_secondary_transport.o
-    slv_reg
-  .text                     9     0x0     0x66
-    inv_init_secondary
-  .text                     9    0x66     0x58
-    inv_read_secondary
-  .text                     9    0xbe     0x46
-    inv_execute_read_secondary
-  .text                     9   0x104     0x64
-    inv_write_secondary
-  .text                     9   0x168     0x32
-    inv_execute_write_secondary
-  .text                     9   0x19a      0x2
-    inv_mems_secondary_saveI2cOdr
-  .text                     9   0x19c      0x2
-    inv_mems_secondary_restoreI2cOdr
-  .text                     9   0x19e     0x12
-    inv_mems_secondary_stop_channel
-  .text                     9   0x1b0     0x16
-    inv_mems_secondary_enable_i2c
-  .text                     9   0x1c6     0x16
-    inv_mems_secondary_disable_i2c
-  .text                     9   0x1dc      0x4
-  .text                     9   0x1e0      0x4
-  .text                     9   0x1e4     0x26
-    inv_mems_secondary_set_odr
-  .bss                      8     0x0     0x24  inv_mems_slave_compass.o
-    final_matrix
-  .bss                      9     0x0      0x4
-    compass_sens
-  .bss                     10     0x0      0x4
-    st_upper
-  .bss                     11     0x0      0x4
-    st_lower
-  .bss                     12     0x0      0x4
-    scale
-  .data                    13     0x0      0x1
-    dmp_on
-  .rodata                  14     0x0      0x8
-    AKM8975_ST_Lower
-  .rodata                  15     0x0      0x8
-    AKM8975_ST_Upper
-  .rodata                  16     0x0      0x8
-    AKM8972_ST_Lower
-  .rodata                  17     0x0      0x8
-    AKM8972_ST_Upper
-  .rodata                  18     0x0      0x8
-    AKM8963_ST_Lower
-  .rodata                  19     0x0      0x8
-    AKM8963_ST_Upper
-  .rodata                  20     0x0      0x8
-    AK09911_ST_Lower
-  .rodata                  21     0x0      0x8
-    AK09911_ST_Upper
-  .rodata                  22     0x0      0x8
-    AK09912_ST_Lower
-  .rodata                  23     0x0      0x8
-    AK09912_ST_Upper
-  .rodata                  24     0x0      0x8
-    AK09916_ST_Lower
-  .rodata                  25     0x0      0x8
-    AK09916_ST_Upper
-  .bss                     26     0x0      0x1
-    secondary_resume_state
-  .bss                     27     0x0      0x1
-    sModeRegAddr
-  .text                    28     0x0    0x1a4
-    inv_setup_compass_akm
-  .text                    28   0x1a4    0x36a
-    inv_check_akm_self_test
-  .text                    28   0x50e     0x48
+  .text                    10   0x87e     0x1c
+    dmp_get_pressure_raw
+  .text                    10   0x89a     0x36
+    dmp_get_pressure_temperature
+  .text                    10   0xa30      0x4
+  .text                    28   0x50e     0x48  inv_mems_slave_compass.o
     inv_write_akm_scale
   .text                    28   0x556     0x6c
     inv_read_akm_scale
-  .text                    28   0x5c2     0x3e
-    inv_suspend_akm
-  .text                    28   0x600     0xc4
-    inv_resume_akm
-  .text                    28   0x6c4      0x6
-    inv_mems_compass_getstate
-  .text                    28   0x6ca    0x17e
-    inv_compass_dmp_cal
-  .text                    28   0x848     0x48
-    inv_apply_raw_compass_matrix
-  .text                    28   0x890      0x4
-  .text                    28   0x894      0x4
-  .text                    28   0x898      0x4
-  .text                    28   0x89c      0x4
-  .text                    28   0x8a0      0x4
-  .text                    28   0x8a4      0x4
-  .text                    28   0x8a8      0x4
-  .text                    28   0x8ac      0x4
-  .text                    28   0x8b0      0x4
-  .text                    28   0x8b4      0x4
-  .text                    28   0x8b8      0x4
-  .text                    28   0x8bc      0x4
-  .text                    28   0x8c0      0x4
-  .text                    28   0x8c4      0x4
-  .text                    28   0x8c8      0x4
-  .text                    28   0x8cc      0x4
-  .text                    28   0x8d0      0x4
-  .text                    28   0x8d4      0x4
-  .text                    28   0x8d8      0x4
-  .text                    28   0x8dc      0x4
-  .text                    28   0x8e0      0x4
-  .text                    28   0x8e4      0x4
-  .text                    28   0x8e8      0x4
-  .text                    28   0x8ec      0x4
-  .text                    28   0x8f0      0x4
-  .text                    28   0x8f4      0x4
-  .bss                      8     0x0      0x1  inv_mems_slave_pressure.o
-    secondary_resume_state
-  .bss                      9     0x0     0x18
+  .bss                      9     0x0     0x18  inv_mems_slave_pressure.o
     sBmpCompensationParameters
   .bss                     10     0x0      0x4
     sBmp280Fine
   .text                    11     0x0     0x72
     inv_mems_pressure_setup_bmp
-  .text                    11    0x72     0x66
-    inv_mems_pressure_suspend_bmp
-  .text                    11    0xd8    0x162
-    inv_mems_pressure_resume_bmp
-  .text                    11   0x23a      0x6
-    inv_mems_pressure_getstate
   .text                    11   0x240     0x3e
     BMP280_compensateTemp
   .text                    11   0x27e     0xae
     BMP280_compensatePress
-  .text                    11   0x32c      0x4
   .text                    11   0x330      0x4
-  .text                    11   0x334      0x4
   .text                    11   0x338      0x4
   .text                    11   0x33c     0x44
     inv_mems_pressure_bmp280_rawToPascal
@@ -272,16 +156,6 @@ Unused fragments:
   .rodata                 163     0x0     0x64
   .rodata                 164     0x0      0xc
   .rodata                 165     0x0      0xc
-  .rodata                 174     0x0      0x1
-    COMPASS_SLAVE_ID
-  .rodata                 175     0x0      0x1
-    COMPASS_CHIP_ADDR
-  .rodata                 176     0x0      0x1
-    PRESSURE_CHIP_ADDR
-  .data                   177     0x0      0xc
-    COMPASS_ORIENTATION
-  .data                   178     0x0     0x24
-    SOFT_IRON_MATRIX
   .text                     8     0x0      0xa  misc.o
     NVIC_PriorityGroupConfig
   .text                     8    0x6c      0xc

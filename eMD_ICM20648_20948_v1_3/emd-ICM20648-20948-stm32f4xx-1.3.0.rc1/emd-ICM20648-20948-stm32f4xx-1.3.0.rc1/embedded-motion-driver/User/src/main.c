@@ -168,7 +168,8 @@ float current_output_rate = 5;
 const unsigned char ACCEL_GYRO_CHIP_ADDR = 0x68;
 
 /* Change ACCEL_GYRO_ORIENTATION according to actual mount matrix */
-signed char ACCEL_GYRO_ORIENTATION[] = {0,-1,0,1,0,0,0,0,1};
+//signed char ACCEL_GYRO_ORIENTATION[] = {0,-1,0,1,0,0,0,0,1};
+signed char ACCEL_GYRO_ORIENTATION[] = {1,0,0,0,1,0,0,0,1};
 
 /* Change the COMPASS_SLAVE_ID to the correct ID of compass used. You can find the defines in inv_mems_hw_config.h*/
 const unsigned char COMPASS_SLAVE_ID = HW_AK09916;
@@ -180,6 +181,8 @@ const unsigned char PRESSURE_CHIP_ADDR = 0x00;
 
 /* Change COMPASS_ORIENTATION according to actual mount matrix */
 signed char COMPASS_ORIENTATION[] = {0,-1,0,1,0,0,0,0,1};
+//signed char COMPASS_ORIENTATION[] = {1,0,0,0,-1,0,0,0,-1};
+//signed char COMPASS_ORIENTATION[] = {1,0,0,0,1,0,0,0,1};
 
 /* Change SOFT_IRON_MATRIX if necessary (q30) */
 long SOFT_IRON_MATRIX[] = {1073741824,0,0,0,1073741824,0,0,0,1073741824};
@@ -973,7 +976,7 @@ void process_sensor_output()
 
 	if (quat9_data_was_set == 1) {
 		if (hal.report & PRINT_RV) {
-			INV_SPRINTF(tst, INV_TST_LEN, "RV\t %7.5f, %7.5f, %7.5f, %7.5f, %d, %lld\r\n", rv_float[0], rv_float[1], rv_float[2], rv_float[3], rv_accuracy, ts);
+			INV_SPRINTF(tst, INV_TST_LEN, "RV,%7.5f,%7.5f,%7.5f,%7.5f,%d,%lld\r\n", rv_float[0], rv_float[1], rv_float[2], rv_float[3], rv_accuracy, ts);
 			print_data_console(tst);
 		}
 		if (hal.report &  PRINT_CUBE_RV) {
@@ -985,7 +988,7 @@ void process_sensor_output()
 		}
 #if defined MEMS_AUGMENTED_SENSORS
 		if (hal.report & PRINT_ORIENT) {
-			INV_SPRINTF(tst, INV_TST_LEN, "Orientation\t %7.5f, %7.5f, %7.5f, %lld\r\n", orientationFloat[0], orientationFloat[1], orientationFloat[2], ts);
+			INV_SPRINTF(tst, INV_TST_LEN, "Orientation,%7.5f,%7.5f,%7.5f,%lld\r\n", orientationFloat[0], orientationFloat[1], orientationFloat[2], ts);
 			print_data_console(tst);
 		}
 		quat9_data_was_set = 0;
@@ -1383,8 +1386,19 @@ int main(void)
 	inv_error_t result;
 
 	board_init();
+        int i;
+        
+        print_command_console("\nWelcome on STM32F407 board !!!\r\n");
 
-	print_command_console("\nWelcome on STM32F407 board !!!\r\n");
+        
+        while(0) {
+          for (i = 0; i < 10000; i++) {            
+          }
+          print_command_console("\nWelcome on STM32F407 board !!!\r\n");
+          for (i = 0; i < 10000; i++) {            
+          }          
+          //print_command_console("\nWelcome on STM32F407 board !!!\r\n");
+        }       
 	/* Setup accel and gyro mounting matrix and associated angle for current board */
 	inv_set_chip_to_body_axis_quaternion(ACCEL_GYRO_ORIENTATION, 0.0);
 	result = inv_initialize_lower_driver(SERIAL_INTERFACE_I2C, 0);
