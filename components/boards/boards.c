@@ -45,6 +45,10 @@
 static const uint8_t m_board_led_list[LEDS_NUMBER] = LEDS_LIST;
 #endif
 
+#if TPS_NUMBER > 0
+static const uint8_t m_board_tp_list[TPS_NUMBER] = TPS_LIST;
+#endif
+
 #if BUTTONS_NUMBER > 0
 static const uint8_t m_board_btn_list[BUTTONS_NUMBER] = BUTTONS_LIST;
 #endif
@@ -102,6 +106,38 @@ void bsp_board_leds_init(void)
     }
     bsp_board_leds_off();
 }
+#ifdef TPS_NUMBER
+void bsp_board_tps_init(void)
+{
+    uint32_t i;
+    for (i = 0; i < TPS_NUMBER; ++i)
+    {
+        nrf_gpio_cfg_output(m_board_tp_list[i]);
+    }
+    bsp_board_tps_off();
+}
+
+void bsp_board_tps_off(void)
+{
+    uint32_t i;
+    for (i = 0; i < TPS_NUMBER; ++i)
+    {
+        nrf_gpio_pin_clear(m_board_tp_list[i]);
+    }
+}
+
+void bsp_board_tps_on(void)
+{
+    uint32_t i;
+    for (i = 0; i < TPS_NUMBER; ++i)
+    {
+        nrf_gpio_pin_set(m_board_tp_list[i]);
+    }
+}
+
+#endif
+
+
 
 uint32_t bsp_board_led_idx_to_pin(uint32_t led_idx)
 {

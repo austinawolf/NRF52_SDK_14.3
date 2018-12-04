@@ -74,6 +74,8 @@
   #include "arduino_primo.h"
 #elif defined (BOARD_PCB001)
 	#include "pcb001.h"
+#elif defined (BOARD_PCB002)
+	#include "pcb002.h"
 #elif defined(BOARD_CUSTOM)
   #include "custom_board.h"
 #else
@@ -179,6 +181,12 @@ uint32_t bsp_board_pin_to_button_idx(uint32_t pin_number);
  * @return Pin number.
  */
 uint32_t bsp_board_button_idx_to_pin(uint32_t button_idx);
+
+void bsp_board_tps_off(void);
+void bsp_board_tps_on(void);
+void bsp_board_tps_init(void);
+
+
 
 #define BSP_BOARD_LED_0 0
 #define BSP_BOARD_LED_1 1

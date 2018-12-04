@@ -37,8 +37,8 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-#ifndef PCB001_H_
-#define PCB001_H_
+#ifndef PCB002_H_
+#define PCB002_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,24 +46,41 @@ extern "C" {
 
 #include "nrf_gpio.h"
 
-// LEDs definitions for pcb001
-#define LEDS_NUMBER    3
+// LEDs definitions for pcb002
+#define LEDS_NUMBER    4
 
-#define LED_START      3
-#define LED_1          3
-#define LED_2          4
-#define LED_3          5
-#define LED_STOP       5
+#define LED_1          NRF_GPIO_PIN_MAP(0,8)
+#define LED_START      LED_1	
+#define LED_2          NRF_GPIO_PIN_MAP(1,6)
+#define LED_3          NRF_GPIO_PIN_MAP(0,9)
+#define LED_4		   NRF_GPIO_PIN_MAP(0,10)
+#define LED_STOP       LED_4
 
 #define LEDS_ACTIVE_STATE 0
 
 #define LEDS_INV_MASK  LEDS_MASK
-#define LEDS_LIST { LED_1, LED_2, LED_3 }
+#define LEDS_LIST { LED_1, LED_2, LED_3, LED_4 }
+
+#define TP1 NRF_GPIO_PIN_MAP(1,9)
+#define TP2 NRF_GPIO_PIN_MAP(1,2)
+#define TP3 NRF_GPIO_PIN_MAP(0,12)
+#define TP4 NRF_GPIO_PIN_MAP(1,4)
+#define TP6 NRF_GPIO_PIN_MAP(0,31)
+#define TP7 NRF_GPIO_PIN_MAP(0,29)
+#define TP8 NRF_GPIO_PIN_MAP(0,2)
+#define TP9 NRF_GPIO_PIN_MAP(1,15)
+#define TP10 NRF_GPIO_PIN_MAP(1,13)
+#define TP11 NRF_GPIO_PIN_MAP(1,10)
+
+#define TPS_NUMBER 10
+#define TPS_LIST { TP1, TP2, TP3, TP4, TP6, TP7, TP8, TP9, TP10, TP11 }
+
 
 
 #define BSP_LED_0      LED_1
 #define BSP_LED_1      LED_2
 #define BSP_LED_2      LED_3
+#define BSP_LED_3      LED_4
 
 #define BUTTONS_NUMBER 4
 
@@ -84,10 +101,10 @@ extern "C" {
 #define BSP_BUTTON_2   BUTTON_3
 #define BSP_BUTTON_3   BUTTON_4
 
-#define RX_PIN_NUMBER  8
-#define TX_PIN_NUMBER  6
-#define CTS_PIN_NUMBER 7
-#define RTS_PIN_NUMBER 5
+#define RX_PIN_NUMBER  NRF_GPIO_PIN_MAP(0,2)
+#define TX_PIN_NUMBER  NRF_GPIO_PIN_MAP(0,4)
+#define CTS_PIN_NUMBER NRF_GPIO_PIN_MAP(1,9)
+#define RTS_PIN_NUMBER NRF_GPIO_PIN_MAP(0,12)
 #define HWFC           true
 
 #define SPIS_MISO_PIN   28  // SPI MISO signal.
@@ -95,10 +112,10 @@ extern "C" {
 #define SPIS_MOSI_PIN   25  // SPI MOSI signal.
 #define SPIS_SCK_PIN    29  // SPI SCK signal.
 
-#define SPIM0_SS_PIN    31  // SPI Slave Select GPIO pin number.
-#define SPIM0_MOSI_PIN  28  // SPI Master Out Slave In GPIO pin number.
-#define SPIM0_MISO_PIN  2  // SPI Master In Slave Out GPIO pin number.
-#define SPIM0_SCK_PIN   29  // SPI clock GPIO pin number.
+#define SPIM0_SS_PIN    NRF_GPIO_PIN_MAP(0,13)  // SPI Slave Select GPIO pin number.
+#define SPIM0_MOSI_PIN  NRF_GPIO_PIN_MAP(0,20)  // SPI Master Out Slave In GPIO pin number.
+#define SPIM0_MISO_PIN  NRF_GPIO_PIN_MAP(0,22)  // SPI Master In Slave Out GPIO pin number.
+#define SPIM0_SCK_PIN   NRF_GPIO_PIN_MAP(0,15)  // SPI clock GPIO pin number.
 
 #define SPI_SS_PIN SPIM0_SS_PIN
 #define SPI_MOSI_PIN SPIM0_MOSI_PIN
@@ -106,8 +123,8 @@ extern "C" {
 #define SPI_SCK_PIN SPIM0_SCK_PIN
 
 //TWI Pins for MPU9150 interface
-#define MPU9150_TWI_SDA		25 
-#define MPU9150_TWI_SCL		26
+#define MPU9150_TWI_SDA		NRF_GPIO_PIN_MAP(0,4) 
+#define MPU9150_TWI_SCL		NRF_GPIO_PIN_MAP(0,26)
 
 // serialization APPLICATION board - temp. setup for running serialized MEMU tests
 #define SER_APP_RX_PIN              23    // UART RX pin number.
